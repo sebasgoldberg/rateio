@@ -36,5 +36,8 @@
         }
       }
     }
+  },
+  "devDependencies": {
+    "sqlite3": "^4.2.0"
   }
 }
