@@ -11,5 +11,30 @@
   },
   "scripts": {
     "start": "npx cds run"
+  },
+  "cds": {
+    "requires": {
+      "API_COMPANYCODE_SRV": {
+        "kind": "odata",
+        "model": "srv/external/API_COMPANYCODE_SRV",
+        "credentials": {
+          "destination": "s4hana"
+        }
+      },
+      "API_GLACCOUNTINCHARTOFACCOUNTS_SRV": {
+        "kind": "odata",
+        "model": "srv/external/API_GLACCOUNTINCHARTOFACCOUNTS_SRV",
+        "credentials": {
+          "destination": "s4hana"
+        }
+      },
+      "API_COSTCENTER_SRV": {
+        "kind": "odata",
+        "model": "srv/external/API_COSTCENTER_SRV",
+        "credentials": {
+          "destination": "s4hana"
+        }
+      }
+    }
   }
 }

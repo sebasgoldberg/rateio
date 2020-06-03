@@ -1,0 +1,281 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="1.0" xmlns:edmx="http://schemas.microsoft.com/ado/2007/06/edmx" xmlns:m="http://schemas.microsoft.com/ado/2007/08/dataservices/metadata" xmlns:sap="http://www.sap.com/Protocols/SAPData">
+ <edmx:Reference Uri="https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMON',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Include Namespace="com.sap.vocabularies.Common.v1" Alias="Common"/>
+ </edmx:Reference>
+ <edmx:Reference Uri="https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_CAPABILITIES',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Include Namespace="Org.OData.Capabilities.V1" Alias="Capabilities"/>
+ </edmx:Reference>
+ <edmx:Reference Uri="https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_COMMUNICATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Include Namespace="com.sap.vocabularies.Communication.v1" Alias="Communication"/>
+ </edmx:Reference>
+ <edmx:Reference Uri="https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_AGGREGATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Include Namespace="Org.OData.Aggregation.V1" Alias="Aggregation"/>
+ </edmx:Reference>
+ <edmx:Reference Uri="https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_PERSONALDATA',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Include Namespace="com.sap.vocabularies.PersonalData.v1" Alias="PersonalData"/>
+ </edmx:Reference>
+ <edmx:Reference Uri="https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_VALIDATION',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Include Namespace="Org.OData.Validation.V1" Alias="Validation"/>
+ </edmx:Reference>
+ <edmx:Reference Uri="https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_ANALYTICS',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Include Namespace="com.sap.vocabularies.Analytics.v1" Alias="Analytics"/>
+ </edmx:Reference>
+ <edmx:Reference Uri="https://host:port/sap/opu/odata/IWFND/CATALOGSERVICE;v=2/Vocabularies(TechnicalName='%2FIWBEP%2FVOC_MEASURES',Version='0001',SAP__Origin='LOCAL')/$value" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+  <edmx:Include Namespace="Org.OData.Measures.V1" Alias="Measures"/>
+ </edmx:Reference>
+ <edmx:DataServices m:DataServiceVersion="2.0">
+  <Schema Namespace="API_COSTCENTER_SRV" xml:lang="en" sap:schema-version="1" xmlns="http://schemas.microsoft.com/ado/2008/09/edm">
+   <EntityType Name="A_CostCenterType" sap:label="Cost Center" sap:content-version="1">
+    <Key>
+     <PropertyRef Name="ControllingArea"/>
+     <PropertyRef Name="CostCenter"/>
+     <PropertyRef Name="ValidityEndDate"/>
+    </Key>
+    <Property Name="ControllingArea" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Controlling Area">
+     <Documentation>
+      <Summary>Uniquely identifies a controlling area.</Summary>
+      <LongDescription>The controlling area is the highest organizational unit in Controlling.Whether controlling area and company code are in a 1:1 relationship or a 1:n relationship, the number of posting periods in both controlling area and company code(s) must be identical. However, special periods may vary.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="CostCenter" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Cost Center">
+     <Documentation>
+      <Summary>A key that uniquely identifies a cost center.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="ValidityEndDate" Type="Edm.DateTime" Nullable="false" Precision="0" sap:display-format="Date" sap:label="Valid To" sap:quickinfo="Valid To Date">
+     <Documentation>
+      <Summary>Date indicating up to when an entry is valid.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Valid From" sap:quickinfo="Valid-From Date">
+     <Documentation>
+      <Summary>Date indicating as of when an entry is valid.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="CompanyCode" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Company Code">
+     <Documentation>
+      <Summary>The company code is an organizational unit within financial accounting.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="BusinessArea" Type="Edm.String" MaxLength="4" sap:display-format="UpperCase" sap:label="Business Area">
+     <Documentation>
+      <Summary>Key that uniquely identifies a business area.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="CostCtrResponsiblePersonName" Type="Edm.String" MaxLength="20" sap:label="Person Responsible">
+     <Documentation>
+      <Summary>Person responsible for the given cost center.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="CostCtrResponsibleUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="User Responsible">
+     <Documentation>
+      <Summary>In this field, you can enter the user ID of the person responsible for the cost center. This user ID is stored in the SAP user master record.</Summary>
+      <LongDescription>In the Person Responsible field, you can type in the name of the person responsible. No consistency check is performed against the user master record.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="CostCenterCurrency" Type="Edm.String" MaxLength="5" sap:label="Currency" sap:quickinfo="Currency Key" sap:semantics="currency-code">
+     <Documentation>
+      <Summary>Currency key for amounts in the system.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="ProfitCenter" Type="Edm.String" MaxLength="10" sap:display-format="UpperCase" sap:label="Profit Center">
+     <Documentation>
+      <Summary>Key which together with the controlling area uniquely identifies a profit center.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="Department" Type="Edm.String" MaxLength="12" sap:label="Department">
+     <Documentation>
+      <Summary>In this field, you can enter the name of the department to which the cost center belongs. It then can be used for evaluations.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="CostingSheet" Type="Edm.String" MaxLength="6" sap:display-format="UpperCase" sap:label="Costing Sheet">
+     <Documentation>
+      <Summary>Controls the calculation of overhead.</Summary>
+      <LongDescription>You must store one costing sheet for each object for which the R/3 System is to determine overhead costs.For orders, you enter the costing sheet in the order master record.For overhead cost orders the costing sheet can be defaulted through a model order.For CO production orders without quantity structure the costing sheet can be defaulted through a planning profile.For production orders, process orders, produc cost collectors, maintenance orders, regular maintenance orders and service orders the costing sheet is defaulted through a valuation variant.The valuation variant is stored in the costing variant. You can store the costing variant as default value per order type and plant.For cost centers you enter the costing sheet in the master data.For buiness processes you enter the costing sheet in the master data.For projects you enter the costing sheet in the project profile.For materials the R/3 System selects the costing sheet through the valuation variant.For base object plannings, enter the costing sheet in the master data of the costing sheet.For cost object IDs the costing sheet is defaulted through the cost object profile.For cost and revenue carrying sales document items the costing sheet is defaulted through the requirements class.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="FunctionalArea" Type="Edm.String" MaxLength="16" sap:display-format="UpperCase" sap:label="Functional Area">
+     <Documentation>
+      <Summary>Structure criterion for an enterprise or government based on functional aspects.</Summary>
+      <LongDescription>Use for Cost-of-Sales AccountingThe functional area is required to create a profit and loss account in Financial Accounting using cost-of-sales accounting. The following are examples of structure criteria:ManufacturingAdministrationSalesResearch and developmentUse for GovernmentThe functional area is needed for Funds Management to meet legal requirements for reporting with functional aspects. You can use the functional area to represent the global targets and goals (such as public safety or city development), in particular the expenses of your organization.Use in cost-of-sales accountingSee the documentation on Filling the Functional Area Field.For comprehensive information on cost-of-sales accounting and on the functional area, see the SAP Library under Accounting -&gt; Financial Accounting -&gt; General Ledger -&gt; Cost-of-Sales Accounting.Use in governmentFor more information on the functional area, see the implementation Guide for Funds Management Government in the section Activate Account Assignment Elements.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="Country" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Country Key">
+     <Documentation>
+      <Summary>The country key contains information which the system uses to check entries such as the length of the postal code or bank account number.</Summary>
+      <LongDescription>The two-character ISO code in accordance with ISO 3166, which is delivered by SAP as a default, is usually used.It could also be the vehicle license plate country-code or a typical country key, for example, in Germany the Federal statistics office key.The country keys are determined at system installation in the global settings.The definition of the country key in the SAP system does not have to match political or government entities.Since the country key does not have to correspond to the ISO code in all installations, programs that differ according to certain values of the country key cannot query the country key T005-LAND1, but have to program based on the ISO code T005 INTCA.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="Region" Type="Edm.String" MaxLength="3" sap:display-format="UpperCase" sap:label="Region" sap:quickinfo="Region (State, Province, County)">
+     <Documentation>
+      <Summary>In some countries, the region forms part of the address. The meaning depends on the country.</Summary>
+      <LongDescription>The automatic address formatting function prints the region in addresses in the USA, Canada, Italy, Brazil or Australia, and the county in Great Britain.For more information, see the examples in the documentation on the Address Layout Key.Meaning of the regional code in ...Australia       -&gt;  ProvinceBrazil          -&gt;  StateCanada          -&gt;  ProvinceGermany         -&gt;  StateGreat Britain   -&gt;  CountyItaly           -&gt;  ProvinceJapan           -&gt;  PrefectureSwitzerland     -&gt;  CantonUSA             -&gt;  State</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="CityName" Type="Edm.String" MaxLength="35" sap:label="City">
+     <Documentation>
+      <Summary>Name of the city as a part of the address.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="CostCenterStandardHierArea" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="Hierarchy Area" sap:quickinfo="Standard Hierarchy Area">
+     <Documentation>
+      <Summary>Standard hierarchy</Summary>
+      <LongDescription>To create cost centers, you require a structure in master data maintenance to which you can assign cost centers. You create this CO structure, the standard hierarchy, when you create a controlling area. If this hierarchy is not present during controlling area maintenance, the system automatically creates the highest node there.Use group maintenance to construct the structure of the standard hierarchy. This is possible in both application and customizing menus.About the Application MenuAbout the Customizing MenuYou may create as many alternative groups as you wish. You cannot create new cost centers in groups, but you can enter existing cost centers and cost centers that are to be created.The direct assignment to the controlling area guarantees that all cost centers of a controlling area are collected together.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="CostCenterCategory" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Cost Center Category">
+     <Documentation>
+      <Summary>Indicator used to define a cost center category.</Summary>
+      <LongDescription>The master data of an activity type includes one or more cost center categories. The activity type may be used only by cost centers of the appropriate categories.You define categories in Customizing. For each category, you can define default values for the "Lock" and "Record quantity" indicators, for transfer to cost center master data. Maintain these indicators only if the entry diverges from the default cost center category.In addition, you may use the categories for reports and evaluations.Production cost centerService cost centerAdministration cost center</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="IsBlkdForPrimaryCostsPosting" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Actual primary costs" sap:quickinfo="Lock Indicator for Actual Primary Postings">
+     <Documentation>
+      <Summary>Indicator defining whether a cost center is locked for posting with direct costs.</Summary>
+      <LongDescription>If the indicator is active, no primary costs can be posted to the cost center. You may, however, still use the cost center for evaluations such as summarization, etc.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="IsBlkdForSecondaryCostsPosting" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Actl Sec. Costs" sap:quickinfo="Lock Indicator for Actual Secondary Costs">
+     <Documentation>
+      <Summary>Indicator controlling whether the cost center is locked against postings of secondary costs</Summary>
+      <LongDescription>UseIf the indicator is active, you cannot post secondary costs to the cost center from now on.This indicatory normally locks the cost center only against actual debits of secondary costs. However, actual credits to the cost center are possible.To alter the effect of this indicator so that sender cost centers are also locked against allocation, change the type of messsage GM 155 from I (information) to E (error).To do so, access the IMG for General Controlling -&gt; Message Control. Enter GM as the work area. You can then create a new entry for message number 155, which entry differs from the standard message type.Message control</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="IsBlockedForRevenuePosting" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Actual Revenues" sap:quickinfo="Lock Indicator for Actual Revenue Postings">
+     <Documentation>
+      <Summary>Indicator defining whether a cost center is locked for posting with revenues.</Summary>
+      <LongDescription>If the indicator is active, you cannot post revenues to the affected cost center.If the indicator is inactive, the revenues are written to the cost center as statistics only.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="IsBlockedForCommitmentPosting" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Commitment Update" sap:quickinfo="Lock Indicator for Commitment Update">
+     <Documentation>
+      <Summary>Indicator defining whether a commitment is updated for the cost center.</Summary>
+      <LongDescription>If the indicator is active, no commitments can be updated to the affected cost center.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="IsBlockedForPlanPrimaryCosts" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Plan primary costs" sap:quickinfo="Lock Indicator for Plan Primary Costs">
+     <Documentation>
+      <Summary>Indicator defining whether a cost center is locked for planning with direct costs.</Summary>
+      <LongDescription>If the indicator is active, you cannot plan any primary costs on the affected cost center at this time.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="IsBlockedForPlanSecondaryCosts" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Lock Plan Sec Costs" sap:quickinfo="Lock Indicator for Plan Secondary Costs"/>
+    <Property Name="IsBlockedForPlanRevenues" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Lock Planning Revn" sap:quickinfo="Lock Indicator for Planning Revenues"/>
+    <Property Name="ConsumptionQtyIsRecorded" Type="Edm.String" MaxLength="1" sap:display-format="UpperCase" sap:label="Record Quantity" sap:quickinfo="Indicator for Recording Consumption Quantities">
+     <Documentation>
+      <Summary>Indicator defining whether the system issues a message if no quantity or quantity unit is specified for commitment or actual postings.</Summary>
+      <LongDescription>The indicator has no effect on planning.You can also plan consumption quantities at a later date.The indicator has no effect on quantity updates or on the identification of quantities in reports.You must set the indicator if you want to cost using an overhead that is dependent on the unit of measure posted with this cost element.The indicator is an active default setting for the combination of cost center and cost element if in the master data for the cost center and cost element, it is defined that quantities should be managed.You can specify the recording of quantities in two ways:In the master data for the cost center and cost element, you can activate the Record qty indicator.In the master data, the indicator specifies whether consumption quantities should be recorded for each object (cost center, cost element).You can change the indicator in planning.In planning, the indicator specifies whether consumption quantities are to be recorded for planning values as well as actual values. This is for the object combination to be planned (such as cost center/cost element).A combination of objects is used for planning or actual postings, which means that the effect this has depends on the indicator setting for each object combination.The object combination comes fromThe first planning entriesThe first actual postingIf planning does not exist, the system determines whether the indicator is set for the object combination. It does this by using the logical AND link for the field values in the master record of the corresponding single objects.CautionIf you want to record consumption quantities, you need to specify a quantity and a unit of measure for actual and commitment postings.For the first posting in a fiscal year to an object using a particular cost element, specify the following for the object and the corresponding cost element:Whether quantities are to be recorded in the totals recordsWhich unit of measure is to be used for recording the quantitiesOnce you have specified this for the relevant fiscal year, you cannot change it.Specify a different unit of measure for a later posting.If you can convert the unit of measure using that of the first posting (such as kilograms into tons), then- The system converts the units of measure accordingly- The system displays the posted quantities using the unit of measure that you specified for the first posting.If the unit of measure cannot be converted (such as hours into pieces), then- The system does not update any quantities after this posting- The system does not display any quantities in the information system- The system displays the posted quantities in the line items using the corresponding posted unit of measure.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="Language" Type="Edm.String" MaxLength="2" sap:label="Language Key">
+     <Documentation>
+      <Summary>The language key indicates</Summary>
+      <LongDescription>- the language in which texts are displayed,- the language in which you enter texts,- the language in which the system prints texts.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="CostCenterCreatedByUser" Type="Edm.String" MaxLength="12" sap:display-format="UpperCase" sap:label="Created By" sap:quickinfo="Entered By">
+     <Documentation>
+      <Summary>User ID of the person who created the cost estimate.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="CostCenterCreationDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Entered On">
+     <Documentation>
+      <Summary>Date on which the cost estimate was created.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <NavigationProperty Name="to_Text" Relationship="API_COSTCENTER_SRV.assoc_908EE76104E2F80C8DB8059C22542E29" FromRole="FromRole_assoc_908EE76104E2F80C8DB8059C22542E29" ToRole="ToRole_assoc_908EE76104E2F80C8DB8059C22542E29"/>
+   </EntityType>
+   <EntityType Name="A_CostCenterTextType" sap:label="Cost Center Text" sap:content-version="1">
+    <Key>
+     <PropertyRef Name="CostCenter"/>
+     <PropertyRef Name="ControllingArea"/>
+     <PropertyRef Name="Language"/>
+     <PropertyRef Name="ValidityEndDate"/>
+    </Key>
+    <Property Name="CostCenter" Type="Edm.String" Nullable="false" MaxLength="10" sap:display-format="UpperCase" sap:label="Cost Center">
+     <Documentation>
+      <Summary>A key that uniquely identifies a cost center.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="ControllingArea" Type="Edm.String" Nullable="false" MaxLength="4" sap:display-format="UpperCase" sap:label="Controlling Area">
+     <Documentation>
+      <Summary>Uniquely identifies a controlling area.</Summary>
+      <LongDescription>The controlling area is the highest organizational unit in Controlling.Whether controlling area and company code are in a 1:1 relationship or a 1:n relationship, the number of posting periods in both controlling area and company code(s) must be identical. However, special periods may vary.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="Language" Type="Edm.String" Nullable="false" MaxLength="2" sap:label="Language Key">
+     <Documentation>
+      <Summary>The language key indicates</Summary>
+      <LongDescription>- the language in which texts are displayed,- the language in which you enter texts,- the language in which the system prints texts.</LongDescription>
+     </Documentation>
+    </Property>
+    <Property Name="ValidityEndDate" Type="Edm.DateTime" Nullable="false" Precision="0" sap:display-format="Date" sap:label="Valid To" sap:quickinfo="Valid To Date">
+     <Documentation>
+      <Summary>Date indicating up to when an entry is valid.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="ValidityStartDate" Type="Edm.DateTime" Precision="0" sap:display-format="Date" sap:label="Valid From" sap:quickinfo="Valid-From Date">
+     <Documentation>
+      <Summary>Date indicating as of when an entry is valid.</Summary>
+      <LongDescription/>
+     </Documentation>
+    </Property>
+    <Property Name="CostCenterName" Type="Edm.String" MaxLength="20" sap:label="Cost Center Name"/>
+    <Property Name="CostCenterDescription" Type="Edm.String" MaxLength="40" sap:label="Cost Center Desc." sap:quickinfo="Description of Cost Center"/>
+    <NavigationProperty Name="to_CostCenter" Relationship="API_COSTCENTER_SRV.assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8" FromRole="FromRole_assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8" ToRole="ToRole_assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8"/>
+   </EntityType>
+   <Association Name="assoc_908EE76104E2F80C8DB8059C22542E29" sap:content-version="1">
+    <End Type="API_COSTCENTER_SRV.A_CostCenterType" Multiplicity="1" Role="FromRole_assoc_908EE76104E2F80C8DB8059C22542E29"/>
+    <End Type="API_COSTCENTER_SRV.A_CostCenterTextType" Multiplicity="*" Role="ToRole_assoc_908EE76104E2F80C8DB8059C22542E29"/>
+   </Association>
+   <Association Name="assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8" sap:content-version="1">
+    <End Type="API_COSTCENTER_SRV.A_CostCenterTextType" Multiplicity="1" Role="FromRole_assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8"/>
+    <End Type="API_COSTCENTER_SRV.A_CostCenterType" Multiplicity="1" Role="ToRole_assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8"/>
+   </Association>
+   <EntityContainer Name="API_COSTCENTER_SRV_Entities" m:IsDefaultEntityContainer="true" sap:message-scope-supported="true" sap:supported-formats="atom json xlsx">
+    <EntitySet Name="A_CostCenter" EntityType="API_COSTCENTER_SRV.A_CostCenterType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+    <EntitySet Name="A_CostCenterText" EntityType="API_COSTCENTER_SRV.A_CostCenterTextType" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1"/>
+    <AssociationSet Name="assoc_908EE76104E2F80C8DB8059C22542E29" Association="API_COSTCENTER_SRV.assoc_908EE76104E2F80C8DB8059C22542E29" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+     <End EntitySet="A_CostCenter" Role="FromRole_assoc_908EE76104E2F80C8DB8059C22542E29"/>
+     <End EntitySet="A_CostCenterText" Role="ToRole_assoc_908EE76104E2F80C8DB8059C22542E29"/>
+    </AssociationSet>
+    <AssociationSet Name="assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8" Association="API_COSTCENTER_SRV.assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8" sap:creatable="false" sap:updatable="false" sap:deletable="false" sap:content-version="1">
+     <End EntitySet="A_CostCenterText" Role="FromRole_assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8"/>
+     <End EntitySet="A_CostCenter" Role="ToRole_assoc_BB9DB6B1ACD06A8C08DED685B5DE78B8"/>
+    </AssociationSet>
+   </EntityContainer>
+   <Annotations Target="API_COSTCENTER_SRV.API_COSTCENTER_SRV_Entities" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+    <Annotation Term="Common.ApplyMultiUnitBehaviorForSortingAndFiltering" Bool="true"/>
+    <Annotation Term="Aggregation.ApplySupported">
+     <Record>
+      <PropertyValue Property="Transformations">
+       <Collection>
+        <String>aggregate</String>
+        <String>groupby</String>
+        <String>filter</String>
+       </Collection>
+      </PropertyValue>
+      <PropertyValue Property="Rollup" EnumMember="None"/>
+     </Record>
+    </Annotation>
+   </Annotations>
+   <atom:link rel="self" href="https://host:port/sap/opu/odata/sap/API_COSTCENTER_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+   <atom:link rel="latest-version" href="https://host:port/sap/opu/odata/sap/API_COSTCENTER_SRV/$metadata" xmlns:atom="http://www.w3.org/2005/Atom"/>
+  </Schema>
+ </edmx:DataServices>
+</edmx:Edmx>

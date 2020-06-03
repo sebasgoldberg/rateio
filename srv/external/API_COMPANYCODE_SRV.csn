@@ -1,0 +1,95 @@
+{
+  "definitions": {
+    "API_COMPANYCODE_SRV": {
+      "kind": "service"
+    },
+    "API_COMPANYCODE_SRV.A_CompanyCode": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "elements": {
+        "CompanyCode": {
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CompanyCodeName": {
+          "type": "cds.String",
+          "length": 25
+        },
+        "CityName": {
+          "type": "cds.String",
+          "length": 25
+        },
+        "Country": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "Currency": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "Language": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "ChartOfAccounts": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "FiscalYearVariant": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "Company": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "CreditControlArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "CountryChartOfAccounts": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "FinancialManagementArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "AddressID": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "TaxableEntity": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "VATRegistration": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "ExtendedWhldgTaxIsActive": {
+          "type": "cds.Boolean"
+        },
+        "ControllingArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "FieldStatusVariant": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "NonTaxableTransactionTaxCode": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "DocDateIsUsedForTaxDetn": {
+          "type": "cds.Boolean"
+        },
+        "TaxRptgDateIsActive": {
+          "type": "cds.Boolean"
+        }
+      }
+    }
+  }
+}
