@@ -1,0 +1,869 @@
+{
+  "definitions": {
+    "API_JOURNALENTRYITEMBASIC_SRV": {
+      "kind": "service"
+    },
+    "API_JOURNALENTRYITEMBASIC_SRV.A_CompanyCode": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "elements": {
+        "CompanyCode": {
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CompanyCodeName": {
+          "type": "cds.String",
+          "length": 25
+        },
+        "CityName": {
+          "type": "cds.String",
+          "length": 25
+        },
+        "Country": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "Currency": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "Language": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "ChartOfAccounts": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "FiscalYearVariant": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "Company": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "CreditControlArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "CountryChartOfAccounts": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "FinancialManagementArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "AddressID": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "TaxableEntity": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "VATRegistration": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "ExtendedWhldgTaxIsActive": {
+          "type": "cds.Boolean"
+        },
+        "ControllingArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "FieldStatusVariant": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "NonTaxableTransactionTaxCode": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "DocDateIsUsedForTaxDetn": {
+          "type": "cds.Boolean"
+        },
+        "TaxRptgDateIsActive": {
+          "type": "cds.Boolean"
+        }
+      }
+    },
+    "API_JOURNALENTRYITEMBASIC_SRV.A_CostCenter": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "elements": {
+        "ControllingArea": {
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "CostCenter": {
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ValidityEndDate": {
+          "key": true,
+          "type": "cds.Date"
+        },
+        "ValidityStartDate": {
+          "type": "cds.Date"
+        },
+        "CompanyCode": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "BusinessArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "CostCtrResponsiblePersonName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "CostCtrResponsibleUser": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "CostCenterCurrency": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "ProfitCenter": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "Department": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "CostingSheet": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "FunctionalArea": {
+          "type": "cds.String",
+          "length": 16
+        },
+        "Country": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "Region": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "CityName": {
+          "type": "cds.String",
+          "length": 35
+        },
+        "CostCenterStandardHierArea": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "CostCenterCategory": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsBlkdForPrimaryCostsPosting": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsBlkdForSecondaryCostsPosting": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsBlockedForRevenuePosting": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsBlockedForCommitmentPosting": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsBlockedForPlanPrimaryCosts": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsBlockedForPlanSecondaryCosts": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "IsBlockedForPlanRevenues": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "ConsumptionQtyIsRecorded": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "Language": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "CostCenterCreatedByUser": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "CostCenterCreationDate": {
+          "type": "cds.Date"
+        }
+      }
+    },
+    "API_JOURNALENTRYITEMBASIC_SRV.A_GLAccountInChartOfAccounts": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "elements": {
+        "ChartOfAccounts": {
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "GLAccount": {
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "IsBalanceSheetAccount": {
+          "type": "cds.Boolean"
+        },
+        "GLAccountGroup": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "CorporateGroupAccount": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "ProfitLossAccountType": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "SampleGLAccount": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "AccountIsMarkedForDeletion": {
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForCreation": {
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForPosting": {
+          "type": "cds.Boolean"
+        },
+        "AccountIsBlockedForPlanning": {
+          "type": "cds.Boolean"
+        },
+        "PartnerCompany": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "FunctionalArea": {
+          "type": "cds.String",
+          "length": 16
+        },
+        "CreationDate": {
+          "type": "cds.Date"
+        },
+        "CreatedByUser": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "LastChangeDateTime": {
+          "type": "cds.Timestamp"
+        },
+        "GLAccountType": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "GLAccountExternal": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "IsProfitLossAccount": {
+          "type": "cds.Boolean"
+        }
+      }
+    },
+    "API_JOURNALENTRYITEMBASIC_SRV.A_JournalEntryItemBasic": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "elements": {
+        "ID": {
+          "key": true,
+          "type": "cds.LargeString"
+        },
+        "Ledger": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "LedgerName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "LedgerFiscalYear": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "ControllingArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "ControllingAreaName": {
+          "type": "cds.String",
+          "length": 25
+        },
+        "CompanyCode": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "CompanyCodeName": {
+          "type": "cds.String",
+          "length": 25
+        },
+        "GLAccount": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "GLAccountName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "CostCenter": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "CostCenterName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "ProfitCenter": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "ProfitCenterName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "FunctionalArea": {
+          "type": "cds.String",
+          "length": 16
+        },
+        "FunctionalAreaName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "BusinessArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "BusinessAreaName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "Segment": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "SegmentName": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "PartnerCostCenter": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "PartnerCostCenterName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "PartnerProfitCenter": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "PartnerProfitCenterName": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "PartnerFunctionalArea": {
+          "type": "cds.String",
+          "length": 16
+        },
+        "PartnerFunctionalAreaName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "PartnerBusinessArea": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "PartnerBusinessAreaName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "PartnerCompany": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "PartnerCompanyName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "PartnerSegment": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "PartnerSegmentName": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "TransactionCurrency": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInTransactionCurrency": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "CompanyCodeCurrency": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInCompanyCodeCurrency": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "GlobalCurrency": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInGlobalCurrency": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "CostSourceUnit": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "ValuationQuantity": {
+          "type": "cds.Decimal",
+          "precision": 23,
+          "scale": 3
+        },
+        "FreeDefinedCurrency1": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInFreeDefinedCurrency1": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "FreeDefinedCurrency2": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInFreeDefinedCurrency2": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "FreeDefinedCurrency3": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInFreeDefinedCurrency3": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "FreeDefinedCurrency4": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInFreeDefinedCurrency4": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "FreeDefinedCurrency5": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInFreeDefinedCurrency5": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "FreeDefinedCurrency6": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInFreeDefinedCurrency6": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "FreeDefinedCurrency7": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInFreeDefinedCurrency7": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "FreeDefinedCurrency8": {
+          "type": "cds.String",
+          "length": 5
+        },
+        "AmountInFreeDefinedCurrency8": {
+          "type": "cds.Decimal",
+          "precision": 24,
+          "scale": 3
+        },
+        "FiscalPeriod": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "FiscalYearVariant": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "FiscalYearPeriod": {
+          "type": "cds.String",
+          "length": 8
+        },
+        "ChartOfAccounts": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "Plant": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "PlantName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "Customer": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "CustomerName": {
+          "type": "cds.String",
+          "length": 80
+        },
+        "ControllingDebitCreditCode": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "Project": {
+          "type": "cds.String",
+          "length": 24
+        },
+        "ProjectDescription": {
+          "type": "cds.String",
+          "length": 40
+        },
+        "WBSElement": {
+          "type": "cds.String",
+          "length": 24
+        },
+        "WBSElementDescription": {
+          "type": "cds.String",
+          "length": 40
+        },
+        "PartnerCompanyCode": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "PartnerCompanyCodeName": {
+          "type": "cds.String",
+          "length": 25
+        },
+        "CostCtrActivityType": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "CostCtrActivityTypeName": {
+          "type": "cds.String",
+          "length": 60
+        },
+        "OrderID": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "PartnerOrder": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "PartnerCostCtrActivityType": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "PartnerCostCtrActivityTypeName": {
+          "type": "cds.String",
+          "length": 60
+        },
+        "PartnerProject": {
+          "type": "cds.String",
+          "length": 24
+        },
+        "PartnerProjectDescription": {
+          "type": "cds.String",
+          "length": 40
+        },
+        "PartnerWBSElement": {
+          "type": "cds.String",
+          "length": 24
+        },
+        "PartnerWBSElementDescription": {
+          "type": "cds.String",
+          "length": 40
+        },
+        "SalesOrganization": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "SalesOrganizationName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "DistributionChannel": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "DistributionChannelName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "OrganizationDivision": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "DivisionName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "SoldMaterial": {
+          "type": "cds.String",
+          "length": 40
+        },
+        "SoldMaterialName": {
+          "type": "cds.String",
+          "length": 40
+        },
+        "MaterialGroup": {
+          "type": "cds.String",
+          "length": 9
+        },
+        "MaterialGroupName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "CustomerGroup": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "CustomerGroupName": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "CustomerSupplierCountry": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "CustomerSupplierCountryName": {
+          "type": "cds.String",
+          "length": 50
+        },
+        "CustomerSupplierIndustry": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "CustomerSupplierIndustryName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "SalesDistrict": {
+          "type": "cds.String",
+          "length": 6
+        },
+        "SalesDistrictName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "to_CompanyCode": {
+          "type": "cds.Association",
+          "target": "API_JOURNALENTRYITEMBASIC_SRV.A_CompanyCode"
+        },
+        "to_CurrentCostCenter": {
+          "type": "cds.Association",
+          "target": "API_JOURNALENTRYITEMBASIC_SRV.A_CostCenter"
+        },
+        "to_CurrentProfitCenter": {
+          "type": "cds.Association",
+          "target": "API_JOURNALENTRYITEMBASIC_SRV.A_ProfitCenter"
+        },
+        "to_GLAccountInChartOfAccounts": {
+          "type": "cds.Association",
+          "target": "API_JOURNALENTRYITEMBASIC_SRV.A_GLAccountInChartOfAccounts"
+        }
+      }
+    },
+    "API_JOURNALENTRYITEMBASIC_SRV.A_ProfitCenter": {
+      "kind": "entity",
+      "@cds.persistence.skip": true,
+      "elements": {
+        "ControllingArea": {
+          "key": true,
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCenter": {
+          "key": true,
+          "type": "cds.String",
+          "length": 10
+        },
+        "ValidityEndDate": {
+          "key": true,
+          "type": "cds.Date"
+        },
+        "ProfitCtrResponsiblePersonName": {
+          "type": "cds.String",
+          "length": 20
+        },
+        "CompanyCode": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCtrResponsibleUser": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "ValidityStartDate": {
+          "type": "cds.Date"
+        },
+        "Department": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "ProfitCenterStandardHierarchy": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "Segment": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "ProfitCenterIsBlocked": {
+          "type": "cds.String",
+          "length": 1
+        },
+        "FormulaPlanningTemplate": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "FormOfAddress": {
+          "type": "cds.String",
+          "length": 15
+        },
+        "AddressName": {
+          "type": "cds.String",
+          "length": 35
+        },
+        "AdditionalName": {
+          "type": "cds.String",
+          "length": 35
+        },
+        "ProfitCenterAddrName3": {
+          "type": "cds.String",
+          "length": 35
+        },
+        "ProfitCenterAddrName4": {
+          "type": "cds.String",
+          "length": 35
+        },
+        "StreetAddressName": {
+          "type": "cds.String",
+          "length": 35
+        },
+        "POBox": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "CityName": {
+          "type": "cds.String",
+          "length": 35
+        },
+        "PostalCode": {
+          "type": "cds.String",
+          "length": 10
+        },
+        "District": {
+          "type": "cds.String",
+          "length": 35
+        },
+        "Country": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "Region": {
+          "type": "cds.String",
+          "length": 3
+        },
+        "TaxJurisdiction": {
+          "type": "cds.String",
+          "length": 15
+        },
+        "Language": {
+          "type": "cds.String",
+          "length": 2
+        },
+        "PhoneNumber1": {
+          "type": "cds.String",
+          "length": 16
+        },
+        "PhoneNumber2": {
+          "type": "cds.String",
+          "length": 16
+        },
+        "TeleboxNumber": {
+          "type": "cds.String",
+          "length": 15
+        },
+        "TelexNumber": {
+          "type": "cds.String",
+          "length": 30
+        },
+        "FaxNumber": {
+          "type": "cds.String",
+          "length": 31
+        },
+        "DataCommunicationPhoneNumber": {
+          "type": "cds.String",
+          "length": 14
+        },
+        "ProfitCenterPrinterName": {
+          "type": "cds.String",
+          "length": 4
+        },
+        "ProfitCenterCreatedByUser": {
+          "type": "cds.String",
+          "length": 12
+        },
+        "ProfitCenterCreationDate": {
+          "type": "cds.Date"
+        }
+      }
+    }
+  }
+}

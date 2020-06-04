@@ -1,13 +1,16 @@
 using { qintess.rateio as rateio } from '../db/schema';
 
+using { API_JOURNALENTRYITEMBASIC_SRV as ext } from '../srv/external/API_JOURNALENTRYITEMBASIC_SRV';
+
 service ConfigService @(requires_:'config') {
+
     // Serviços externos
     @readonly
-    entity Empresas as projection on rateio.Empresas;
+    entity A_CompanyCode as projection on ext.A_CompanyCode;
     @readonly
-    entity Contas as projection on rateio.Contas;
+    entity A_GLAccountInChartOfAccounts as projection on ext.A_GLAccountInChartOfAccounts;
     @readonly
-    entity CentrosCusto as projection on rateio.CentrosCusto;
+    entity A_CostCenter as projection on ext.A_CostCenter
 
     entity EtapasProcesso as projection on rateio.EtapaProcesso;
     entity ConfigOrigens as projection on rateio.ConfigOrigens;

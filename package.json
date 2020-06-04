@@ -14,25 +14,17 @@
   },
   "cds": {
     "requires": {
-      "API_COMPANYCODE_SRV": {
+      "API_JOURNALENTRYITEMBASIC_SRV": {
         "kind": "odata",
-        "model": "srv/external/API_COMPANYCODE_SRV",
+        "model": "srv/external/API_JOURNALENTRYITEMBASIC_SRV",
         "credentials": {
-          "destination": "s4hana"
+          "destination": "s4hc"
         }
       },
-      "API_GLACCOUNTINCHARTOFACCOUNTS_SRV": {
-        "kind": "odata",
-        "model": "srv/external/API_GLACCOUNTINCHARTOFACCOUNTS_SRV",
+      "db": {
+        "kind": "sqlite",
         "credentials": {
-          "destination": "s4hana"
-        }
-      },
-      "API_COSTCENTER_SRV": {
-        "kind": "odata",
-        "model": "srv/external/API_COSTCENTER_SRV",
-        "credentials": {
-          "destination": "s4hana"
+          "database": "rateio.db"
         }
       }
     }

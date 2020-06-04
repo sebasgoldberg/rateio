@@ -1,8 +1,5 @@
 using { cuid, temporal, managed, sap } from '@sap/cds/common';
-using { API_COMPANYCODE_SRV } from '../srv/external/API_COMPANYCODE_SRV';
-using { API_GLACCOUNTINCHARTOFACCOUNTS_SRV } from '../srv/external/API_GLACCOUNTINCHARTOFACCOUNTS_SRV';
-using { API_COSTCENTER_SRV } from '../srv/external/API_COSTCENTER_SRV';
-
+using { API_JOURNALENTRYITEMBASIC_SRV as ext  } from '../srv/external/API_JOURNALENTRYITEMBASIC_SRV';
 namespace qintess.rateio;
 
 /**************************************************/
@@ -10,14 +7,14 @@ namespace qintess.rateio;
 /**************************************************/
     
 
-@readonly
-entity Empresas as projection on API_COMPANYCODE_SRV.A_CompanyCode;
+// @readonly
+// entity Empresas as projection on API_JOURNALENTRYITEMBASIC_SRV.A_CompanyCode;
 
-@readonly
-entity Contas as projection on API_GLACCOUNTINCHARTOFACCOUNTS_SRV.A_GLAccountInChartOfAccounts;
+// @readonly
+// entity Contas as projection on API_JOURNALENTRYITEMBASIC_SRV.A_GLAccountInChartOfAccounts;
 
-@readonly
-entity CentrosCusto as projection on API_COSTCENTER_SRV.A_CostCenter;
+// @readonly
+// entity CentrosCusto as projection on API_JOURNALENTRYITEMBASIC_SRV.A_CostCenter;
 
 /**************************************************/
 // Modelo 
@@ -43,7 +40,7 @@ entity ConfigOrigens : cuid, temporal {
     etapaProcesso: Association to EtapaProcesso not null;
     
     companyCode: CompanyCode not null;
-    empresa: Association to one Empresas on empresa.CompanyCode = $self.companyCode;
+    empresa: Association to one ext.A_CompanyCode on empresa.CompanyCode = $self.companyCode;
 
     // Faz parte da chave das contas.
     chartOfAccounts: ChartOfAccounts default '1234' not null;
@@ -54,12 +51,12 @@ entity ConfigOrigens : cuid, temporal {
     // Dados Origem
 
     gLAccountOrigem: GLAccount not null;
-    contaOrigem: Association to one Contas on 
+    contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts on 
         contaOrigem.ChartOfAccounts = $self.chartOfAccounts and
         contaOrigem.GLAccount = $self.gLAccountOrigem;
 
     costCenterOrigem: CostCenter not null;
-    centroCustoOrigem: Association to one CentrosCusto on
+    centroCustoOrigem: Association to one ext.A_CostCenter on
         centroCustoOrigem.ControllingArea = $self.controllingArea and
         centroCustoOrigem.CostCenter = $self.costCenterOrigem;
 
@@ -73,12 +70,12 @@ entity ConfigDestinos: cuid, managed{
     tipoOperacao: TipoOperacao;
 
     gLAccountDestino: GLAccount not null;
-    contaDestino: Association to one Contas on 
+    contaDestino: Association to one ext.A_GLAccountInChartOfAccounts on 
         contaDestino.ChartOfAccounts = $self.origem.chartOfAccounts and
         contaDestino.GLAccount = $self.gLAccountDestino;
 
     costCenterDestino: CostCenter not null;
-    centroCustoDestino: Association to one CentrosCusto on
+    centroCustoDestino: Association to one ext.A_CostCenter on
         centroCustoDestino.ControllingArea = $self.origem.controllingArea and
         centroCustoDestino.CostCenter = $self.costCenterDestino;
 
