@@ -1,0 +1,9 @@
+[
+    {
+        "name": "s4hc",
+        "url": "https://{my-domain}:{my-port}/sap/opu/odata/sap/API_JOURNALENTRYITEMBASIC_SRV/",
+        "username": "{my-username}",
+        "password": "{my-password}",
+        "authentication": "BasicAuthentication"
+    }
+]

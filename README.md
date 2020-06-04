@@ -1,3 +1,6 @@
+# Config
+To execute locally `cp destinations.template.json destinations.json` and adjust the destination values, then to load the destinations data to env run `source load-env.sh`.
+
 # Getting Started
 
 Welcome to your new project.
