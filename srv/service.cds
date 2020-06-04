@@ -10,7 +10,7 @@ service ConfigService @(requires_:'config') {
     @readonly
     entity A_GLAccountInChartOfAccounts as projection on ext.A_GLAccountInChartOfAccounts;
     @readonly
-    entity A_CostCenter as projection on ext.A_CostCenter
+    entity A_CostCenter as projection on ext.A_CostCenter;
 
     entity EtapasProcesso as projection on rateio.EtapaProcesso;
     entity ConfigOrigens as projection on rateio.ConfigOrigens;
