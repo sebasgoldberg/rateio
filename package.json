@@ -1,8 +1,8 @@
 {
   "name": "rateio",
   "version": "1.0.0",
-  "description": "A simple CAP project.",
-  "repository": "<Add your repository here>",
+  "description": "Rateio de documentos.",
+  "repository": "https://github.com/sebasgoldberg/rateio.git",
   "license": "UNLICENSED",
   "private": true,
   "dependencies": {
@@ -22,9 +22,9 @@
         }
       },
       "db": {
-        "kind": "sqlite",
+        "kind": "sql",
         "credentials": {
-          "database": "rateio.db"
+          "database": "memory"
         }
       }
     }
