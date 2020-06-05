@@ -13,7 +13,7 @@ entity EtapaProcesso: managed, sap.common.CodeList{
 
 type TipoOperacao: String enum { credito; debito }
 
-entity TipoOperacoes {
+entity TiposOperacoes {
     key operacao: TipoOperacao;
     descricao: localized String(20);
 }
@@ -81,7 +81,7 @@ entity ConfigDestinos: managed{
     origem: Association to one ConfigOrigens on origem.ID = $self.origem_ID;
 
     key tipoOperacao_ID: TipoOperacao not null;
-    tipoOperacao: Association to TipoOperacoes;
+    tipoOperacao: Association to one TiposOperacoes;
 
     key gLAccountDestino: GLAccount not null;
     contaDestino: Association to one ext.A_GLAccountInChartOfAccounts on 

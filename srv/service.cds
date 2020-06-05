@@ -15,4 +15,5 @@ service ConfigService @(requires_:'config') {
     entity EtapasProcesso as projection on rateio.EtapaProcesso;
     entity ConfigOrigens as projection on rateio.ConfigOrigens;
     entity ConfigDestinos as projection on rateio.ConfigDestinos;
+    entity TiposOperacoes as projection on rateio.TiposOperacoes;
 }
