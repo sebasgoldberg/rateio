@@ -27,49 +27,54 @@ type CostCenter : String(10);
 
 // TODO Se não tiver execuções só poderá habilitar/deshabilitar e modificar as datas de inicio e fim.
 // TODO Validar não exista sobreposição de periodos entre 
-entity ConfigOrigens : cuid, temporal {
+entity ConfigOrigens : temporal {
+
+    ID: UUID @cds.valid.key;
 
     Descricao: String(100);
 
     // etapaProcesso: Association to one EtapaProcesso not null;
-    etapaProcesso: Association to one EtapaProcesso not null;
+    key etapaProcesso_ID: Integer not null;
+    etapaProcesso: Association to one EtapaProcesso on etapaProcesso.sequencia = $self.etapaProcesso_ID;
     
-    companyCode: CompanyCode not null;
+    key companyCode: CompanyCode not null;
     empresa: Association to one ext.A_CompanyCode on empresa.CompanyCode = $self.companyCode;
 
     // Faz parte da chave das contas.
-    chartOfAccounts: ChartOfAccounts default '1234' not null;
+    key chartOfAccounts: ChartOfAccounts default '1234' not null;
 
     // Faz parte da chave dos centros de custo.
-    controllingArea: ControllingArea default '1234' not null;
+    key controllingArea: ControllingArea default '1234' not null;
 
     // Dados Origem
 
-    gLAccountOrigem: GLAccount not null;
+    key gLAccountOrigem: GLAccount not null;
     contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts on 
         contaOrigem.ChartOfAccounts = $self.chartOfAccounts and
         contaOrigem.GLAccount = $self.gLAccountOrigem;
 
-    costCenterOrigem: CostCenter not null;
+    key costCenterOrigem: CostCenter not null;
     centroCustoOrigem: Association to one ext.A_CostCenter on
         centroCustoOrigem.ControllingArea = $self.controllingArea and
         centroCustoOrigem.CostCenter = $self.costCenterOrigem;
 
     // Dados de Destino
-    destinos: Association to many ConfigDestinos on destinos.origem = $self;
+    destinos: Association to many ConfigDestinos on destinos.origem_ID = $self.ID;
 
-    habilitado: Boolean not null default true; // Necessario já que uma vez que foi associado a alguma excecução, não sera possível modificar ou eliminar.
-
-    itensExecucoes: Association to many ItensExecucoes on itensExecucoes.configuracaoOrigem = $self;
+    itensExecucoes: Association to many ItensExecucoes on itensExecucoes.origem_ID = $self.ID;
 
 }
+
+type UUIDType: String(36);
 
 // TODO Modificação só possível se não tiver execuções (incluindo adições/eliminações).
 // TODO A soma do porcentagemRateio agrupado por tipoOperacao sempre deve de ser 100.
 // TODO Um mesmo origem tem que ter definidos os dois tipos de operações
 entity ConfigDestinos: managed{
     
-    key origem: Association to one ConfigOrigens not null;
+    key origem_ID: UUIDType;
+    origem: Association to one ConfigOrigens on origem.ID = $self.origem_ID;
+
     key tipoOperacao: TipoOperacao not null;
 
     key gLAccountDestino: GLAccount not null;
@@ -116,10 +121,12 @@ entity Execucoes: cuid, managed{
 }
 
 // TODO Não é possível apagar uma vez realizada a execução.
-entity ItensExecucoes: cuid, managed {
-    execucao: Association to one Execucoes not null;
+entity ItensExecucoes: managed {
+    key execucao: Association to one Execucoes not null;
     // TODO só poderão ser adicionadas configurações onde execucao.DataConfiguracoes esteja dentro do periodo de validez.
-    configuracaoOrigem: Association to one ConfigOrigens not null;
+    key origem_ID: UUIDType;
+    configuracaoOrigem: Association to one ConfigOrigens on configuracaoOrigem.ID = $self.origem_ID;
+
     documentoGerado: Association to one Documentos on documentoGerado.itemExecutado = $self;
     logs: Association to many ItensExecucoesLogs on logs.item = $self;
 }

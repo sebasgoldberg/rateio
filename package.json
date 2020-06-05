@@ -22,10 +22,7 @@
         }
       },
       "db": {
-        "kind": "sql",
-        "credentials": {
-          "database": "memory"
-        }
+        "kind": "sql"
       }
     }
   },
