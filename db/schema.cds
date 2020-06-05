@@ -112,7 +112,8 @@ entity Execucoes: cuid, managed{
     Periodo: FiscalPeriod not null; // TODO Validar formato
     Ano: FiscalYear not null; // TODO Validar formato
 
-    DataConfiguracoes: Date not null default $now;
+    // TODO Modificar para Date e mudar $now para $today se existir, já que Date é incompatível com $now.
+    DataConfiguracoes: DateTime not null default $now;
 
     itensExecucoes: Association to many ItensExecucoes on itensExecucoes.execucao = $self;
 
