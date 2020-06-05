@@ -18,4 +18,14 @@ describe('Rateio: TiposOperacoes', () => {
             { operacao: 'debito' },
         ])
     })
-  })
+
+    it('Os textos ven carregados em portugues', async () => {
+        const operacoes = await srv.read(TiposOperacoes, b => { b.descricao })
+    
+        expect(operacoes).toMatchObject([
+            { descricao: 'Crédito' },
+            { descricao: 'Débito' },
+        ])
+    })
+
+})
