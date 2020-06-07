@@ -7,7 +7,7 @@ namespace qintess.rateio;
 /**************************************************/
 
 // TODO O processamento deve ser realizado seguindo a sequencia.
-entity EtapaProcesso: managed, sap.common.CodeList{
+entity EtapasProcesso: managed, sap.common.CodeList{
     key sequencia: Integer;
 }
 
@@ -31,42 +31,25 @@ type CostCenter : String(10);
 /**************************************************/
 
 // TODO Se não tiver execuções só poderá habilitar/deshabilitar e modificar as datas de inicio e fim.
-// TODO Validar não exista sobreposição de periodos entre 
-entity ConfigOrigens : temporal {
-
-    ID: UUID @cds.valid.key;
+// TODO Validar não exista sobreposição de periodos.
+entity ConfigOrigens{
 
     Descricao: String(100);
 
-    // etapaProcesso: Association to one EtapaProcesso not null;
-    key etapaProcesso_ID: Integer not null;
-    etapaProcesso: Association to one EtapaProcesso on etapaProcesso.sequencia = $self.etapaProcesso_ID;
+    key etapasProcesso: Association to one EtapasProcesso;
     
-    key companyCode: CompanyCode not null;
-    empresa: Association to one ext.A_CompanyCode on empresa.CompanyCode = $self.companyCode;
+    key empresa: Association to one ext.A_CompanyCode;
 
-    // Faz parte da chave das contas.
-    key chartOfAccounts: ChartOfAccounts default '1234' not null;
+    key contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts;
 
-    // Faz parte da chave dos centros de custo.
-    key controllingArea: ControllingArea default '1234' not null;
+    key centroCustoOrigem: Association to one ext.A_CostCenter;
 
-    // Dados Origem
+    key validFrom : Timestamp;
+    validTo   : Timestamp;
 
-    key gLAccountOrigem: GLAccount not null;
-    contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts on 
-        contaOrigem.ChartOfAccounts = $self.chartOfAccounts and
-        contaOrigem.GLAccount = $self.gLAccountOrigem;
+    destinos: Association to many ConfigDestinos on destinos.origem = $self;
 
-    key costCenterOrigem: CostCenter not null;
-    centroCustoOrigem: Association to one ext.A_CostCenter on
-        centroCustoOrigem.ControllingArea = $self.controllingArea and
-        centroCustoOrigem.CostCenter = $self.costCenterOrigem;
-
-    // Dados de Destino
-    destinos: Association to many ConfigDestinos on destinos.origem_ID = $self.ID;
-
-    itensExecucoes: Association to many ItensExecucoes on itensExecucoes.origem_ID = $self.ID;
+    itensExecucoes: Association to many ItensExecucoes on itensExecucoes.configuracaoOrigem = $self;
 
 }
 
@@ -77,21 +60,13 @@ type UUIDType: String(36);
 // TODO Um mesmo origem tem que ter definidos os dois tipos de operações
 entity ConfigDestinos: managed{
     
-    key origem_ID: UUIDType;
-    origem: Association to one ConfigOrigens on origem.ID = $self.origem_ID;
+    key origem: Association to one ConfigOrigens;
 
-    key tipoOperacao_ID: TipoOperacao not null;
-    tipoOperacao: Association to one TiposOperacoes;
+    key tipoOperacao: Association to one TiposOperacoes;
 
-    key gLAccountDestino: GLAccount not null;
-    contaDestino: Association to one ext.A_GLAccountInChartOfAccounts on 
-        contaDestino.ChartOfAccounts = $self.origem.chartOfAccounts and
-        contaDestino.GLAccount = $self.gLAccountDestino;
+    key contaDestino: Association to one ext.A_GLAccountInChartOfAccounts;
 
-    key costCenterDestino: CostCenter not null;
-    centroCustoDestino: Association to one ext.A_CostCenter on
-        centroCustoDestino.ControllingArea = $self.origem.controllingArea and
-        centroCustoDestino.CostCenter = $self.costCenterDestino;
+    key centroCustoDestino: Association to one ext.A_CostCenter;
 
     key atribuicao: String(18);
 
@@ -131,8 +106,7 @@ entity Execucoes: cuid, managed{
 entity ItensExecucoes: managed {
     key execucao: Association to one Execucoes not null;
     // TODO só poderão ser adicionadas configurações onde execucao.DataConfiguracoes esteja dentro do periodo de validez.
-    key origem_ID: UUIDType;
-    configuracaoOrigem: Association to one ConfigOrigens on configuracaoOrigem.ID = $self.origem_ID;
+    configuracaoOrigem: Association to one ConfigOrigens;
 
     documentoGerado: Association to one Documentos on documentoGerado.itemExecutado = $self;
     logs: Association to many ItensExecucoesLogs on logs.item = $self;

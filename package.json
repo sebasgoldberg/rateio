@@ -24,7 +24,10 @@
         }
       },
       "db": {
-        "kind": "sql"
+        "kind": "sql",
+        "[production]": {
+          "kind": "hana"
+        }
       }
     }
   },
