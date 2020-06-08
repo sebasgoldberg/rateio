@@ -1,16 +1,15 @@
-const cds = require('@sap/cds')
+const TestUtils = require('../utils')
 
 describe('OData: Rateio: TiposOperacoes', () => {
-  const app = require('express')()
-  const request = require('supertest')(app)
+
+  utils = new TestUtils()
 
   beforeAll(async () => {
-    await cds.deploy(__dirname + '/../../srv/service').to('sqlite::memory:')
-    await cds.serve('ConfigService').from(__dirname + '/../../srv/service').in(app)
+    await utils.deployAndServe()
   })
 
   it('Service $metadata document', async () => {
-    const response = await request
+    const response = await utils.request
       .get('/config/$metadata')
       .expect('Content-Type', /^application\/xml/)
       .expect(200)
@@ -22,7 +21,7 @@ describe('OData: Rateio: TiposOperacoes', () => {
   })
 
   it('A tradução funciona corretamente', async () => {
-    const response = await request
+    const response = await utils.request
       .get('/config/TiposOperacoes?sap-language=en')
       .expect('Content-Type', /^application\/json/)
       .expect(200)

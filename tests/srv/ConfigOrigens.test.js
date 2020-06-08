@@ -1,16 +1,15 @@
-const cds = require('@sap/cds')
+const TestUtils = require('../utils')
 
 describe('OData: Rateio: TiposOperacoes', () => {
-    const app = require('express')()
-    const request = require('supertest')(app)
+
+    utils = new TestUtils()
 
     beforeAll(async () => {
-        await cds.deploy(__dirname + '/../../srv/service').to('sqlite::memory:')
-        await cds.serve('ConfigService').from(__dirname + '/../../srv/service').in(app)
+      await utils.deployAndServe()
     })
 
     it('Service $metadata document', async () => {
-        const response = await request
+        const response = await utils.request
             .get('/config/$metadata')
             .expect('Content-Type', /^application\/xml/)
             .expect(200)
@@ -23,7 +22,7 @@ describe('OData: Rateio: TiposOperacoes', () => {
 
 
     it('Não é possível criar uma configuração para uma etapa que não existe.', async () => {
-        const response = await request
+        const response = await utils.request
             .post('/config/ConfigOrigens')
             .send({
                 "etapasProcesso_sequencia": 20,
