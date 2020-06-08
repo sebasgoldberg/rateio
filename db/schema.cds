@@ -13,9 +13,8 @@ entity EtapasProcesso: managed, sap.common.CodeList{
 
 type TipoOperacao: String enum { credito; debito }
 
-entity TiposOperacoes {
+entity TiposOperacoes: sap.common.CodeList{
     key operacao: TipoOperacao;
-    descricao: localized String(20);
 }
 
 type CompanyCode : String(4);
@@ -34,7 +33,7 @@ type CostCenter : String(10);
 // TODO Validar não exista sobreposição de periodos.
 entity ConfigOrigens{
 
-    Descricao: String(100);
+    descricao: String(100);
 
     key etapasProcesso: Association to one EtapasProcesso;
     
@@ -85,7 +84,7 @@ type FiscalPeriod: String(3);
 
 entity Execucoes: cuid, managed{
 
-    Descricao: String(100) not null;
+    descricao: String(100) not null;
 
     // companyCode: CompanyCode not null;
     // empresa: Association to one ext.A_CompanyCode on empresa.CompanyCode = $self.companyCode;

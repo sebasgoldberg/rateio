@@ -1,3 +1,5 @@
-operacao;locale;descricao
-credito;pt;Crédito
-debito;pt;Débito
+operacao;locale;name;descr
+credito;pt;Crédito;Operação de crédito
+debito;pt;Débito;Operação de débito
+credito;en;Credit;Credit operation
+debito;en;Debit;Debit operation
