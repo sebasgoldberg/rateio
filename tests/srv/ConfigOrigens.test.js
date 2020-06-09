@@ -198,4 +198,37 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
   })
 
+  it('É possível criar uma configuração', async () => {
+
+    const configOrigemData = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": "2019-06-01T00:00:00.000Z",
+      "validTo": "2019-06-30T00:00:00.000Z",
+    }
+    
+    let response = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    expect(JSON.parse(response.text))
+      .toEqual(expect.objectContaining(configOrigemData))
+
+    response = await this.utils.request
+      .get('/config/ConfigOrigens')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    expect(JSON.parse(response.text).value[0])
+      .toEqual(expect.objectContaining(configOrigemData))
+
+  })
+
 })
