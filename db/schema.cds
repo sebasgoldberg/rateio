@@ -29,8 +29,11 @@ type CostCenter : String(10);
 // Configuração
 /**************************************************/
 
-// TODO Se não tiver execuções só poderá habilitar/deshabilitar e modificar as datas de inicio e fim.
+// TODO Se não tiver execuções só poderá modificar as datas de inicio e fim.
 // TODO Validar não exista sobreposição de periodos.
+// TODO Só podem colocar empresas que existam
+// TODO Só podem colocar contas que existam
+// TODO Só podem colocar centros de custo que existam
 entity ConfigOrigens{
 
     descricao: String(100);

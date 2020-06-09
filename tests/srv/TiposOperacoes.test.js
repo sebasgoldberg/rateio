@@ -2,14 +2,14 @@ const TestUtils = require('../utils')
 
 describe('OData: Rateio: TiposOperacoes', () => {
 
-  utils = new TestUtils()
+  this.utils = new TestUtils()
 
   beforeAll(async () => {
-    await utils.deployAndServe()
+    await this.utils.deployAndServe()
   })
 
   it('Service $metadata document', async () => {
-    const response = await utils.request
+    const response = await this.utils.request
       .get('/config/$metadata')
       .expect('Content-Type', /^application\/xml/)
       .expect(200)
@@ -21,7 +21,7 @@ describe('OData: Rateio: TiposOperacoes', () => {
   })
 
   it('A tradução funciona corretamente', async () => {
-    const response = await utils.request
+    const response = await this.utils.request
       .get('/config/TiposOperacoes?sap-language=en')
       .expect('Content-Type', /^application\/json/)
       .expect(200)
