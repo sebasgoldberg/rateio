@@ -2,18 +2,57 @@ const cds = require('@sap/cds')
 
 const { registerImpForInternalModels } = require("../srv/imp")
 
+const constants = {
+    SEQUENCIA_1: 90,
+    SEQUENCIA_2: 900,
+    COMPANY_CODE: "9000",
+    CHART_OF_ACCOUNTS: "CH01",
+    GL_ACCOUNT_1: "99999999",
+    GL_ACCOUNT_2: "88888888",    
+}
+
 function registerImpForExternalModels(){
 
-    this.on('READ','A_CompanyCode', req => {
-        const instances = [
-            {
-                "CompanyCode": '9000',
-            }
-        ]
-        const result = req.data.CompanyCode ? 
-            instances.filter( o => req.data.CompanyCode == o.CompanyCode ) :
-            instances
-        req.reply(result)
+    [
+        {
+            entity: "A_CompanyCode",
+            keyFields: ["CompanyCode"],
+            instances: [
+                {
+                    "CompanyCode": constants.COMPANY_CODE,
+                }
+            ]
+        },
+        {
+            entity: "A_GLAccountInChartOfAccounts",
+            keyFields: ["ChartOfAccounts", "GLAccount"],
+            instances: [
+                {
+                    "ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+                    "GLAccount": constants.GL_ACCOUNT_1,
+                },
+                {
+                    "ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+                    "GLAccount": constants.GL_ACCOUNT_2,
+                },
+            ]
+        }
+    ].forEach( o => {
+
+        this.on('READ',o.entity, req => {
+            let keysDefinedInReq = o.keyFields.filter( k => k in req.data)
+            const result = keysDefinedInReq.length > 0 ? 
+                o.instances.filter( instance => {
+                    for (let keyDefinedInReq of keysDefinedInReq){
+                        if (req.data[keyDefinedInReq] !== instance[keyDefinedInReq])
+                            return false
+                    }
+                    return true
+                }) :
+                o.instances
+            req.reply(result)
+        })
+    
     })
 
 }
@@ -48,7 +87,7 @@ class TestUtils{
             this.request
                 .post('/config/EtapasProcesso')
                 .send({
-                    sequencia: 90,
+                    sequencia: constants.SEQUENCIA_1,
                 })
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /^application\/json/)
@@ -57,4 +96,8 @@ class TestUtils{
     }
 
 }
-module.exports = TestUtils
+
+module.exports = {
+    TestUtils: TestUtils,
+    constants: constants,
+}

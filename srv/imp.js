@@ -21,13 +21,27 @@ class ImplementationRegistration{
 
     async registerImpForInternalModels(){
 
-        const { A_CompanyCode, ConfigOrigens } = this.entities
+        const { A_CompanyCode, A_GLAccountInChartOfAccounts, ConfigOrigens } = this.entities
     
         this.before('CREATE', ConfigOrigens, async req => {
-            const { empresa_CompanyCode } = req.data
-            let result = await this.read(A_CompanyCode).where({CompanyCode: empresa_CompanyCode})            
-            if (result.length == 0)
+
+            const { 
+                empresa_CompanyCode,
+                contaOrigem_ChartOfAccounts,
+                contaOrigem_GLAccount 
+            } = req.data
+
+            let results = await Promise.all([
+                this.read(A_CompanyCode).where({CompanyCode: empresa_CompanyCode}),
+                this.read(A_GLAccountInChartOfAccounts).where({
+                    ChartOfAccounts: contaOrigem_ChartOfAccounts,
+                    GLAccount: contaOrigem_GLAccount,
+                })
+            ])
+            if (results[0].length == 0)
                 req.error(409, `A empresa ${empresa_CompanyCode} não existe`)
+            if (results[1].length == 0)
+                req.error(409, `A conta ${contaOrigem_ChartOfAccounts}/${contaOrigem_GLAccount} não existe`)
         })
     
     

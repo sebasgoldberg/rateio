@@ -1,4 +1,4 @@
-const TestUtils = require('../utils')
+const { TestUtils } = require('../utils')
 
 describe('OData: Rateio: TiposOperacoes', () => {
 
