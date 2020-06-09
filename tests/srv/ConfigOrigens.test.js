@@ -226,8 +226,16 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 
-    expect(JSON.parse(response.text).value[0])
-      .toEqual(expect.objectContaining(configOrigemData))
+    parsedResponse = JSON.parse(response.text)
+
+    expect(parsedResponse)
+      .toHaveProperty('value')
+
+    expect(parsedResponse.value)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(configOrigemData)
+        ]))
 
   })
 
