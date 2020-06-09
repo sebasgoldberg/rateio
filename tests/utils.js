@@ -8,7 +8,10 @@ const constants = {
     COMPANY_CODE: "9000",
     CHART_OF_ACCOUNTS: "CH01",
     GL_ACCOUNT_1: "99999999",
-    GL_ACCOUNT_2: "88888888",    
+    GL_ACCOUNT_2: "88888888",
+    CONTROLLING_AREA: "AA90",
+    COST_CENTER_1: "999888",
+    COST_CENTER_2: "555444",
 }
 
 function registerImpForExternalModels(){
@@ -34,6 +37,20 @@ function registerImpForExternalModels(){
                 {
                     "ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
                     "GLAccount": constants.GL_ACCOUNT_2,
+                },
+            ]
+        },
+        {
+            entity: "A_CostCenter",
+            keyFields: ["ControllingArea", "CostCenter"],
+            instances: [
+                {
+                    "ControllingArea": constants.CONTROLLING_AREA,
+                    "CostCenter": constants.COST_CENTER_1,
+                },
+                {
+                    "ControllingArea": constants.CONTROLLING_AREA,
+                    "CostCenter": constants.COST_CENTER_2,
                 },
             ]
         }

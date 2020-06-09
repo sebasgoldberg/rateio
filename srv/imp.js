@@ -21,14 +21,16 @@ class ImplementationRegistration{
 
     async registerImpForInternalModels(){
 
-        const { A_CompanyCode, A_GLAccountInChartOfAccounts, ConfigOrigens } = this.entities
+        const { A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter, ConfigOrigens } = this.entities
     
         this.before('CREATE', ConfigOrigens, async req => {
 
             const { 
                 empresa_CompanyCode,
                 contaOrigem_ChartOfAccounts,
-                contaOrigem_GLAccount 
+                contaOrigem_GLAccount,
+                centroCustoOrigem_ControllingArea,
+                centroCustoOrigem_CostCenter,
             } = req.data
 
             let results = await Promise.all([
@@ -36,12 +38,18 @@ class ImplementationRegistration{
                 this.read(A_GLAccountInChartOfAccounts).where({
                     ChartOfAccounts: contaOrigem_ChartOfAccounts,
                     GLAccount: contaOrigem_GLAccount,
-                })
+                }),
+                this.read(A_CostCenter).where({
+                    ControllingArea: centroCustoOrigem_ControllingArea,
+                    CostCenter: centroCustoOrigem_CostCenter,
+                }),
             ])
             if (results[0].length == 0)
                 req.error(409, `A empresa ${empresa_CompanyCode} não existe`)
             if (results[1].length == 0)
                 req.error(409, `A conta ${contaOrigem_ChartOfAccounts}/${contaOrigem_GLAccount} não existe`)
+            if (results[2].length == 0)
+                req.error(409, `O centro ${centroCustoOrigem_ControllingArea}/${centroCustoOrigem_CostCenter} não existe`)
         })
     
     

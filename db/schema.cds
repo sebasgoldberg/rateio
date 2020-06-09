@@ -44,7 +44,11 @@ entity ConfigOrigens{
 
     key contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts;
 
-    key centroCustoOrigem: Association to one ext.A_CostCenter;
+    key centroCustoOrigem_ControllingArea: ControllingArea;
+    key centroCustoOrigem_CostCenter: CostCenter;
+    centroCustoOrigem: Association to one ext.A_CostCenter on
+        centroCustoOrigem.ControllingArea = $self.centroCustoOrigem_ControllingArea and
+        centroCustoOrigem.CostCenter = $self.centroCustoOrigem_CostCenter;
 
     key validFrom : Timestamp;
     validTo   : Timestamp;

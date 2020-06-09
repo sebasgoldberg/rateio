@@ -2,6 +2,8 @@ const { TestUtils, constants } = require('../utils')
 
 const CHART_OF_ACCOUNTS = "1234"
 const GL_ACCOUNT = "45678910"
+const CONTROLLING_AREA = "4567"
+const COST_CENTER = "012345"
 
 describe('OData: Rateio: ConfigOrigens', () => {
 
@@ -33,9 +35,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
-        "centroCustoOrigem_ControllingArea": "1235",
-        "centroCustoOrigem_CostCenter": "1234",
-        "centroCustoOrigem_ValidityEndDate": "9999-12-31",
+        "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": "2019-06-01T00:00:00.000Z",
         "validTo": "2019-06-30T00:00:00.000Z",
       })
@@ -54,9 +55,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "empresa_CompanyCode": "1001",
         "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
-        "centroCustoOrigem_ControllingArea": "1235",
-        "centroCustoOrigem_CostCenter": "1234",
-        "centroCustoOrigem_ValidityEndDate": "9999-12-31",
+        "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": "2019-06-01T00:00:00.000Z",
         "validTo": "2019-06-30T00:00:00.000Z",
       })
@@ -76,9 +76,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": GL_ACCOUNT,
-        "centroCustoOrigem_ControllingArea": "1235",
-        "centroCustoOrigem_CostCenter": "1234",
-        "centroCustoOrigem_ValidityEndDate": "9999-12-31",
+        "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": "2019-06-01T00:00:00.000Z",
         "validTo": "2019-06-30T00:00:00.000Z",
       })
@@ -98,9 +97,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": GL_ACCOUNT,
-        "centroCustoOrigem_ControllingArea": "1235",
-        "centroCustoOrigem_CostCenter": "1234",
-        "centroCustoOrigem_ValidityEndDate": "9999-12-31",
+        "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": "2019-06-01T00:00:00.000Z",
         "validTo": "2019-06-30T00:00:00.000Z",
       })
@@ -121,9 +119,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
-        "centroCustoOrigem_ControllingArea": "1235",
-        "centroCustoOrigem_CostCenter": "1234",
-        "centroCustoOrigem_ValidityEndDate": "9999-12-31",
+        "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": "2019-06-01T00:00:00.000Z",
         "validTo": "2019-06-30T00:00:00.000Z",
       })
@@ -132,6 +129,72 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(409)
 
       expect(response.text).toEqual(expect.stringMatching(new RegExp(`A conta ${CHART_OF_ACCOUNTS}/${constants.GL_ACCOUNT_1} não existe`)))
+
+  })
+
+  it('Não é possível criar uma configuração para um centro que não existe: ControllingArea/CostCenter', async () => {
+  
+    const response = await this.utils.request
+    .post('/config/ConfigOrigens')
+    .send({
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": COST_CENTER,
+      "validFrom": "2019-06-01T00:00:00.000Z",
+      "validTo": "2019-06-30T00:00:00.000Z",
+    })
+    .set('Accept', 'application/json')
+    .expect('Content-Type', /^application\/json/)
+    .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(`O centro ${CONTROLLING_AREA}/${COST_CENTER} não existe`)))
+
+  })
+
+  it('Não é possível criar uma configuração para um centro que não existe: ControllingArea', async () => {
+  
+    const response = await this.utils.request
+    .post('/config/ConfigOrigens')
+    .send({
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": "2019-06-01T00:00:00.000Z",
+      "validTo": "2019-06-30T00:00:00.000Z",
+    })
+    .set('Accept', 'application/json')
+    .expect('Content-Type', /^application\/json/)
+    .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(`O centro ${CONTROLLING_AREA}/${constants.COST_CENTER_1} não existe`)))
+
+  })
+
+  it('Não é possível criar uma configuração para um centro que não existe: CostCenter', async () => {
+  
+    const response = await this.utils.request
+    .post('/config/ConfigOrigens')
+    .send({
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": COST_CENTER,
+      "validFrom": "2019-06-01T00:00:00.000Z",
+      "validTo": "2019-06-30T00:00:00.000Z",
+    })
+    .set('Accept', 'application/json')
+    .expect('Content-Type', /^application\/json/)
+    .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(`O centro ${constants.CONTROLLING_AREA}/${COST_CENTER} não existe`)))
 
   })
 
