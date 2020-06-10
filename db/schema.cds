@@ -6,7 +6,6 @@ namespace qintess.rateio;
 // Definições Basicas
 /**************************************************/
 
-// TODO O processamento deve ser realizado seguindo a sequencia.
 entity EtapasProcesso: managed, sap.common.CodeList{
     key sequencia: Integer;
 }
@@ -29,12 +28,12 @@ type CostCenter : String(10);
 // Configuração
 /**************************************************/
 
-// TODO Se não tiver execuções só poderá modificar as datas de inicio e fim.
-// TODO Validar não exista sobreposição de periodos.
+// TODO Se tiver itens de execuções associadas não poderá ser apagado e só poderá modificar as datas de inicio e fim, e a descrição.
 entity ConfigOrigens{
 
     descricao: String(100);
 
+    // TODO A etapa realmente deve ser chave?
     key etapasProcesso: Association to one EtapasProcesso;
     
     key empresa: Association to one ext.A_CompanyCode;
@@ -59,7 +58,7 @@ entity ConfigOrigens{
 type UUIDType: String(36);
 
 // TODO Modificação só possível se não tiver execuções (incluindo adições/eliminações).
-// TODO A soma do porcentagemRateio agrupado por tipoOperacao sempre deve de ser 100.
+// TODO A soma do porcentagemRateio para os creditos deve ser igual ao dos debitos.
 // TODO Um mesmo origem tem que ter definidos os dois tipos de operações
 entity ConfigDestinos: managed{
     
@@ -86,6 +85,8 @@ entity ConfigDestinos: managed{
 type FiscalYear: String(4);
 type FiscalPeriod: String(3);
 
+// TODO Não deve ser possível realizar uma mesma execução em paralello.
+// TODO A busca dos saldos base para criação dos documentos deve ser realizado por etapa (ou por ConfigOrigem?).
 entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
@@ -105,19 +106,26 @@ entity Execucoes: cuid, managed{
 
 }
 
-// TODO Não é possível apagar uma vez realizada a execução.
+// TODO Não é possível apagar uma vez realizada a execução ().
+// TODO O processamento deve ser realizado seguindo a configuracaoOrigem.etapasProcesso.sequencia
 entity ItensExecucoes: managed {
     key execucao: Association to one Execucoes not null;
     // TODO só poderão ser adicionadas configurações onde execucao.DataConfiguracoes esteja dentro do periodo de validez.
-    configuracaoOrigem: Association to one ConfigOrigens;
+    key configuracaoOrigem: Association to one ConfigOrigens;
 
     documentoGerado: Association to one Documentos on documentoGerado.itemExecutado = $self;
     logs: Association to many ItensExecucoesLogs on logs.item = $self;
 }
 
 @autoexpose
-// TODO Um documento poderá ser criado se não existir Execucoes com Periodo e Ano com 
-// itemExecutado.configuracaoOrigem similar que verifique itemExecutado.documentoGerado.cancelado = false
+// TODO Validar não seja possível a duplicidade de rateios:
+// Um documento X poderá ser criado se não existir outro documento Y onde
+// Y.itemExecutado.configuracaoOrigem.equivalenteA(X.itemExecutado.configuracaoOrigem) e
+// Y.itemExecutado.execucao.mesmoPeriodo(X.itemExecutado.execucao) e
+// not Y.cancelado
+// equivalenteA: Compara empresa, conta e centro de custo.
+// mesmoPeriodo: Compara o mes e o ano.
+// TODO Quando um documento for cancelado, deixar registrado no log associado ao item.
 entity Documentos: managed {
     key CompanyCode: CompanyCode not null;
     key AccountingDocument: String(10) not null;

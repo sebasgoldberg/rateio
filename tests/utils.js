@@ -12,6 +12,29 @@ const constants = {
     CONTROLLING_AREA: "AA90",
     COST_CENTER_1: "999888",
     COST_CENTER_2: "555444",
+    /*
+    PERIODO_1 -[------------]--------------
+    PERIODO_2 ---[------]------------------
+    PERIODO_3 -------[---------------]-----
+    PERIODO_4 ------------------------[---]
+    PERIODO_4 não é sobrepostos com nenhum periodo.
+    */
+    PERIODO_1:{
+        VALID_FROM: "2020-06-01T00:00:00.000Z",
+        VALID_TO: "2020-06-30T00:00:00.000Z",
+    },
+    PERIODO_2:{
+        VALID_FROM: "2020-06-05T00:00:00.000Z",
+        VALID_TO: "2020-06-20T00:00:00.000Z",
+    },
+    PERIODO_3:{
+        VALID_FROM: "2020-06-12T00:00:00.000Z",
+        VALID_TO: "2020-07-20T00:00:00.000Z",
+    },
+    PERIODO_4:{
+        VALID_FROM: "2020-07-20T00:00:01.000Z",
+        VALID_TO: "2020-07-30T00:00:00.000Z",
+    },
 }
 
 function registerImpForExternalModels(){

@@ -37,8 +37,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
         "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
-        "validFrom": "2019-06-01T00:00:00.000Z",
-        "validTo": "2019-06-30T00:00:00.000Z",
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -57,8 +57,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
         "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
-        "validFrom": "2019-06-01T00:00:00.000Z",
-        "validTo": "2019-06-30T00:00:00.000Z",
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -78,8 +78,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "contaOrigem_GLAccount": GL_ACCOUNT,
         "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
-        "validFrom": "2019-06-01T00:00:00.000Z",
-        "validTo": "2019-06-30T00:00:00.000Z",
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -99,8 +99,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "contaOrigem_GLAccount": GL_ACCOUNT,
         "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
-        "validFrom": "2019-06-01T00:00:00.000Z",
-        "validTo": "2019-06-30T00:00:00.000Z",
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -121,8 +121,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
         "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
-        "validFrom": "2019-06-01T00:00:00.000Z",
-        "validTo": "2019-06-30T00:00:00.000Z",
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -143,8 +143,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
       "centroCustoOrigem_ControllingArea": CONTROLLING_AREA,
       "centroCustoOrigem_CostCenter": COST_CENTER,
-      "validFrom": "2019-06-01T00:00:00.000Z",
-      "validTo": "2019-06-30T00:00:00.000Z",
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
     })
     .set('Accept', 'application/json')
     .expect('Content-Type', /^application\/json/)
@@ -165,8 +165,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
       "centroCustoOrigem_ControllingArea": CONTROLLING_AREA,
       "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
-      "validFrom": "2019-06-01T00:00:00.000Z",
-      "validTo": "2019-06-30T00:00:00.000Z",
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
     })
     .set('Accept', 'application/json')
     .expect('Content-Type', /^application\/json/)
@@ -187,8 +187,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
       "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
       "centroCustoOrigem_CostCenter": COST_CENTER,
-      "validFrom": "2019-06-01T00:00:00.000Z",
-      "validTo": "2019-06-30T00:00:00.000Z",
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
     })
     .set('Accept', 'application/json')
     .expect('Content-Type', /^application\/json/)
@@ -207,8 +207,8 @@ describe('OData: Rateio: ConfigOrigens', () => {
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
       "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
       "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
-      "validFrom": "2019-06-01T00:00:00.000Z",
-      "validTo": "2019-06-30T00:00:00.000Z",
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
     }
     
     let response = await this.utils.request
@@ -237,6 +237,320 @@ describe('OData: Rateio: ConfigOrigens', () => {
           expect.objectContaining(configOrigemData)
         ]))
 
+  })
+
+  it('Não é possível criar configurações em datas sobrepostas: intercessão parcial / o mais velho existe.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+    }
+    
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_3.VALID_FROM,
+      "validTo": constants.PERIODO_3.VALID_TO,
+    }
+      
+    const response = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(
+      new RegExp(`O periodo indicado fica sobreposto com uma configuração `+
+        `já existente no periodo ${configOrigemData1.validFrom} - `+
+        `${configOrigemData1.validTo}.`
+        )))
+
+  })
+
+  it('Não é possível criar configurações em datas sobrepostas: intercessão parcial / o mais novo existe.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_3.VALID_FROM,
+      "validTo": constants.PERIODO_3.VALID_TO,
+    }
+    
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+    }
+      
+    const response = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(
+      new RegExp(`O periodo indicado fica sobreposto com uma configuração `+
+        `já existente no periodo ${configOrigemData1.validFrom} - `+
+        `${configOrigemData1.validTo}.`
+        )))
+
+  })
+
+  it('Não é possível criar configurações em datas sobrepostas: intercessão total / o maior existe.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+    }
+    
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_2.VALID_FROM,
+      "validTo": constants.PERIODO_2.VALID_TO,
+    }
+      
+    const response = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(
+      new RegExp(`O periodo indicado fica sobreposto com uma configuração `+
+        `já existente no periodo ${configOrigemData1.validFrom} - `+
+        `${configOrigemData1.validTo}.`
+        )))
+
+  })
+
+  it('Não é possível criar configurações em datas sobrepostas: intercessão total / o menor existe.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_2.VALID_FROM,
+      "validTo": constants.PERIODO_2.VALID_TO,
+    }
+    
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+    }
+      
+    const response = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(
+      new RegExp(`O periodo indicado fica sobreposto com uma configuração `+
+        `já existente no periodo ${configOrigemData1.validFrom} - `+
+        `${configOrigemData1.validTo}.`
+        )))
+
+  })
+
+  it('É possível criar configurações em periodos não sobrepostos: separados.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+    }
+    
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_4.VALID_FROM,
+      "validTo": constants.PERIODO_4.VALID_TO,
+    }
+
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    let response = await this.utils.request
+      .get('/config/ConfigOrigens')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    parsedResponse = JSON.parse(response.text)
+
+    expect(parsedResponse)
+      .toHaveProperty('value')
+
+    expect(parsedResponse.value)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(configOrigemData1),
+          expect.objectContaining(configOrigemData2),
+        ]))
+  })
+
+  it('É possível criar configurações em periodos não sobrepostos: contiguos.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_3.VALID_FROM,
+      "validTo": constants.PERIODO_3.VALID_TO,
+    }
+    
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_4.VALID_FROM,
+      "validTo": constants.PERIODO_4.VALID_TO,
+    }
+
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    let response = await this.utils.request
+      .get('/config/ConfigOrigens')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    parsedResponse = JSON.parse(response.text)
+
+    expect(parsedResponse)
+      .toHaveProperty('value')
+
+    expect(parsedResponse.value)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(configOrigemData1),
+          expect.objectContaining(configOrigemData2),
+        ]))
   })
 
 })
