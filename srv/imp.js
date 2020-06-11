@@ -17,63 +17,15 @@ function ODataV2toODataV4Date(value){
         .slice(0,10)
 }
 
+const { ConfigOrigensImplementation } = require("./")
+
 class ImplementationRegistration{
 
     async registerImpForInternalModels(){
 
-        const { A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter, ConfigOrigens } = this.entities
-    
-        this.before('CREATE', ConfigOrigens, async req => {
+        const configOrigensImp = new ConfigOrigensImplementation(this);
 
-            const { 
-                empresa_CompanyCode,
-                contaOrigem_ChartOfAccounts,
-                contaOrigem_GLAccount,
-                centroCustoOrigem_ControllingArea,
-                centroCustoOrigem_CostCenter,
-                validFrom,
-                validTo
-            } = req.data
-
-            let results = await Promise.all([
-                this.read(A_CompanyCode).where({CompanyCode: empresa_CompanyCode}), // 0
-                this.read(A_GLAccountInChartOfAccounts).where({ // 1
-                    ChartOfAccounts: contaOrigem_ChartOfAccounts,
-                    GLAccount: contaOrigem_GLAccount,
-                }),
-                this.read(A_CostCenter).where({ // 2
-                    ControllingArea: centroCustoOrigem_ControllingArea,
-                    CostCenter: centroCustoOrigem_CostCenter,
-                }),
-                this.read(ConfigOrigens).where({ // 3
-                    or: [ 
-                        {
-                            validFrom: { '<=': validFrom },
-                            validTo: { '>=': validFrom },
-                        },
-                        {
-                            validFrom: { '<=': validTo },
-                            validTo: { '>=': validTo },
-                        },
-                        {
-                            validFrom: { '>=': validFrom },
-                            validTo: { '<=': validTo },
-                        },
-                    ]
-                }),
-            ])
-            if (results[0].length == 0)
-                req.error(409, `A empresa ${empresa_CompanyCode} não existe`)
-            if (results[1].length == 0)
-                req.error(409, `A conta ${contaOrigem_ChartOfAccounts}/${contaOrigem_GLAccount} não existe`)
-            if (results[2].length == 0)
-                req.error(409, `O centro ${centroCustoOrigem_ControllingArea}/${centroCustoOrigem_CostCenter} não existe`)
-            if (results[3].length > 0)
-                req.error(409, `O periodo indicado fica sobreposto com uma configuração `+
-                    `já existente no periodo ${results[3][0].validFrom} - `+
-                    `${results[3][0].validTo}.`)
-        })
-    
+        configOrigensImp.registerHandles()
     
     }
 

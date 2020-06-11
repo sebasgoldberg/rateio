@@ -17,7 +17,7 @@ const constants = {
     PERIODO_2 ---[------]------------------
     PERIODO_3 -------[---------------]-----
     PERIODO_4 ------------------------[---]
-    PERIODO_4 não é sobrepostos com nenhum periodo.
+    PERIODO_5 --------------------------[-]
     */
     PERIODO_1:{
         VALID_FROM: "2020-06-01T00:00:00.000Z",
@@ -33,6 +33,10 @@ const constants = {
     },
     PERIODO_4:{
         VALID_FROM: "2020-07-20T00:00:01.000Z",
+        VALID_TO: "2020-07-30T00:00:00.000Z",
+    },
+    PERIODO_5:{
+        VALID_FROM: "2020-07-25T00:00:00.000Z",
         VALID_TO: "2020-07-30T00:00:00.000Z",
     },
 }
@@ -133,6 +137,16 @@ class TestUtils{
                 .expect('Content-Type', /^application\/json/)
                 .expect(201),
         ])
+    }
+
+    buildConfigOrigensUrlKey(data){
+        return `centroCustoOrigem_ControllingArea='${data.centroCustoOrigem_ControllingArea}',`+
+            `centroCustoOrigem_CostCenter='${data.centroCustoOrigem_CostCenter}',`+
+            `validFrom=${data.validFrom},`+
+            `etapasProcesso_sequencia=${data.etapasProcesso_sequencia},`+
+            `empresa_CompanyCode='${data.empresa_CompanyCode}',`+
+            `contaOrigem_ChartOfAccounts='${data.contaOrigem_ChartOfAccounts}',`+
+            `contaOrigem_GLAccount='${data.contaOrigem_GLAccount}'`
     }
 
 }

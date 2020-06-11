@@ -553,4 +553,62 @@ describe('OData: Rateio: ConfigOrigens', () => {
         ]))
   })
 
+  it('Não é possível modificar configurações gerando periodos sobrepostos: intercessão parcial / o mais novo é modificado.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+    }
+    
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_4.VALID_FROM,
+      "validTo": constants.PERIODO_4.VALID_TO,
+    }
+
+    await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const response = await this.utils.request
+      .patch(`/config/ConfigOrigens(${this.utils.buildConfigOrigensUrlKey(configOrigemData1)})`)
+      .send({
+        validTo: constants.PERIODO_5.VALID_FROM
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(
+      new RegExp(`O periodo indicado fica sobreposto com uma configuração `+
+        `já existente no periodo ${configOrigemData2.validFrom} - `+
+        `${configOrigemData2.validTo}.`
+        )))
+
+  })
+
 })
