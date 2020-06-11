@@ -36,6 +36,11 @@ class ConfigOrigensImplementation{
             validTo
         } = entityData
     
+        if (validFrom > validTo){
+            req.error(409, `O periodo indicado ${validFrom} - ${validTo} é inválido.`)
+            return
+        }
+
         result = await cds.transaction(req).run(
             SELECT.from(ConfigOrigens)
                 .where({

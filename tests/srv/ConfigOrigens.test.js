@@ -198,6 +198,29 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
   })
 
+  it('Não é possível criar uma configuração com um periodo invalido', async () => {
+  
+    const response = await this.utils.request
+    .post('/config/ConfigOrigens')
+    .send({
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": COST_CENTER,
+      "validFrom": constants.PERIODO_1.VALID_TO,
+      "validTo": constants.PERIODO_1.VALID_FROM,
+    })
+    .set('Accept', 'application/json')
+    .expect('Content-Type', /^application\/json/)
+    .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(
+      `O periodo indicado ${constants.PERIODO_1.VALID_TO} - ${constants.PERIODO_1.VALID_FROM} é inválido.`)))
+
+  })
+
   it('É possível criar uma configuração', async () => {
 
     const configOrigemData = {

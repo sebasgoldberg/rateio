@@ -29,6 +29,7 @@ type CostCenter : String(10);
 /**************************************************/
 
 // TODO Se tiver itens de execuções associadas não poderá ser apagado e só poderá modificar as datas de inicio e fim, e a descrição.
+// TODO Validar que não seja possível modificar a chave
 entity ConfigOrigens: cuid, managed{
 
     // TODO A etapa realmente deve ser chave?
