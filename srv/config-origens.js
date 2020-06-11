@@ -1,3 +1,5 @@
+const cds = require('@sap/cds')
+
 class ConfigOrigensImplementation{
 
     constructor(srv){
@@ -8,7 +10,22 @@ class ConfigOrigensImplementation{
 
         const { ConfigOrigens } = this.srv.entities
 
+        let result = await cds.transaction(req).run(
+            SELECT.from(ConfigOrigens)
+                .where({
+                    ID: req.data.ID
+                })
+        )
+
+        let entityData;
+
+        if (result.length == 0)
+            entityData = req.data
+        else
+            entityData = {...result[0], ...req.data}
+            
         const {
+            ID,
             etapasProcesso_sequencia,
             empresa_CompanyCode,
             contaOrigem_ChartOfAccounts,
@@ -17,10 +34,10 @@ class ConfigOrigensImplementation{
             centroCustoOrigem_CostCenter,
             validFrom,
             validTo
-        } = req.data
-
-        const result = await cds.transaction(req).run(
-            this.srv.read(ConfigOrigens)
+        } = entityData
+    
+        result = await cds.transaction(req).run(
+            SELECT.from(ConfigOrigens)
                 .where({
                     and: [
                         { etapasProcesso_sequencia: etapasProcesso_sequencia },
@@ -29,7 +46,7 @@ class ConfigOrigensImplementation{
                         { contaOrigem_GLAccount: contaOrigem_GLAccount },
                         { centroCustoOrigem_ControllingArea: centroCustoOrigem_ControllingArea },
                         { centroCustoOrigem_CostCenter: centroCustoOrigem_CostCenter },
-                        { validFrom: {'!=': validFrom} },
+                        { ID: { '!=': ID } },
                         { or: [
                             {
                                 validFrom: { '<=': validFrom },

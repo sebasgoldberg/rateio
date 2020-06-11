@@ -553,7 +553,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
         ]))
   })
 
-  it('Não é possível modificar configurações gerando periodos sobrepostos: intercessão parcial / o mais novo é modificado.', async () => {
+  it('É possível criar configurações com chave distinta em periodos sobrepostos.', async () => {
 
     await this.utils.deployAndServe()
     await this.utils.createTestData();
@@ -580,11 +580,11 @@ describe('OData: Rateio: ConfigOrigens', () => {
       "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
-      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_2,
       "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
       "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
-      "validFrom": constants.PERIODO_4.VALID_FROM,
-      "validTo": constants.PERIODO_4.VALID_TO,
+      "validFrom": constants.PERIODO_3.VALID_FROM,
+      "validTo": constants.PERIODO_3.VALID_TO,
     }
 
     await this.utils.request
@@ -594,8 +594,67 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect('Content-Type', /^application\/json/)
       .expect(201)
 
+    let response = await this.utils.request
+      .get('/config/ConfigOrigens')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    parsedResponse = JSON.parse(response.text)
+
+    expect(parsedResponse)
+      .toHaveProperty('value')
+
+    expect(parsedResponse.value)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(configOrigemData1),
+          expect.objectContaining(configOrigemData2),
+        ]))
+  })
+
+  it('Não é possível modificar configurações gerando periodos sobrepostos: intercessão parcial / o mais novo é modificado.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+    }
+    
+    const response1 = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_4.VALID_FROM,
+      "validTo": constants.PERIODO_4.VALID_TO,
+    }
+
+    const response2 = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
     const response = await this.utils.request
-      .patch(`/config/ConfigOrigens(${this.utils.buildConfigOrigensUrlKey(configOrigemData1)})`)
+      .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
       .send({
         validTo: constants.PERIODO_5.VALID_FROM
       })
@@ -609,6 +668,76 @@ describe('OData: Rateio: ConfigOrigens', () => {
         `${configOrigemData2.validTo}.`
         )))
 
+  })
+
+  it('É possível modificar configurações sem gerar periodos sobrepostos.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+    }
+    
+    const response1 = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const configOrigemData2 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_4.VALID_FROM,
+      "validTo": constants.PERIODO_4.VALID_TO,
+    }
+
+    const response2 = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData2)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    await this.utils.request
+      .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
+      .send({
+        validTo: constants.PERIODO_2.VALID_TO
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    configOrigemData1.validTo = constants.PERIODO_2.VALID_TO
+
+    const response = await this.utils.request
+      .get('/config/ConfigOrigens')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    parsedResponse = JSON.parse(response.text)
+
+    expect(parsedResponse)
+      .toHaveProperty('value')
+
+    expect(parsedResponse.value)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(configOrigemData1),
+          expect.objectContaining(configOrigemData2),
+        ]))
   })
 
 })

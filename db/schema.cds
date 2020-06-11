@@ -29,25 +29,25 @@ type CostCenter : String(10);
 /**************************************************/
 
 // TODO Se tiver itens de execuções associadas não poderá ser apagado e só poderá modificar as datas de inicio e fim, e a descrição.
-entity ConfigOrigens{
-
-    descricao: String(100);
+entity ConfigOrigens: cuid, managed{
 
     // TODO A etapa realmente deve ser chave?
-    key etapasProcesso: Association to one EtapasProcesso;
+    etapasProcesso: Association to one EtapasProcesso not null;
     
-    key empresa: Association to one ext.A_CompanyCode;
+    empresa: Association to one ext.A_CompanyCode not null;
 
-    key contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts;
+    contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts not null;
 
-    key centroCustoOrigem_ControllingArea: ControllingArea;
-    key centroCustoOrigem_CostCenter: CostCenter;
+    centroCustoOrigem_ControllingArea: ControllingArea not null;
+    centroCustoOrigem_CostCenter: CostCenter not null;
     centroCustoOrigem: Association to one ext.A_CostCenter on
         centroCustoOrigem.ControllingArea = $self.centroCustoOrigem_ControllingArea and
         centroCustoOrigem.CostCenter = $self.centroCustoOrigem_CostCenter;
 
-    key validFrom : Timestamp;
-    validTo   : Timestamp;
+    validFrom : DateTime not null;
+    validTo   : DateTime not null;
+
+    descricao: String(100);
 
     destinos: Association to many ConfigDestinos on destinos.origem = $self;
 
