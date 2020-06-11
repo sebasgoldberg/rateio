@@ -77,8 +77,23 @@ class ConfigOrigensImplementation{
 
     }
 
+    validarNaoExistemMudancasCamposChave(req){
+        [
+            'etapasProcesso_sequencia',
+            'empresa_CompanyCode',
+            'contaOrigem_ChartOfAccounts',
+            'contaOrigem_GLAccount',
+            'centroCustoOrigem_ControllingArea',
+            'centroCustoOrigem_CostCenter',    
+        ].forEach(fieldName => {
+            if (fieldName in req.data)
+                req.error(409, `O campo ${fieldName} não deve ser modificado`)
+        })
+    }
+
     async beforeUpdate(req){
 
+        this.validarNaoExistemMudancasCamposChave(req);
         await this.validatePeriodosSobrepostos(req);
 
     }

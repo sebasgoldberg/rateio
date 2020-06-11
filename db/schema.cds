@@ -29,7 +29,10 @@ type CostCenter : String(10);
 /**************************************************/
 
 // TODO Se tiver itens de execuções associadas não poderá ser apagado e só poderá modificar as datas de inicio e fim, e a descrição.
-// TODO Validar que não seja possível modificar a chave
+// TODO Uma vez que esteja ativo, não poderá ser modificado
+// TODO Ao ativar, tem que validar as configurações de destino.
+// TODO O indicador de ativo não deveria ser modificável diretamente.
+// Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
 entity ConfigOrigens: cuid, managed{
 
     // TODO A etapa realmente deve ser chave?
@@ -58,7 +61,7 @@ entity ConfigOrigens: cuid, managed{
 
 type UUIDType: String(36);
 
-// TODO Modificação só possível se não tiver execuções (incluindo adições/eliminações).
+// TODO Modificação só possível se empty(origem.itensExecucoes) (incluindo adições/eliminações).
 // TODO A soma do porcentagemRateio para os creditos deve ser igual ao dos debitos.
 // TODO Um mesmo origem tem que ter definidos os dois tipos de operações
 entity ConfigDestinos: managed{
