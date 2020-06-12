@@ -824,4 +824,42 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
   })
 
+  it('Não é possível modificar uma configuração colocando um periodo invalido.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData1 = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_2.VALID_FROM,
+      "validTo": constants.PERIODO_2.VALID_TO,
+    }
+    
+    const response1 = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData1)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const response = await this.utils.request
+      .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
+      .send({
+        validTo: constants.PERIODO_1.VALID_FROM
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(
+      `O periodo indicado ${constants.PERIODO_2.VALID_FROM} - ${constants.PERIODO_1.VALID_FROM} é inválido.`)))
+  
+
+  })
+
 })
