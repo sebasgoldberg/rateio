@@ -68,11 +68,15 @@ entity ConfigDestinos: managed{
     
     key origem: Association to one ConfigOrigens;
 
-    key tipoOperacao: Association to one TiposOperacoes;
+    key tipoOperacao: Association to one TiposOperacoes not null;
 
-    key contaDestino: Association to one ext.A_GLAccountInChartOfAccounts;
+    key contaDestino: Association to one ext.A_GLAccountInChartOfAccounts not null;
 
-    key centroCustoDestino: Association to one ext.A_CostCenter;
+    key centroCustoDestino_ControllingArea: ControllingArea not null;
+    key centroCustoDestino_CostCenter: CostCenter not null;
+    centroCustoDestino: Association to one ext.A_CostCenter on
+        centroCustoDestino.ControllingArea = $self.centroCustoDestino_ControllingArea and
+        centroCustoDestino.CostCenter = $self.centroCustoDestino_CostCenter;
 
     key atribuicao: String(18);
 
