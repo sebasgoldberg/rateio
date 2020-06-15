@@ -18,15 +18,19 @@ function ODataV2toODataV4Date(value){
 }
 
 const { ConfigOrigensImplementation } = require("./")
+const { ConfigDestinosImplementation } = require("./")
 
 class ImplementationRegistration{
 
     async registerImpForInternalModels(){
 
-        const configOrigensImp = new ConfigOrigensImplementation(this);
-
+        const configOrigensImp = new ConfigOrigensImplementation(this)
         configOrigensImp.registerHandles()
-    
+
+        const configDestinosImp = new ConfigDestinosImplementation(this)
+        configDestinosImp.registerHandles()
+
+
     }
 
     async registerImpForExternalModels(){

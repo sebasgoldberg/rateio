@@ -1,10 +1,5 @@
 const { TestUtils, constants } = require('../utils')
 
-const CHART_OF_ACCOUNTS = "1234"
-const GL_ACCOUNT = "45678910"
-const CONTROLLING_AREA = "4567"
-const COST_CENTER = "012345"
-
 describe('OData: Rateio: ConfigOrigens', () => {
 
   this.utils = new TestUtils()
@@ -67,6 +62,50 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(400)
 
     expect(response.text).toEqual(expect.stringMatching(/Reference integrity is violated for association 'tipoOperacao'/))
+  })
+
+  it('Não é possível criar uma configuração de destino para uma conta que não existe.', async () => {
+    const response = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send({
+        origem_ID: this.utils.createdData.configOrigem.ID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+        contaDestino_ChartOfAccounts: constants.INVALID.CHART_OF_ACCOUNTS,
+        contaDestino_GLAccount: constants.INVALID.GL_ACCOUNT,
+        centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+        centroCustoDestino_CostCenter: constants.COST_CENTER_1,
+        atribuicao: "",
+        porcentagemRateio: "12.34",
+      })
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(
+      `A conta ${constants.INVALID.CHART_OF_ACCOUNTS}/${constants.INVALID.GL_ACCOUNT} não existe`)))
+  })
+
+  it('Não é possível criar uma configuração de destino para um centro que não existe.', async () => {
+    const response = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send({
+        origem_ID: this.utils.createdData.configOrigem.ID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+        contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+        contaDestino_GLAccount: constants.GL_ACCOUNT_1,
+        centroCustoDestino_ControllingArea: constants.INVALID.CONTROLLING_AREA,
+        centroCustoDestino_CostCenter: constants.INVALID.COST_CENTER,
+        atribuicao: "",
+        porcentagemRateio: "12.34",
+      })
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(
+      `O centro ${constants.INVALID.CONTROLLING_AREA}/${constants.INVALID.COST_CENTER} não existe`)))
   })
 
 })

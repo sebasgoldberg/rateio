@@ -47,6 +47,12 @@ const constants = {
         VALID_FROM: "2020-08-01T00:00:00Z",
         VALID_TO: "2020-08-31T00:00:00Z",
     },
+    INVALID:{
+        CHART_OF_ACCOUNTS: "1234",
+        GL_ACCOUNT: "45678910",
+        CONTROLLING_AREA: "4567",
+        COST_CENTER: "012345",
+    }
 }
 
 function registerImpForExternalModels(){

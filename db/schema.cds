@@ -61,9 +61,10 @@ entity ConfigOrigens: cuid, managed{
 
 type UUIDType: String(36);
 
-// TODO A conta e o centro de custo tem que ser validos.
+// TODO A conta e o centro de custo tem que ser validos na modificação.
 // TODO Modificação só possível se empty(origem.itensExecucoes) (incluindo adições/eliminações).
 // TODO A soma do porcentagemRateio para os creditos deve ser igual ao dos debitos.
+// TODO A soma das porcentagens agrupadas por tipo de operação não pode ultrapasar o 100%.
 // TODO Um mesmo origem tem que ter definidos os dois tipos de operações
 entity ConfigDestinos: managed{
     

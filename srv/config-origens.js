@@ -1,9 +1,11 @@
 const cds = require('@sap/cds')
+const ExternalData = require("./external-data")
 
 class ConfigOrigensImplementation{
 
     constructor(srv){
         this.srv = srv
+        this.externalData = new ExternalData(srv)
     }
 
     async validatePeriodosSobrepostos(req){
@@ -100,8 +102,6 @@ class ConfigOrigensImplementation{
 
     async validateDadosExternos(req){
 
-        const { A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter } = this.srv.entities
-
         const { 
             empresa_CompanyCode,
             contaOrigem_ChartOfAccounts,
@@ -110,23 +110,12 @@ class ConfigOrigensImplementation{
             centroCustoOrigem_CostCenter,
         } = req.data
 
-        let results = await Promise.all([
-            this.srv.read(A_CompanyCode).where({CompanyCode: empresa_CompanyCode}), // 0
-            this.srv.read(A_GLAccountInChartOfAccounts).where({ // 1
-                ChartOfAccounts: contaOrigem_ChartOfAccounts,
-                GLAccount: contaOrigem_GLAccount,
-            }),
-            this.srv.read(A_CostCenter).where({ // 2
-                ControllingArea: centroCustoOrigem_ControllingArea,
-                CostCenter: centroCustoOrigem_CostCenter,
-            }),
+        await Promise.all([
+            this.externalData.validateEmpresa(req, empresa_CompanyCode),
+            this.externalData.validateConta(req, contaOrigem_ChartOfAccounts, contaOrigem_GLAccount),
+            this.externalData.validateCentro(req, centroCustoOrigem_ControllingArea, centroCustoOrigem_CostCenter),
         ])
-        if (results[0].length == 0)
-            req.error(409, `A empresa ${empresa_CompanyCode} não existe`)
-        if (results[1].length == 0)
-            req.error(409, `A conta ${contaOrigem_ChartOfAccounts}/${contaOrigem_GLAccount} não existe`)
-        if (results[2].length == 0)
-            req.error(409, `O centro ${centroCustoOrigem_ControllingArea}/${centroCustoOrigem_CostCenter} não existe`)
+
     }
 
     async beforeCreate(req){
