@@ -193,6 +193,16 @@ class TestUtils{
             `contaOrigem_GLAccount='${data.contaOrigem_GLAccount}'`
     }
 
+    buildConfigDestinosUrlKey(data){
+        return `origem_ID=${data.origem_ID},`+
+            `centroCustoDestino_ControllingArea='${data.centroCustoDestino_ControllingArea}',`+
+            `tipoOperacao_operacao='${data.tipoOperacao_operacao}',`+
+            `centroCustoDestino_CostCenter='${data.centroCustoDestino_CostCenter}',`+
+            `contaDestino_ChartOfAccounts='${data.contaDestino_ChartOfAccounts}',`+
+            `contaDestino_GLAccount='${data.contaDestino_GLAccount}',`+
+            `atribuicao='${data.atribuicao}'`
+    }
+
 }
 
 module.exports = {

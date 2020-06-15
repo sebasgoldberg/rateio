@@ -64,7 +64,6 @@ entity ConfigOrigens: cuid, managed{
 
 type UUIDType: String(36);
 
-// TODO A soma das porcentagens agrupadas por tipo de operação não pode ultrapasar o 100% na modificação.
 // TODO A conta e o centro de custo tem que ser validos na modificação.
 // TODO adição/modificação/eliminação só possível se not origem.ativo
 entity ConfigDestinos: managed{

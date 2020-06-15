@@ -31,6 +31,11 @@ class ConfigDestinosImplementation{
         const { 
             origem_ID,
             tipoOperacao_operacao,
+            contaDestino_ChartOfAccounts,
+            contaDestino_GLAccount,
+            centroCustoDestino_ControllingArea,
+            centroCustoDestino_CostCenter,
+            atribuicao,
             porcentagemRateio,
         } = req.data
 
@@ -38,23 +43,41 @@ class ConfigDestinosImplementation{
         const result = await cds.transaction(req).run(
             SELECT.from(ConfigDestinos)
                 .where({
-                    origem_ID: origem_ID,
-                    tipoOperacao_operacao: tipoOperacao_operacao,
+                    and:[
+                        { origem_ID: origem_ID },
+                        { tipoOperacao_operacao: tipoOperacao_operacao },
+                    ]
                 })
         )
 
         // Adiciona as porcentagens junto com o novo destino.
-        const porcentagemTotal = result.reduce(
-            (total, o) => total + o.porcentagemRateio,
-            porcentagemRateio)
+        const porcentagemTotal = result
+            // TODO Ver de excluir o registro existente a nivel da query.
+            .filter( o => 
+                !( o.contaDestino_ChartOfAccounts == contaDestino_ChartOfAccounts &&
+                o.contaDestino_GLAccount == contaDestino_GLAccount &&
+                o.centroCustoDestino_ControllingArea == centroCustoDestino_ControllingArea &&
+                o.centroCustoDestino_CostCenter == centroCustoDestino_CostCenter &&
+                o.atribuicao == atribuicao )
+            )
+            .reduce( (total, o) => total + o.porcentagemRateio, Number(porcentagemRateio))
 
         // Se for maior a 100, então temos um erro
         if (porcentagemTotal > 100)
-            req.error(409, `A soma das porcentagens no tipo de operação ${tipoOperacao_operacao} supera o 100%.`)
+            req.error(409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`)
 
     }
 
     async beforeCreate(req){
+
+        await Promise.all([
+            this.validateDadosExternos(req),
+            this.validatePorcentagens(req),
+        ]);
+
+    }
+
+    async beforeUpdate(req){
 
         await Promise.all([
             this.validateDadosExternos(req),
@@ -68,6 +91,7 @@ class ConfigDestinosImplementation{
         const { ConfigDestinos } = this.srv.entities
 
         this.srv.before('CREATE', ConfigDestinos, this.beforeCreate.bind(this))
+        this.srv.before('UPDATE', ConfigDestinos, this.beforeUpdate.bind(this))
     }
 
 }
