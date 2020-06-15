@@ -28,10 +28,10 @@ type CostCenter : String(10);
 // Configuração
 /**************************************************/
 
-// TODO Se tiver itens de execuções associadas não poderá ser apagado e só poderá modificar as datas de inicio e fim, e a descrição.
-// TODO Uma vez que esteja ativo, não poderá ser modificado
-// TODO Ao ativar, tem que validar as configurações de destino.
-// TODO O indicador de ativo não deveria ser modificável diretamente.
+// TODO Se ativo: Só poderá modificar as datas de inicio e fim, e a descrição.
+// TODO Ao ativar: A soma do porcentagemRateio para os creditos deve ser igual ao dos debitos nos destinos  a origem.
+// TODO Ao ativar: A origem tem que ter destinos.
+// TODO Desativação: Só possível se empty(origem.itensExecucoes).
 // Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
 entity ConfigOrigens: cuid, managed{
 
@@ -64,11 +64,9 @@ entity ConfigOrigens: cuid, managed{
 
 type UUIDType: String(36);
 
+// TODO A soma das porcentagens agrupadas por tipo de operação não pode ultrapasar o 100% na modificação.
 // TODO A conta e o centro de custo tem que ser validos na modificação.
-// TODO Modificação só possível se empty(origem.itensExecucoes) (incluindo adições/eliminações).
-// TODO A soma do porcentagemRateio para os creditos deve ser igual ao dos debitos.
-// TODO A soma das porcentagens agrupadas por tipo de operação não pode ultrapasar o 100%.
-// TODO Um mesmo origem tem que ter definidos os dois tipos de operações
+// TODO adição/modificação/eliminação só possível se not origem.ativo
 entity ConfigDestinos: managed{
     
     key origem: Association to one ConfigOrigens;

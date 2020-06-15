@@ -24,10 +24,41 @@ class ConfigDestinosImplementation{
 
     }
 
+    async validatePorcentagens(req){
+
+        const { ConfigDestinos } = this.srv.entities
+
+        const { 
+            origem_ID,
+            tipoOperacao_operacao,
+            porcentagemRateio,
+        } = req.data
+
+        // Obtem os destinos para o mesmo origem.
+        const result = await cds.transaction(req).run(
+            SELECT.from(ConfigDestinos)
+                .where({
+                    origem_ID: origem_ID,
+                    tipoOperacao_operacao: tipoOperacao_operacao,
+                })
+        )
+
+        // Adiciona as porcentagens junto com o novo destino.
+        const porcentagemTotal = result.reduce(
+            (total, o) => total + o.porcentagemRateio,
+            porcentagemRateio)
+
+        // Se for maior a 100, então temos um erro
+        if (porcentagemTotal > 100)
+            req.error(409, `A soma das porcentagens no tipo de operação ${tipoOperacao_operacao} supera o 100%.`)
+
+    }
+
     async beforeCreate(req){
 
         await Promise.all([
-            this.validateDadosExternos(req)
+            this.validateDadosExternos(req),
+            this.validatePorcentagens(req),
         ]);
 
     }
