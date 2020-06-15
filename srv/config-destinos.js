@@ -68,6 +68,29 @@ class ConfigDestinosImplementation{
 
     }
 
+    async validateOrigemAtivo(req){
+        const { ConfigOrigens } = this.srv.entities
+
+        const { 
+            origem_ID,
+        } = req.data
+
+        // Obtem os destinos para o mesmo origem.
+        const result = await cds.transaction(req).run(
+            SELECT.from(ConfigOrigens)
+                .where({
+                    and:[
+                        { ID: origem_ID },
+                        { ativa: true },
+                    ]
+                })
+        )
+
+        if (result.length > 0)
+            req.error(409, `A configuração origem ${origem_ID} já esta ativa, `+
+            `imposível adicionar, modificar ou eliminar destinos.`)
+    }
+
     async beforeCreate(req){
 
         await Promise.all([
@@ -82,6 +105,7 @@ class ConfigDestinosImplementation{
         await Promise.all([
             this.validateDadosExternos(req),
             this.validatePorcentagens(req),
+            this.validateOrigemAtivo(req),
         ]);
 
     }

@@ -413,4 +413,67 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
   })
 
+  it('Se o origem estiver ativo, não é posível modificar destinos.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData()
+
+    const response1 = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send({
+        origem_ID: this.utils.createdData.configOrigem.ID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+        contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+        contaDestino_GLAccount: constants.GL_ACCOUNT_1,
+        centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+        centroCustoDestino_CostCenter: constants.COST_CENTER_1,
+        atribuicao: "1",
+        porcentagemRateio: "40",
+      })
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const destino2 = {
+      origem_ID: this.utils.createdData.configOrigem.ID,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_2,
+      contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+      contaDestino_GLAccount: constants.GL_ACCOUNT_2,
+      centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+      centroCustoDestino_CostCenter: constants.COST_CENTER_2,
+      atribuicao: "2",
+      porcentagemRateio: "40",
+    }
+
+    const response2 = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send(destino2)
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const response3 = await this.utils.request
+      .post(`/config/ConfigOrigens(${destino2.origem_ID})/ConfigService.ativar`) 
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect(204)
+
+    const response4 = await this.utils.request
+      .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino2)})`) 
+      .send({
+        porcentagemRateio: "18.99",
+      })
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(409)
+
+    expect(response4.text).toEqual(expect.stringMatching(new RegExp(
+      `A configuração origem ${this.utils.createdData.configOrigem.ID} já esta ativa, `+
+        `imposível adicionar, modificar ou eliminar destinos.`)))
+  
+  })
+
 })

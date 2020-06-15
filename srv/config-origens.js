@@ -127,12 +127,28 @@ class ConfigOrigensImplementation{
 
     }
 
+    async ativarAction(req){
+
+        const { ConfigOrigens } = this.srv.entities
+
+        const ID = req.params[0]
+
+        const tx = cds.transaction(req)
+
+        const result = await tx.run ([
+            UPDATE(ConfigOrigens).set({ativa: true}).where({ID: ID})
+          ])
+
+        return result
+    }
+
     registerHandles(){
         
         const { ConfigOrigens } = this.srv.entities
 
         this.srv.before('CREATE', ConfigOrigens, this.beforeCreate.bind(this))
         this.srv.before('UPDATE', ConfigOrigens, this.beforeUpdate.bind(this))
+        this.srv.on('ativar', ConfigOrigens, this.ativarAction.bind(this))
     }
 
 }

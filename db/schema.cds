@@ -28,9 +28,9 @@ type CostCenter : String(10);
 // Configuração
 /**************************************************/
 
-// TODO Se ativo: Só poderá modificar as datas de inicio e fim, e a descrição.
-// TODO Ao ativar: A soma do porcentagemRateio para os creditos deve ser igual ao dos debitos nos destinos  a origem.
 // TODO Ao ativar: A origem tem que ter destinos.
+// TODO Ao ativar: A soma do porcentagemRateio para os creditos deve ser igual ao dos debitos nos destinos  a origem.
+// TODO Se ativo: Só poderá modificar as datas de inicio e fim, e a descrição.
 // TODO Desativação: Só possível se empty(origem.itensExecucoes).
 // Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
 entity ConfigOrigens: cuid, managed{
@@ -55,6 +55,7 @@ entity ConfigOrigens: cuid, managed{
 
     destinos: Association to many ConfigDestinos on destinos.origem = $self;
 
+    // TODO Confirmar que realmente não pode ser modificado.
     @readonly
     ativa: Boolean not null default false;
 
@@ -64,7 +65,6 @@ entity ConfigOrigens: cuid, managed{
 
 type UUIDType: String(36);
 
-// TODO A conta e o centro de custo tem que ser validos na modificação.
 // TODO adição/modificação/eliminação só possível se not origem.ativo
 entity ConfigDestinos: managed{
     
