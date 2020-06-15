@@ -3,6 +3,9 @@ const cds = require('@sap/cds')
 const { registerImpForInternalModels } = require("../srv/imp")
 
 const constants = {
+    GUID: "17b1febd-0d85-463c-b16d-ce72bbf3a09b",
+    TIPO_OPERACAO_1: "credito",
+    TIPO_OPERACAO_2: "debito",
     SEQUENCIA_1: 90,
     SEQUENCIA_2: 900,
     COMPANY_CODE: "9000",
@@ -13,11 +16,12 @@ const constants = {
     COST_CENTER_1: "999888",
     COST_CENTER_2: "555444",
     /*
-    PERIODO_1 -[------------]--------------
-    PERIODO_2 ---[------]------------------
-    PERIODO_3 -------[---------------]-----
-    PERIODO_4 ------------------------[---]
-    PERIODO_5 --------------------------[-]
+    PERIODO_1 -[------------]----------------------------
+    PERIODO_2 ---[------]--------------------------------
+    PERIODO_3 -------[---------------]-------------------
+    PERIODO_4 ------------------------[---]--------------
+    PERIODO_5 --------------------------[-]--------------
+    PERIODO_6 ------------------------------[-----------]
     */
     PERIODO_1:{
         VALID_FROM: "2020-06-01T00:00:00Z",
@@ -38,6 +42,10 @@ const constants = {
     PERIODO_5:{
         VALID_FROM: "2020-07-25T00:00:00Z",
         VALID_TO: "2020-07-30T00:00:00Z",
+    },
+    PERIODO_6:{
+        VALID_FROM: "2020-08-01T00:00:00Z",
+        VALID_TO: "2020-08-31T00:00:00Z",
     },
 }
 
@@ -127,7 +135,22 @@ class TestUtils{
     }
 
     async createTestData(){
-        return Promise.all([
+
+        this.createdData = {
+        }
+
+        const configOrigemData = {
+            "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+            "empresa_CompanyCode": constants.COMPANY_CODE,
+            "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+            "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+            "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+            "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+            "validFrom": constants.PERIODO_6.VALID_FROM,
+            "validTo": constants.PERIODO_6.VALID_TO,
+          }
+      
+        await Promise.all([
             this.request
                 .post('/config/EtapasProcesso')
                 .send({
@@ -137,6 +160,21 @@ class TestUtils{
                 .expect('Content-Type', /^application\/json/)
                 .expect(201),
         ])
+
+        const results = await Promise.all([
+            this.request
+                .post('/config/ConfigOrigens')
+                .send(configOrigemData)
+                .set('Accept', 'application/json')
+                .expect('Content-Type', /^application\/json/)
+                .expect(201),
+        ])
+
+        this.createdData.configOrigem = {
+            ...configOrigemData,
+            ...{ ID: JSON.parse(results[0].text).ID }
+        } 
+
     }
 
     buildConfigOrigensUrlKey(data){
