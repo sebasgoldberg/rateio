@@ -55,6 +55,9 @@ entity ConfigOrigens: cuid, managed{
 
     destinos: Association to many ConfigDestinos on destinos.origem = $self;
 
+    @readonly
+    ativa: Boolean not null default false;
+
     itensExecucoes: Association to many ItensExecucoes on itensExecucoes.configuracaoOrigem = $self;
 
 }
@@ -82,7 +85,7 @@ entity ConfigDestinos: managed{
 
     key atribuicao: String(18);
 
-    porcentagemRateio: Decimal(5,2) not null;
+    porcentagemRateio: Decimal(5,2) not null @assert.range: [ 0, 100 ];
 
     itensDocumentos: Association to many ItensDocumentos on itensDocumentos.configuracaoDestino = $self;
 

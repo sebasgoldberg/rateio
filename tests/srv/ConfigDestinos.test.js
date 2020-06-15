@@ -108,4 +108,48 @@ describe('OData: Rateio: ConfigOrigens', () => {
       `O centro ${constants.INVALID.CONTROLLING_AREA}/${constants.INVALID.COST_CENTER} não existe`)))
   })
 
+  it('Não é possível indicar uma porcentagem maior a 100.', async () => {
+    const response = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send({
+        origem_ID: this.utils.createdData.configOrigem.ID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+        contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+        contaDestino_GLAccount: constants.GL_ACCOUNT_1,
+        centroCustoDestino_ControllingArea: constants.INVALID.CONTROLLING_AREA,
+        centroCustoDestino_CostCenter: constants.INVALID.COST_CENTER,
+        atribuicao: "",
+        porcentagemRateio: "100.01",
+      })
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(400)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(
+      `Value of element 'porcentagemRateio' is not in specified range`)))
+  })
+
+  it('Não é possível indicar uma porcentagem menor a 0.', async () => {
+    const response = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send({
+        origem_ID: this.utils.createdData.configOrigem.ID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+        contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+        contaDestino_GLAccount: constants.GL_ACCOUNT_1,
+        centroCustoDestino_ControllingArea: constants.INVALID.CONTROLLING_AREA,
+        centroCustoDestino_CostCenter: constants.INVALID.COST_CENTER,
+        atribuicao: "",
+        porcentagemRateio: "-12.34",
+      })
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(400)
+
+    expect(response.text).toEqual(expect.stringMatching(new RegExp(
+      `Value of element 'porcentagemRateio' is not in specified range`)))
+  })
+
 })
