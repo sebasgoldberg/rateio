@@ -55,9 +55,7 @@ entity ConfigOrigens: cuid, managed{
 
     destinos: Association to many ConfigDestinos on destinos.origem = $self;
 
-    // TODO Confirmar que realmente não pode ser modificado.
-    @readonly
-    ativa: Boolean not null default false;
+    ativa: Boolean not null default false @readonly;
 
     itensExecucoes: Association to many ItensExecucoes on itensExecucoes.configuracaoOrigem = $self;
 

@@ -221,7 +221,127 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
   })
 
+  it('É possível criar uma configuração passando o indicador de se esta ativa, porem o mesmo é desconsiderado', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+      ativa: true,
+    }
+    
+    const response1 = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const response2 = await this.utils.request
+      .get('/config/ConfigOrigens')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    parsedResponse = JSON.parse(response2.text)
+
+    expect(parsedResponse)
+      .toHaveProperty('value')
+
+    const configOrigemDataExpected = {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+        "empresa_CompanyCode": constants.COMPANY_CODE,
+        "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+        "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+        "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+        ativa: false,
+      }
+
+    expect(parsedResponse.value)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(configOrigemDataExpected)
+        ]))
+
+  })
+
+  it('É possível modificar uma configuração passando o indicador de se esta ativa, porem o mesmo é desconsiderado', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const configOrigemData = {
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+      "empresa_CompanyCode": constants.COMPANY_CODE,
+      "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+      "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+      "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+      "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+      "validFrom": constants.PERIODO_1.VALID_FROM,
+      "validTo": constants.PERIODO_1.VALID_TO,
+      ativa: true,
+    }
+    
+    const response1 = await this.utils.request
+      .post('/config/ConfigOrigens')
+      .send(configOrigemData)
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const response2 = await this.utils.request
+      .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
+      .send({
+        ativa: true
+      })
+      .set('Accept', 'application/json')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    const response3 = await this.utils.request
+      .get('/config/ConfigOrigens')
+      .expect('Content-Type', /^application\/json/)
+      .expect(200)
+
+    parsedResponse = JSON.parse(response3.text)
+
+    expect(parsedResponse)
+      .toHaveProperty('value')
+
+    const configOrigemDataExpected = {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+        "empresa_CompanyCode": constants.COMPANY_CODE,
+        "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+        "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+        "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+        ativa: false,
+      }
+
+    expect(parsedResponse.value)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining(configOrigemDataExpected)
+        ]))
+
+  })
+
   it('É possível criar uma configuração', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
 
     const configOrigemData = {
       "etapasProcesso_sequencia": constants.SEQUENCIA_1,
