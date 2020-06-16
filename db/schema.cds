@@ -28,7 +28,6 @@ type CostCenter : String(10);
 // Configuração
 /**************************************************/
 
-// TODO Ao ativar: A soma do porcentagemRateio para os creditos deve ser igual ao dos debitos nos destinos da origem.
 // TODO Se ativo: Só poderá modificar as datas de inicio e fim, e a descrição.
 // TODO Desativação: Só possível se empty(origem.itensExecucoes).
 // Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo

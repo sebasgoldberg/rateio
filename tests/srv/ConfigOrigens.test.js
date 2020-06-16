@@ -1001,4 +1001,98 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
   })
 
+  it('Ao ativar uma configuração origem, a mesma tem que ter destinos.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const destino1 = {
+      origem_ID: this.utils.createdData.configOrigem.ID,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+      contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+      contaDestino_GLAccount: constants.GL_ACCOUNT_1,
+      centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+      centroCustoDestino_CostCenter: constants.COST_CENTER_1,
+      atribuicao: "1",
+      porcentagemRateio: "40",
+    }
+
+    const response1 = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send(destino1)
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const destino2 = {
+      origem_ID: this.utils.createdData.configOrigem.ID,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_2,
+      contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+      contaDestino_GLAccount: constants.GL_ACCOUNT_2,
+      centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+      centroCustoDestino_CostCenter: constants.COST_CENTER_2,
+      atribuicao: "2",
+      porcentagemRateio: "40",
+    }
+
+    const response2 = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send(destino2)
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const destino3 = {
+      origem_ID: this.utils.createdData.configOrigem.ID,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+      contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+      contaDestino_GLAccount: constants.GL_ACCOUNT_1,
+      centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+      centroCustoDestino_CostCenter: constants.COST_CENTER_1,
+      atribuicao: "3",
+      porcentagemRateio: "20.1",
+    }
+
+    const response3 = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send(destino3)
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const destino4 = {
+      origem_ID: this.utils.createdData.configOrigem.ID,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_2,
+      contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+      contaDestino_GLAccount: constants.GL_ACCOUNT_2,
+      centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+      centroCustoDestino_CostCenter: constants.COST_CENTER_2,
+      atribuicao: "4",
+      porcentagemRateio: "20.05",
+    }
+
+    const response4 = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send(destino4)
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+  
+    const response = await this.utils.request
+      .post(`/config/ConfigOrigens(${this.utils.createdData.configOrigem.ID})/ConfigService.ativar`) 
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(
+      new RegExp(`Impossível ativar a configuração. A soma das porcentagens agrupadas por tipo de operação não coincidem: .*`
+        )))
+
+
+  })
+
 })

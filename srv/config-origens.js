@@ -144,6 +144,20 @@ class ConfigOrigensImplementation{
             return
         }
 
+        const somaPorcentagens = result1.reduce((prev, destino) => {
+            const { tipoOperacao_operacao: operacao, porcentagemRateio } = destino
+            prev[operacao] += porcentagemRateio
+            return prev
+        },{credito: 0, debito: 0})
+
+        const {credito, debito} = somaPorcentagens
+
+        if (credito != debito){
+            req.error(409, `Impossível ativar a configuração. A soma das porcentagens agrupadas `+
+                `por tipo de operação não coincidem: ${credito} distinto de ${debito}.`)
+            return
+        }
+
         const result2 = await tx.run (
             UPDATE(ConfigOrigens).set({ativa: true}).where({ID: ID})
           )
