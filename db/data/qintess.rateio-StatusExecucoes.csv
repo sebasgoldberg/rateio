@@ -1,0 +1,5 @@
+status;name;descr
+nao_executado;Não executado;Ainda não executado
+em_execucao;Em execução;Em execução
+finalizado;Finalizado;Finalizado
+cancelado;Cancelado;Execução cancelada

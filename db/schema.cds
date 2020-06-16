@@ -28,8 +28,6 @@ type CostCenter : String(10);
 // Configuração
 /**************************************************/
 
-// TODO Se ativo: Só poderá modificar as datas de inicio e fim, e a descrição.
-// TODO Desativação: Só possível se empty(origem.itensExecucoes).
 // Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
 entity ConfigOrigens: cuid, managed{
 
@@ -90,20 +88,31 @@ entity ConfigDestinos: managed{
 type FiscalYear: String(4);
 type FiscalPeriod: String(3);
 
+type StatusExecucao: String enum { nao_executado; em_execucao; finalizado; cancelado; }
+
+entity StatusExecucoes: sap.common.CodeList{
+    key status: StatusExecucao;
+}
+
+// TODO Na criação/modificação a adição de itensExecução é automática.
+// TODO Na eliminação a eliminação de itensExecução é automática.
 // TODO Não deve ser possível realizar uma mesma execução em paralello.
-// TODO A busca dos saldos base para criação dos documentos deve ser realizado por etapa (ou por ConfigOrigem?).
+// TODO A busca dos saldos base para criação dos documentos deve ser realizado por etapa.
+// TODO Não é possível modificar.
+// TODO Só possível executar se status.status == nao_executado
 entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
 
-    // companyCode: CompanyCode not null;
-    // empresa: Association to one ext.A_CompanyCode on empresa.CompanyCode = $self.companyCode;
-
-    Periodo: FiscalPeriod not null; // TODO Validar formato
-    Ano: FiscalYear not null; // TODO Validar formato
+    periodo: FiscalPeriod not null; // TODO Validar formato
+    ano: FiscalYear not null; // TODO Validar formato
 
     // TODO Modificar para Date e mudar $now para $today se existir, já que Date é incompatível com $now.
-    DataConfiguracoes: DateTime not null default $now;
+    dataConfiguracoes: DateTime not null default $now;
+
+    @readonly
+    status_status: StatusExecucao not null default 'nao_executado';
+    status: Association to one StatusExecucoes on status.status = $self.status_status;
 
     itensExecucoes: Association to many ItensExecucoes on itensExecucoes.execucao = $self;
 
@@ -111,8 +120,9 @@ entity Execucoes: cuid, managed{
 
 }
 
-// TODO Não é possível apagar uma vez realizada a execução ().
 // TODO O processamento deve ser realizado seguindo a configuracaoOrigem.etapasProcesso.sequencia
+@autoexpose
+@readonly
 entity ItensExecucoes: managed {
     key execucao: Association to one Execucoes not null;
     // TODO só poderão ser adicionadas configurações onde execucao.DataConfiguracoes esteja dentro do periodo de validez.
@@ -122,7 +132,6 @@ entity ItensExecucoes: managed {
     logs: Association to many ItensExecucoesLogs on logs.item = $self;
 }
 
-@autoexpose
 // TODO Validar não seja possível a duplicidade de rateios:
 // Um documento X poderá ser criado se não existir outro documento Y onde
 // Y.itemExecutado.configuracaoOrigem.equivalenteA(X.itemExecutado.configuracaoOrigem) e
@@ -131,6 +140,7 @@ entity ItensExecucoes: managed {
 // equivalenteA: Compara empresa, conta e centro de custo.
 // mesmoPeriodo: Compara o mes e o ano.
 // TODO Quando um documento for cancelado, deixar registrado no log associado ao item.
+@autoexpose
 entity Documentos: managed {
     key CompanyCode: CompanyCode not null;
     key AccountingDocument: String(10) not null;
@@ -143,7 +153,6 @@ entity Documentos: managed {
 type DocumentItemNumber: String(6);
 
 @autoexpose
-@insertonly
 entity ItensDocumentos {
     key documento: Association to one Documentos not null;
     key documentItemNumber: DocumentItemNumber not null;
@@ -158,10 +167,12 @@ aspect log: cuid, managed{
     message: String(255) not null;
 }
 
+@autoexpose
 entity ExecucoesLogs: log{
     execucao: Association to Execucoes;
 }
 
+@autoexpose
 entity ItensExecucoesLogs: log{
     item: Association to ItensExecucoes;
 }

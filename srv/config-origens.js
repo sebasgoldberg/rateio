@@ -127,7 +127,7 @@ class ConfigOrigensImplementation{
 
     }
 
-    async ativarAction(req){
+    async ativarConfiguracaoAction(req){
 
         const { ConfigOrigens, ConfigDestinos } = this.srv.entities
 
@@ -165,13 +165,40 @@ class ConfigOrigensImplementation{
         return result2
     }
 
+    async desativarConfiguracaoAction(req){
+
+        const { ConfigOrigens, ItensExecucoes } = this.srv.entities
+
+        const ID = req.params[0]
+
+        const tx = cds.transaction(req)
+
+        const result1 = await tx.run (
+            SELECT.one.from(ItensExecucoes).where({configuracaoOrigem_ID: ID})
+          )
+        
+        if (result1){
+            const { execucao_ID } = result1
+            req.error(409, `Impossível desativar a configuração. `+
+                `A mesma é utilizada na execução ${execucao_ID}.`)
+            return
+        }
+
+        const result2 = await tx.run (
+            UPDATE(ConfigOrigens).set({ativa: false}).where({ID: ID})
+          )
+
+        return result2
+    }
+
     registerHandles(){
         
         const { ConfigOrigens } = this.srv.entities
 
         this.srv.before('CREATE', ConfigOrigens, this.beforeCreate.bind(this))
         this.srv.before('UPDATE', ConfigOrigens, this.beforeUpdate.bind(this))
-        this.srv.on('ativar', ConfigOrigens, this.ativarAction.bind(this))
+        this.srv.on('ativar', ConfigOrigens, this.ativarConfiguracaoAction.bind(this))
+        this.srv.on('desativar', ConfigOrigens, this.desativarConfiguracaoAction.bind(this))
     }
 
 }

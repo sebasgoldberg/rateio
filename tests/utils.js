@@ -52,6 +52,13 @@ const constants = {
         GL_ACCOUNT: "45678910",
         CONTROLLING_AREA: "4567",
         COST_CENTER: "012345",
+    },
+    EXECUCAO: {
+        DESCRICAO: "Test",
+        PERIODO: "006",
+        ANO: "2020",
+        DATA_P123: "2020-06-15T00:00:00Z",
+        DATA_P6: "2020-08-15T00:00:00Z",
     }
 }
 

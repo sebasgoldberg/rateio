@@ -1095,4 +1095,85 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
   })
 
+  it("Desativação: Só possível se a configuração não se encontra involucrada em nenhuma execução.", async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    // Adição dos destinos
+    const destino1 = {
+      origem_ID: this.utils.createdData.configOrigem.ID,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+      contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+      contaDestino_GLAccount: constants.GL_ACCOUNT_1,
+      centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+      centroCustoDestino_CostCenter: constants.COST_CENTER_1,
+      atribuicao: "1",
+      porcentagemRateio: "40",
+    }
+
+    const response1 = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send(destino1)
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    const destino2 = {
+      origem_ID: this.utils.createdData.configOrigem.ID,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_2,
+      contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+      contaDestino_GLAccount: constants.GL_ACCOUNT_2,
+      centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+      centroCustoDestino_CostCenter: constants.COST_CENTER_2,
+      atribuicao: "2",
+      porcentagemRateio: "40",
+    }
+
+    const response2 = await this.utils.request
+      .post('/config/ConfigDestinos') 
+      .send(destino2)
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    // Ativação
+    const respons3 = await this.utils.request
+      .post(`/config/ConfigOrigens(${this.utils.createdData.configOrigem.ID})/ConfigService.ativar`) 
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect(204)
+
+    // Criação da execução
+    const execucao = {
+      descricao: constants.EXECUCAO.DESCRICAO,
+      periodo: constants.EXECUCAO.PERIODO,
+      ano: constants.EXECUCAO.ANO,
+      dataConfiguracoes: constants.EXECUCAO.DATA_P6,
+    }
+
+    const response9 = await this.utils.request
+      .post('/config/Execucoes') 
+      .send(execucao)
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect('Content-Type', /^application\/json/)
+      .expect(201)
+
+    // Intento de desativação da configuração
+    const response10 = await this.utils.request
+      .post(`/config/ConfigOrigens(${this.utils.createdData.configOrigem.ID})/ConfigService.desativar`) 
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect(409)
+
+    expect(response10.text).toEqual(expect.stringMatching(
+      new RegExp(`Impossível desativar a configuração. A mesma é utilizada na execução ${JSON.parse(response9.text).ID}\\.`
+        )))
+
+
+  })
+
 })
