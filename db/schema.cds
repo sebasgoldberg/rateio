@@ -31,7 +31,6 @@ type CostCenter : String(10);
 // Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
 entity ConfigOrigens: cuid, managed{
 
-    // TODO A etapa realmente deve ser chave?
     etapasProcesso: Association to one EtapasProcesso not null;
     
     empresa: Association to one ext.A_CompanyCode not null;
@@ -94,12 +93,12 @@ entity StatusExecucoes: sap.common.CodeList{
     key status: StatusExecucao;
 }
 
-// TODO Na criação/modificação a adição de itensExecução é automática.
-// TODO Na eliminação a eliminação de itensExecução é automática.
-// TODO Não deve ser possível realizar uma mesma execução em paralello.
-// TODO A busca dos saldos base para criação dos documentos deve ser realizado por etapa.
-// TODO Não é possível modificar.
+// TODO Ao executar a adição de itensExecucao é automática.
 // TODO Só possível executar se status.status == nao_executado
+// TODO Só possível modificar se status.status == nao_executado
+// TODO Só possível eliminar se status.status == nao_executado
+// TODO A busca dos saldos base para criação dos documentos deve ser realizado por etapa.
+// TODO Não deve ser possível realizar uma mesma execução em paralello.
 entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
