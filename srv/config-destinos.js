@@ -39,6 +39,9 @@ class ConfigDestinosImplementation{
             porcentagemRateio,
         } = req.data
 
+        if (!porcentagemRateio)
+            return;
+
         // Obtem os destinos para o mesmo origem.
         const result = await cds.transaction(req).run(
             SELECT.from(ConfigDestinos)
@@ -94,6 +97,7 @@ class ConfigDestinosImplementation{
     async beforeCreate(req){
 
         await Promise.all([
+            this.validateOrigemAtivo(req),
             this.validateDadosExternos(req),
             this.validatePorcentagens(req),
         ]);
@@ -110,12 +114,21 @@ class ConfigDestinosImplementation{
 
     }
 
+    async beforeDelete(req){
+
+        await Promise.all([
+            this.validateOrigemAtivo(req),
+        ]);
+
+    }
+
     registerHandles(){
         
         const { ConfigDestinos } = this.srv.entities
 
         this.srv.before('CREATE', ConfigDestinos, this.beforeCreate.bind(this))
         this.srv.before('UPDATE', ConfigDestinos, this.beforeUpdate.bind(this))
+        this.srv.before('DELETE', ConfigDestinos, this.beforeDelete.bind(this))
     }
 
 }
