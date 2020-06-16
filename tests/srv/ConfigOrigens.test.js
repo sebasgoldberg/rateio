@@ -982,4 +982,23 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
   })
 
+  it('Ao ativar uma configuração origem, a mesma tem que ter destinos.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const ID = this.utils.createdData.configOrigem.ID
+
+    const response = await this.utils.request
+      .post(`/config/ConfigOrigens(${ID})/ConfigService.ativar`) 
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect(409)
+
+    expect(response.text).toEqual(expect.stringMatching(
+      new RegExp(`Impossível ativar configuração ${ID}, a mesma não tem destinos definidos.`
+        )))
+
+  })
+
 })

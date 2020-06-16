@@ -129,17 +129,26 @@ class ConfigOrigensImplementation{
 
     async ativarAction(req){
 
-        const { ConfigOrigens } = this.srv.entities
+        const { ConfigOrigens, ConfigDestinos } = this.srv.entities
 
         const ID = req.params[0]
 
         const tx = cds.transaction(req)
 
-        const result = await tx.run ([
-            UPDATE(ConfigOrigens).set({ativa: true}).where({ID: ID})
-          ])
+        const result1 = await tx.run (
+            SELECT.from(ConfigDestinos).where({origem_ID: ID})
+          )
+        
+        if (result1.length == 0){
+            req.error(409, `Impossível ativar configuração ${ID}, a mesma não tem destinos definidos.`)
+            return
+        }
 
-        return result
+        const result2 = await tx.run (
+            UPDATE(ConfigOrigens).set({ativa: true}).where({ID: ID})
+          )
+
+        return result2
     }
 
     registerHandles(){
