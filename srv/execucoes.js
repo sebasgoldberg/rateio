@@ -8,14 +8,19 @@ class ExecucoesImplementation{
         this.externalData = new ExternalData(srv)
     }
 
-    async beforeCreate(req){
+    async executarExecucaoAction(req){
+
+        const ID = req.params[0]
+
+        const { Execucoes, ConfigOrigens, ItensExecucoes } = this.srv.entities
 
         const {
-            ID,
             dataConfiguracoes
-        } = req.data
-
-        const { ConfigOrigens, ItensExecucoes } = this.srv.entities
+        } = await cds.transaction(req).run(
+            SELECT.one
+                .from(Execucoes)
+                .where('ID = ', ID)
+        )
 
         const configAtivasPeriodo =  await cds.transaction(req).run(
             SELECT
@@ -25,7 +30,11 @@ class ExecucoesImplementation{
                 .and('ativa', true)
         )
 
-        await cds.transaction(req).run(
+        if (configAtivasPeriodo.length == 0){
+            req.error(409, `Não existem configurações ativas na data ${dataConfiguracoes}. Não é possível realizar a execução ${ID}.`)
+        }
+
+        const result = await cds.transaction(req).run(
             INSERT
                 .into(ItensExecucoes)
                 .columns('execucao_ID', 'configuracaoOrigem_ID')
@@ -41,7 +50,8 @@ class ExecucoesImplementation{
         
         const { Execucoes } = this.srv.entities
 
-        this.srv.before('CREATE', Execucoes, this.beforeCreate.bind(this))
+        this.srv.on('executar', Execucoes, this.executarExecucaoAction.bind(this))
+
     }
 
 }

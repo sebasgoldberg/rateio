@@ -93,7 +93,6 @@ entity StatusExecucoes: sap.common.CodeList{
     key status: StatusExecucao;
 }
 
-// TODO Ao executar a adição de itensExecucao é automática.
 // TODO Só possível executar se status.status == nao_executado
 // TODO Só possível modificar se status.status == nao_executado
 // TODO Só possível eliminar se status.status == nao_executado

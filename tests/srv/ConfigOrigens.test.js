@@ -1162,15 +1162,23 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect('Content-Type', /^application\/json/)
       .expect(201)
 
-    // Intento de desativação da configuração
+    const { ID: execucaoID } = JSON.parse(response9.text)
+      
     const response10 = await this.utils.request
+      .post(`/config/Execucoes(${execucaoID})/ConfigService.executar`) 
+      .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+      .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+      .expect(204)
+
+    // Intento de desativação da configuração
+    const response11 = await this.utils.request
       .post(`/config/ConfigOrigens(${this.utils.createdData.configOrigem.ID})/ConfigService.desativar`) 
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(409)
 
-    expect(response10.text).toEqual(expect.stringMatching(
-      new RegExp(`Impossível desativar a configuração. A mesma é utilizada na execução ${JSON.parse(response9.text).ID}\\.`
+    expect(response11.text).toEqual(expect.stringMatching(
+      new RegExp(`Impossível desativar a configuração. A mesma é utilizada na execução ${execucaoID}\\.`
         )))
 
 
