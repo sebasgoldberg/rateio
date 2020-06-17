@@ -1,5 +1,6 @@
 const cds = require('@sap/cds')
 const ExternalData = require("./external-data")
+const RateioProcess = require('./rateio')
 
 const STATUS_EXECUCAO = {
     NAO_EXECUTADO: 'nao_executado',
@@ -13,6 +14,27 @@ class ExecucoesImplementation{
     constructor(srv){
         this.srv = srv
         this.externalData = new ExternalData(srv)
+    }
+
+    async realizarRateios(ID, req){
+
+        const { Execucoes } = this.srv.entities
+
+        const rateio = new RateioProcess(ID, this.srv, req)
+        let status = STATUS_EXECUCAO.FINALIZADO
+
+        try{
+            await rateio.execute()
+        }catch(e){
+            status = STATUS_EXECUCAO.CANCELADO
+        }
+
+        cds.transaction(req).run(
+            UPDATE(Execucoes)
+                .set({status_status: status})
+                .where({ID: ID})
+        ) 
+
     }
 
     async executarExecucaoAction(req){
@@ -59,6 +81,9 @@ class ExecucoesImplementation{
                     config.ID,
                 ])),
         ])
+
+        // Continua executando após responder a request de execução.
+        this.realizarRateios(ID, req)
 
     }
 

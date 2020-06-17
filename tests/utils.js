@@ -147,6 +147,14 @@ class TestUtils{
         return __dirname + '/..'
     }
 
+    createEtapaProcesso(data){
+        return this.request
+        .post('/config/EtapasProcesso')
+        .send(data)
+        .set('Accept', 'application/json')
+        .expect('Content-Type', /^application\/json/)
+    }
+
     async createTestData(){
 
         this.createdData = {
@@ -164,14 +172,12 @@ class TestUtils{
           }
       
         await Promise.all([
-            this.request
-                .post('/config/EtapasProcesso')
-                .send({
-                    sequencia: constants.SEQUENCIA_1,
-                })
-                .set('Accept', 'application/json')
-                .expect('Content-Type', /^application\/json/)
-                .expect(201),
+            this.createEtapaProcesso({
+                sequencia: constants.SEQUENCIA_1,
+            }).expect(201),
+            this.createEtapaProcesso({
+                sequencia: constants.SEQUENCIA_2,
+            }).expect(201),
         ])
 
         const results = await Promise.all([
@@ -208,6 +214,29 @@ class TestUtils{
             `contaDestino_ChartOfAccounts='${data.contaDestino_ChartOfAccounts}',`+
             `contaDestino_GLAccount='${data.contaDestino_GLAccount}',`+
             `atribuicao='${data.atribuicao}'`
+    }
+
+    createOrigem(data){
+
+        const origem = {
+            ...{
+                "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+                "empresa_CompanyCode": constants.COMPANY_CODE,
+                "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
+                "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
+                "centroCustoOrigem_ControllingArea": constants.CONTROLLING_AREA,
+                "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+                "validFrom": constants.PERIODO_6.VALID_FROM,
+                "validTo": constants.PERIODO_6.VALID_TO,
+            },
+            ...data
+        }
+
+        return this.request
+            .post('/config/ConfigOrigens')
+            .send(origem)
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /^application\/json/)
     }
 
     createDestino(destino){
