@@ -275,6 +275,21 @@ class TestUtils{
             .expect('Content-Type', /^application\/json/)
     }
 
+    modificarExecucao(ID, data){
+        return this.request
+            .patch(`/config/Execucoes(${ID})`) 
+            .send(data)
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+    }
+
+    eliminarExecucao(ID){
+        return this.request
+            .delete(`/config/Execucoes(${ID})`) 
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+    }
+
 }
 
 module.exports = {

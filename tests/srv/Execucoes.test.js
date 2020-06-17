@@ -125,4 +125,48 @@ describe('OData: Rateio: Execucoes', () => {
 
   })
 
+  it('Só possível modificar/eliminar uma execução se a mesma ainda não foi executada.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const origemID = this.utils.createdData.configOrigem.ID
+
+    const response1 = await this.utils.createDestino()
+      .expect(201)
+
+    const response2 = await this.utils.createDestino({ 
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+    })
+      .expect(201)
+
+    const response3 = await this.utils.activateOrigem(origemID)
+      .expect(204)
+
+    const response4 = await this.utils.createExecucao()
+      .expect(201)
+
+    const execucaoID = JSON.parse(response4.text).ID
+
+    const response5 = await this.utils.executarExecucao(execucaoID)
+      .expect(204)
+
+    const response6 = await this.utils.modificarExecucao(execucaoID, {descricao: "Outra descrição"})
+      .expect(409)
+
+    expect(response6.text).toEqual(expect.stringMatching(
+      new RegExp(`A execução ${execucaoID} não pode ser modificada/eliminada já que `+
+        `atualmente esta com o status .*\\.`
+        )))
+
+    const response7 = await this.utils.eliminarExecucao(execucaoID)
+      .expect(409)
+
+    expect(response7.text).toEqual(expect.stringMatching(
+      new RegExp(`A execução ${execucaoID} não pode ser modificada/eliminada já que `+
+        `atualmente esta com o status .*\\.`
+        )))
+  
+    })
+
 })

@@ -62,10 +62,40 @@ class ExecucoesImplementation{
 
     }
 
+    async validateStatusOnChange(req){
+        const ID = req.params[0]
+
+        const { Execucoes } = this.srv.entities
+
+        const {
+            status_status: status
+        } = await cds.transaction(req).run(
+            SELECT.one
+                .from(Execucoes)
+                .where('ID = ', ID)
+        )
+
+        if (status != STATUS_EXECUCAO.NAO_EXECUTADO){
+            req.error(409, `A execução ${ID} não pode ser modificada/eliminada já que `+
+            `atualmente esta com o status ${status}.`)
+            return
+        }
+    }
+
+    async beforeUpdate(req){
+        await this.validateStatusOnChange(req)
+    }
+
+    async beforeDelete(req){
+        await this.validateStatusOnChange(req)
+    }
+
     registerHandles(){
         
         const { Execucoes } = this.srv.entities
 
+        this.srv.before('UPDATE', Execucoes, this.beforeUpdate.bind(this))
+        this.srv.before('DELETE', Execucoes, this.beforeDelete.bind(this))
         this.srv.on('executar', Execucoes, this.executarExecucaoAction.bind(this))
 
     }
