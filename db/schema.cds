@@ -93,7 +93,6 @@ entity StatusExecucoes: sap.common.CodeList{
     key status: StatusExecucao;
 }
 
-// TODO Só possível executar se status.status == nao_executado
 // TODO Só possível modificar se status.status == nao_executado
 // TODO Só possível eliminar se status.status == nao_executado
 // TODO A busca dos saldos base para criação dos documentos deve ser realizado por etapa.

@@ -210,7 +210,7 @@ class TestUtils{
             `atribuicao='${data.atribuicao}'`
     }
 
-    async createDestino(destino){
+    createDestino(destino){
         const data = {
             ...{
                 origem_ID: this.createdData.configOrigem.ID,
@@ -231,19 +231,17 @@ class TestUtils{
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
             .expect('Content-Type', /^application\/json/)
-            .expect(201)
       
     }
 
-    async activateOrigem(ID){
+    activateOrigem(ID){
         return this.request
             .post(`/config/ConfigOrigens(${ID})/ConfigService.ativar`) 
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
-            .expect(204)
     }
 
-    async createExecucao(execucao){
+    createExecucao(execucao){
 
         const data = {
             ...{
@@ -261,23 +259,20 @@ class TestUtils{
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
             .expect('Content-Type', /^application\/json/)
-            .expect(201)
 
     }
 
-    async executarExecucao(ID){
+    executarExecucao(ID){
         return this.request
             .post(`/config/Execucoes(${ID})/ConfigService.executar`) 
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
-            .expect(204)
     }
 
-    async getItensExecucao(ID){
+    getItensExecucao(ID){
         return this.request
             .get(`/config/Execucoes(${ID})/itensExecucoes`)
             .expect('Content-Type', /^application\/json/)
-            .expect(200)
     }
 
 }
