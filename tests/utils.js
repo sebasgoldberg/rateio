@@ -210,6 +210,76 @@ class TestUtils{
             `atribuicao='${data.atribuicao}'`
     }
 
+    async createDestino(destino){
+        const data = {
+            ...{
+                origem_ID: this.createdData.configOrigem.ID,
+                tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
+                contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+                contaDestino_GLAccount: constants.GL_ACCOUNT_1,
+                centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
+                centroCustoDestino_CostCenter: constants.COST_CENTER_1,
+                atribuicao: "1",
+                porcentagemRateio: "40",
+            },
+            ...destino
+        }
+      
+        return this.request
+            .post('/config/ConfigDestinos') 
+            .send(data)
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+            .expect('Content-Type', /^application\/json/)
+            .expect(201)
+      
+    }
+
+    async activateOrigem(ID){
+        return this.request
+            .post(`/config/ConfigOrigens(${ID})/ConfigService.ativar`) 
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+            .expect(204)
+    }
+
+    async createExecucao(execucao){
+
+        const data = {
+            ...{
+                descricao: constants.EXECUCAO.DESCRICAO,
+                periodo: constants.EXECUCAO.PERIODO,
+                ano: constants.EXECUCAO.ANO,
+                dataConfiguracoes: constants.EXECUCAO.DATA_P6,
+            },
+            ...execucao
+        }
+      
+        return this.request
+            .post('/config/Execucoes') 
+            .send(data)
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+            .expect('Content-Type', /^application\/json/)
+            .expect(201)
+
+    }
+
+    async executarExecucao(ID){
+        return this.request
+            .post(`/config/Execucoes(${ID})/ConfigService.executar`) 
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+            .expect(204)
+    }
+
+    async getItensExecucao(ID){
+        return this.request
+            .get(`/config/Execucoes(${ID})/itensExecucoes`)
+            .expect('Content-Type', /^application\/json/)
+            .expect(200)
+    }
+
 }
 
 module.exports = {
