@@ -18,8 +18,6 @@ class ExecucoesImplementation{
 
     async realizarRateios(ID, req){
 
-        const { Execucoes } = this.srv.entities
-
         const rateio = new RateioProcess(ID, this.srv, req)
         let status = STATUS_EXECUCAO.FINALIZADO
 
@@ -29,18 +27,22 @@ class ExecucoesImplementation{
             status = STATUS_EXECUCAO.CANCELADO
         }
 
+        await this.finalizarExecucao(ID, status, req)
+
+    }
+
+    async finalizarExecucao(ID, status, req){
+
+        const { Execucoes } = this.srv.entities
+
         await cds.transaction(req).run(
             UPDATE(Execucoes)
                 .set({status_status: status})
                 .where({ID: ID})
         ) 
-
     }
 
-    async executarExecucaoAction(req){
-
-        const ID = req.params[0]
-
+    async iniciarExecucao(ID, req){
         const { Execucoes, ConfigOrigens, ItensExecucoes } = this.srv.entities
 
         const {
@@ -81,6 +83,13 @@ class ExecucoesImplementation{
                     config.ID,
                 ])),
         ])
+    }
+
+    async executarExecucaoAction(req){
+
+        const ID = req.params[0]
+
+        await this.iniciarExecucao(ID, req)
 
         // Continua executando após responder a request de execução.
         this.realizarRateios(ID, req)

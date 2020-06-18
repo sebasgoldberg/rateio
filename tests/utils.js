@@ -133,7 +133,7 @@ class TestUtils{
         // await cds.deploy(`${ this.getProjectPath() }/srv/external/API_JOURNALENTRYITEMBASIC_SRV`).to('sqlite::memory:', { mocked:true })
         await cds.deploy(`${ this.getProjectPath() }/srv/service`).to('sqlite::memory:')
         // await cds.serve('API_JOURNALENTRYITEMBASIC_SRV', { mocked:true }).in(this.app)
-        await cds.serve('ConfigService').from(`${ this.getProjectPath() }/srv/service`).in(this.app)
+        this.srv = await cds.serve('ConfigService').from(`${ this.getProjectPath() }/srv/service`).in(this.app)
             .with( srv => {
 
                 registerImpForInternalModels.bind(srv)();
