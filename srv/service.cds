@@ -15,6 +15,7 @@ service ConfigService @(requires_:'config') {
     // Entidades de configuração
     entity EtapasProcesso as projection on rateio.EtapasProcesso;
     entity ConfigOrigens as projection on rateio.ConfigOrigens
+        { *, itensExecucoes: redirected to ItensExecucoes }
         actions{
             action ativar();
             action desativar();
@@ -26,6 +27,7 @@ service ConfigService @(requires_:'config') {
     // Entidades de execução
 
     entity Execucoes as projection on rateio.Execucoes
+        { *, itensExecucoes: redirected to ItensExecucoes }
         actions{
             action executar();
         };
@@ -35,8 +37,19 @@ service ConfigService @(requires_:'config') {
 
     @readonly
     entity Documentos as projection on rateio.Documentos
+        { *, itemExecutado: redirected to ItensExecucoes }
         actions{
             action cancelar();
         }
+
+    // Para uso interno na logica de processamento (é necessario por problemas com sqlite)
+
+    @readonly
+    entity EtapasExecucoes as 
+        SELECT 
+            key execucao.ID as execucao_ID, 
+            key configuracaoOrigem.etapasProcesso.sequencia as sequencia
+        from rateio.ItensExecucoes
+        order by configuracaoOrigem.etapasProcesso.sequencia;
 
 }

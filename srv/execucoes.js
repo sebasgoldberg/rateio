@@ -29,7 +29,7 @@ class ExecucoesImplementation{
             status = STATUS_EXECUCAO.CANCELADO
         }
 
-        cds.transaction(req).run(
+        await cds.transaction(req).run(
             UPDATE(Execucoes)
                 .set({status_status: status})
                 .where({ID: ID})

@@ -1,5 +1,9 @@
 const { TestUtils, constants } = require('../utils')
 
+// Necessario o mock, se não falha por tema de quantidade de conexões.
+const RateioProcess = require('../../srv/rateio')
+jest.mock('../../srv/rateio')
+
 const CHART_OF_ACCOUNTS = "1234"
 const GL_ACCOUNT = "45678910"
 const CONTROLLING_AREA = "4567"

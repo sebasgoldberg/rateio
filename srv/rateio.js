@@ -1,6 +1,7 @@
 const cds = require('@sap/cds')
 
 class RateioProcess{
+
     constructor(execucoes_ID, srv, req){
         this.execucoes_ID = execucoes_ID
         this.srv = srv
@@ -8,14 +9,15 @@ class RateioProcess{
     }
 
     async getEtapas(){
-        return cds.transaction(req).run(
+
+        const { EtapasExecucoes } = this.srv.entities
+
+        return cds.transaction(this.req).run(
             SELECT
-                .columns('configuracaoOrigem.etapasProcesso.sequencia as sequencia')
-                .from(ItensExecucoes)
-                .where('execucao.ID = ', this.execucoes_ID)
-                .groupBy('sequencia')
-                .orderBy('sequencia')
+                .from(EtapasExecucoes)
+                .where('execucao_ID = ', this.execucoes_ID)
         )
+
     }
 
     async execute(){
@@ -30,6 +32,7 @@ class RateioProcess{
 
     async processEtapa(etapa){
         // TODO Adicionar implementação.
+        return Promise.resolve()
     }
 }
 

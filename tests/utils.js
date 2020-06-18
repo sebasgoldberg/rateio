@@ -298,6 +298,12 @@ class TestUtils{
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
     }
 
+    getExecucao(ID){
+        return this.request
+            .get(`/config/Execucoes(${ID})`)
+            .expect('Content-Type', /^application\/json/)
+    }
+
     getItensExecucao(ID){
         return this.request
             .get(`/config/Execucoes(${ID})/itensExecucoes`)
