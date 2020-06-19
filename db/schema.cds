@@ -32,10 +32,16 @@ type CostCenter : String(10);
 entity ConfigOrigens: cuid, managed{
 
     etapasProcesso: Association to one EtapasProcesso not null;
-    
-    empresa: Association to one ext.A_CompanyCode not null;
 
-    contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts not null;
+    empresa_CompanyCode: CompanyCode not null;
+    empresa: Association to one ext.A_CompanyCode on
+        empresa.CompanyCode = $self.empresa_CompanyCode;
+
+    contaOrigem_ChartOfAccounts: ChartOfAccounts not null;
+    contaOrigem_GLAccount: GLAccount not null;
+    contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts on
+        contaOrigem.ChartOfAccounts = $self.contaOrigem_ChartOfAccounts and
+        contaOrigem.GLAccount = $self.contaOrigem_GLAccount;
 
     centroCustoOrigem_ControllingArea: ControllingArea not null;
     centroCustoOrigem_CostCenter: CostCenter not null;
@@ -123,14 +129,17 @@ entity ItensExecucoes: managed {
     // TODO só poderão ser adicionadas configurações onde execucao.DataConfiguracoes esteja dentro do periodo de validez.
     key configuracaoOrigem: Association to one ConfigOrigens;
 
-    documentoGerado: Association to one Documentos on documentoGerado.itemExecutado = $self;
+    documentosGerados: Association to one Documentos; // Um por configuracaoOrigem/moeda
     logs: Association to many ItensExecucoesLogs on logs.item = $self;
 }
 
+type Moeda: String(3);
+
 // TODO Validar não seja possível a duplicidade de rateios:
-// Um documento X poderá ser criado se não existir outro documento Y onde
+// Um documento X poderá ser criado se não existir outro documento Y onde:
 // Y.itemExecutado.configuracaoOrigem.equivalenteA(X.itemExecutado.configuracaoOrigem) e
 // Y.itemExecutado.execucao.mesmoPeriodo(X.itemExecutado.execucao) e
+// Y.modeda == X.moeda
 // not Y.cancelado
 // equivalenteA: Compara empresa, conta e centro de custo.
 // mesmoPeriodo: Compara o mes e o ano.
@@ -140,6 +149,7 @@ entity Documentos: managed {
     key CompanyCode: CompanyCode not null;
     key AccountingDocument: String(10) not null;
     key FiscalYear: FiscalYear not null;
+    moeda: Moeda;
     itemExecutado: Association to one ItensExecucoes not null;
     itensDocumento: Association to many ItensDocumentos on itensDocumento.documento = $self;
     cancelado: Boolean not null default false;

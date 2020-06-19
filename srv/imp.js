@@ -38,9 +38,9 @@ class ImplementationRegistration{
     async registerImpForExternalModels(){
 
         const journalEntryItemBasicSrv = await cds.connect.to('API_JOURNALENTRYITEMBASIC_SRV')
-        const { A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter } = this.entities
+        const { A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter, A_JournalEntryItemBasic } = this.entities
     
-        const entities = [ A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter ]
+        const entities = [ A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter, A_JournalEntryItemBasic ]
     
         entities.forEach( entity => {
             this.on('READ', entity, async req => {
