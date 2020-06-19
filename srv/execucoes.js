@@ -1,6 +1,6 @@
 const cds = require('@sap/cds')
 const ExternalData = require("./external-data")
-const RateioProcess = require('./rateio')
+const createRateioProcess = require('./rateio-factory')
 
 const STATUS_EXECUCAO = {
     NAO_EXECUTADO: 'nao_executado',
@@ -18,7 +18,7 @@ class ExecucoesImplementation{
 
     async realizarRateios(ID, req){
 
-        const rateio = new RateioProcess(ID, this.srv, req)
+        const rateio = createRateioProcess(ID, this.srv, req)
         let status = STATUS_EXECUCAO.FINALIZADO
 
         try{
@@ -39,7 +39,8 @@ class ExecucoesImplementation{
             UPDATE(Execucoes)
                 .set({status_status: status})
                 .where({ID: ID})
-        ) 
+        )
+
     }
 
     async iniciarExecucao(ID, req){
@@ -91,8 +92,8 @@ class ExecucoesImplementation{
 
         await this.iniciarExecucao(ID, req)
 
-        // Continua executando após responder a request de execução.
-        this.realizarRateios(ID, req)
+        // FIXME Ver a possibilidade de  continuar executando após responder a request de execução.
+        await this.realizarRateios(ID, req)
 
     }
 

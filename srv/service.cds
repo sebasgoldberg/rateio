@@ -29,6 +29,7 @@ service ConfigService @(requires_:'config') {
     entity Execucoes as projection on rateio.Execucoes
         { *, itensExecucoes: redirected to ItensExecucoes }
         actions{
+            // TODO Adicionar opção de wait
             action executar();
         };
 

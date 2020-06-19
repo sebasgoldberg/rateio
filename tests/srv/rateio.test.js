@@ -1,6 +1,8 @@
-const { TestUtils, constants } = require('../utils')
-const { STATUS_EXECUCAO, ExecucoesImplementation } = require('../../srv/execucoes')
-const RateioProcess = require('../../srv/rateio')
+const { TestUtils, constants } = require('../utils');
+const createRateioProcess = require('../../srv/rateio-factory');
+const RateioProcess = require('../../srv/rateio');
+
+jest.mock('../../srv/rateio-factory');
 
 describe('Processo: Rateio', () => {
 
@@ -76,16 +78,17 @@ describe('Processo: Rateio', () => {
 
     const execucaoID = JSON.parse(response9.text).ID
 
-    const req = {}
+    let rateioProcess;
 
-    // Iniciamos a execução de forma que sejam associadas as configurações à execução.
-    await (new ExecucoesImplementation(this.utils.srv).iniciarExecucao(execucaoID, req))
+    createRateioProcess.mockImplementationOnce( (ID, srv, req) => {
+      rateioProcess = new RateioProcess(ID, srv, req)
+      rateioProcess.processEtapa = jest.fn()
+      rateioProcess.processEtapa.mockImplementation(() => Promise.resolve());
+      return rateioProcess
+    })
 
-    const rateioProcess = new RateioProcess(execucaoID, this.utils.srv, req)
-
-    rateioProcess.processEtapa = jest.fn()
-
-    await rateioProcess.execute()
+    const response10 = await this.utils.executarExecucao(execucaoID)
+      .expect(204)
 
     expect(rateioProcess.processEtapa.mock.calls.length).toBe(2);
     
@@ -94,7 +97,8 @@ describe('Processo: Rateio', () => {
 
     expect(rateioProcess.processEtapa.mock.calls[1][0]).toEqual(
       expect.objectContaining({ sequencia: constants.SEQUENCIA_2 }));
-  
-    })
-  
+
+  })
+
+
 })

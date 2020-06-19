@@ -1,8 +1,9 @@
 const { TestUtils, constants } = require('../utils')
 const { STATUS_EXECUCAO } = require('../../srv/execucoes')
-const RateioProcess = require('../../srv/rateio')
+const createRateioProcess = require('../../srv/rateio-factory');
+const RateioProcess = require('../../srv/rateio');
 
-jest.mock('../../srv/rateio')
+jest.mock('../../srv/rateio-factory');
 
 describe('OData: Rateio: Execucoes', () => {
 
@@ -11,6 +12,9 @@ describe('OData: Rateio: Execucoes', () => {
   beforeAll(async () => {
     await this.utils.deployAndServe()
     await this.utils.createTestData();
+    createRateioProcess.mockImplementation( (ID, srv, req) => {
+      return new RateioProcess(ID, srv, req)
+    })
   })
 
   it('Service $metadata document', async () => {
@@ -175,13 +179,12 @@ describe('OData: Rateio: Execucoes', () => {
 
   it('Se acontecer algum erro no processo de rateio, então a execução deve ficar com o status de cancelada.', async () => {
 
-    RateioProcess.mockImplementationOnce(() => {
-        return {
-          execute: async () => {
-            return Promise.reject()
-          }
-        }
-      })
+    createRateioProcess.mockImplementationOnce( (ID, srv, req) => {
+      rateioProcess = new RateioProcess(ID, srv, req)
+      rateioProcess.execute = jest.fn()
+      rateioProcess.execute.mockImplementation(() => Promise.reject());
+      return rateioProcess
+    })
 
     await this.utils.deployAndServe()
     await this.utils.createTestData();
@@ -218,13 +221,12 @@ describe('OData: Rateio: Execucoes', () => {
 
   it('Se não acontecer erro no processo de rateio, então a execução deve ficar com o status de finalizada.', async () => {
 
-    RateioProcess.mockImplementationOnce(() => {
-        return {
-          execute: async () => {
-            return Promise.resolve()
-          }
-        }
-      })
+    createRateioProcess.mockImplementationOnce( (ID, srv, req) => {
+      rateioProcess = new RateioProcess(ID, srv, req)
+      rateioProcess.execute = jest.fn()
+      rateioProcess.execute.mockImplementation(() => Promise.resolve());
+      return rateioProcess
+    })
 
     await this.utils.deployAndServe()
     await this.utils.createTestData();
@@ -259,23 +261,29 @@ describe('OData: Rateio: Execucoes', () => {
 
   })
 
-  it('Até o processo de rateio não finalizar, a execução deve ficar com o status de em execução.', async (done) => {
+  it('Até o processo de rateio não finalizar, a execução deve ficar com o status de em execução.', async () => {
 
-    let testeValidado;
-    const validacaoTeste = new Promise( resolve => testeValidado = resolve )
+    let execucaoDuranteExecute
 
-    let rateioEmExecucao;
-    const execucaoRateio = new Promise( resolve => rateioEmExecucao = resolve )
+    createRateioProcess.mockImplementationOnce( (ID, srv, req) => {
+      const rateioProcess = new RateioProcess(ID, srv, req)
+      rateioProcess.execute = jest.fn()
+      rateioProcess.execute.mockImplementation(async function(){
+        
+        const { Execucoes } = this.srv.entities
 
-    RateioProcess.mockImplementationOnce(() => {
-        return {
-          execute: async () => {
-            rateioEmExecucao()
-            await validacaoTeste
-          }
-        }
-      })
+        execucaoDuranteExecute = await cds.transaction(this.req).run(
+            SELECT.one
+                .from(Execucoes)
+                .where('ID = ', this.execucoes_ID)
+        )
 
+        return Promise.resolve()
+
+      });
+      return rateioProcess
+    })
+  
     await this.utils.deployAndServe()
     await this.utils.createTestData();
 
@@ -300,21 +308,9 @@ describe('OData: Rateio: Execucoes', () => {
     const response5 = await this.utils.executarExecucao(execucaoID)
       .expect(204)
 
-    await execucaoRateio
-
-    const response6 = await this.utils.getExecucao(execucaoID)
-      .expect(200)
-
-    const { status_status: status } = JSON.parse(response6.text)
+    const { status_status: status } = execucaoDuranteExecute
 
     expect(status).toBe(STATUS_EXECUCAO.EM_EXECUCAO)
-
-    testeValidado()
-
-    // Necessario para conseguir finalizar a execução dos rateios de forma correta
-    setTimeout(() => {
-      done()
-    }, 10);
 
   })
 
