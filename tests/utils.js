@@ -8,6 +8,7 @@ const constants = {
     TIPO_OPERACAO_2: "debito",
     SEQUENCIA_1: 90,
     SEQUENCIA_2: 900,
+    SEQUENCIA_3: 9000,
     COMPANY_CODE: "9000",
     CHART_OF_ACCOUNTS: "CH01",
     GL_ACCOUNT_1: "99999999",
@@ -101,6 +102,11 @@ function registerImpForExternalModels(){
                     "CostCenter": constants.COST_CENTER_2,
                 },
             ]
+        },
+        {
+            entity: "A_JournalEntryItemBasic",
+            keyFields: [],
+            instances: []
         }
     ].forEach( o => {
 
@@ -177,6 +183,9 @@ class TestUtils{
             }).expect(201),
             this.createEtapaProcesso({
                 sequencia: constants.SEQUENCIA_2,
+            }).expect(201),
+            this.createEtapaProcesso({
+                sequencia: constants.SEQUENCIA_3,
             }).expect(201),
         ])
 

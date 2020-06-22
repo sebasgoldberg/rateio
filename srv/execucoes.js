@@ -25,6 +25,7 @@ class ExecucoesImplementation{
             await rateio.execute()
         }catch(e){
             status = STATUS_EXECUCAO.CANCELADO
+            // req.error(400, e.toString())
         }
 
         await this.finalizarExecucao(ID, status, req)

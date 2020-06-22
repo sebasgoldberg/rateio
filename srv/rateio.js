@@ -1,5 +1,6 @@
 const cds = require('@sap/cds')
 const bs = require("binary-search");
+const { read } = require('@sap/cds');
 
 class RateioProcess{
 
@@ -18,15 +19,31 @@ class RateioProcess{
             SELECT(['sequencia'])
                 .from(EtapasExecucoes)
                 .where('execucao_ID = ', this.execucoes_ID)
-                // .groupBy(['sequencia'])
-                // .orderBy(['sequencia'])
+                .groupBy('sequencia')
+                .orderBy('sequencia')
         )
 
         return etapas
 
     }
 
+    async getDadosExecucao(){
+
+        const { Execucoes } = this.srv.entities
+
+        const execucao = await cds.transaction(this.req).run(
+            SELECT.one
+                .from(Execucoes)
+                .where('ID = ', this.execucoes_ID)
+        )
+
+        return execucao
+
+    }
+
     async execute(){
+
+        this.execucao = await this.getDadosExecucao()
 
         const etapas = await this.getEtapas()
 
@@ -44,7 +61,7 @@ class RateioProcess{
             SELECT
                 .from(EtapasExecucoes)
                 .where('execucao_ID = ', this.execucoes_ID)
-                .and('sequencia =', etapa)
+                .and('sequencia =', etapa.sequencia)
         )
 
     }
@@ -54,25 +71,21 @@ class RateioProcess{
     }
 
     getPeriodoFim(){
-        return `${this.periodo.toString().padStart(3, '0')}/${this.execucao.ano}`
+        return `${this.execucao.periodo.toString().padStart(3, '0')}/${this.execucao.ano}`
     }
 
     buildSaldosOrigensCondition(itensExecucao){
-        return { or: itensExecucao.map( item => ({
-            and: (({
-                CompanyCode,
-                ChartOfAccounts,
-                GLAccount,
-                ControllingArea,
-                CostCenter,
-            }) => ({
-                CompanyCode,
-                ChartOfAccounts,
-                GLAccount,
-                ControllingArea,
-                CostCenter,
-            }))(item)
-        })) }
+        return { 
+            or: itensExecucao.map( item => ({
+                and: [
+                    'CompanyCode',
+                    'ChartOfAccounts',
+                    'GLAccount',
+                    'ControllingArea',
+                    'CostCenter',
+                ].map( fieldName => ({[fieldName]: item[fieldName]})) 
+            }))
+        }
     }
 
     compareSaldosEntry(a, b){
@@ -112,16 +125,14 @@ class RateioProcess{
         const periodoInicio = this.getPeriodoInicio()
         const periodoFim = this.getPeriodoFim()
 
-        this.saldosEtapaProcessada = await cds.transaction(this.req).run(
+        this.saldosEtapaProcessada = await
 
-            SELECT(['CompanyCode', 'ChartOfAccounts', 'GLAccount', 'ControllingArea', 'CostCenter', 'AmountInCompanyCodeCurrency', 'CompanyCodeCurrency' ])
-                .from(A_JournalEntryItemBasic)
+            this.srv.read(A_JournalEntryItemBasic)
+                .columns(['CompanyCode', 'ChartOfAccounts', 'GLAccount', 'ControllingArea', 'CostCenter', 'AmountInCompanyCodeCurrency', 'CompanyCodeCurrency' ])
                 .where('Ledger =', '0L')
                 .and('FiscalYearPeriod >=', periodoInicio)
                 .and('FiscalYearPeriod <=', periodoFim)
                 .and(condicaoOrigens)
-
-        )
 
         this.saldosEtapaProcessada.sort(this.compareSaldosEntry)
     }
