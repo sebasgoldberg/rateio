@@ -1,6 +1,6 @@
 const cds = require('@sap/cds')
 const bs = require("binary-search");
-const { read } = require('@sap/cds');
+const createDocumento = require('./documento-factory');
 
 class RateioProcess{
 
@@ -140,7 +140,7 @@ class RateioProcess{
     async getConfigDestinos(origem_ID){
 
         // Obtenção das informações de destino.
-        const { Documentos } = this.srv.entities
+        const { ConfigDestinos } = this.srv.entities
 
         return cds.transaction(this.req).run(
             SELECT
@@ -154,38 +154,35 @@ class RateioProcess{
 
         const { DocumentosPorOrigem } = this.srv.entities
 
-        return cds.transaction(this.req).run(
+        const filter = {
+            and: [
+                'sequencia',
+                'CompanyCode',
+                'ChartOfAccounts',
+                'GLAccount',
+                'ControllingArea',
+                'CostCenter',
+            ].map( fieldName => ({[fieldName]: item[fieldName]}))
+        }
+
+        const documento = await cds.transaction(this.req).run(
             SELECT.one
                 .from(DocumentosPorOrigem)
-                .where((({
-                    sequencia,
-                    CompanyCode,
-                    ChartOfAccounts,
-                    GLAccount,
-                    ControllingArea,
-                    CostCenter,
-                }) => ({
-                    sequencia,
-                    CompanyCode,
-                    ChartOfAccounts,
-                    GLAccount,
-                    ControllingArea,
-                    CostCenter,
-                }))(item))
-                .and({
-                    cancelado: false,
-                    moeda: saldoItem.CompanyCodeCurrency
-                })
-        )
-    
+                .where(filter)
+                .and( 'cancelado =', false)
+                .and( 'moeda =', saldoItem.CompanyCodeCurrency)
+            )
+
+        return documento
+            
     }
     
     getItemDebitCreditCode(saldoItem, destino){
 
-        if (destino.tipoOperacao_operacao = 'credito'){
+        if (destino.tipoOperacao_operacao == 'credito'){
             return saldoItem.AmountInCompanyCodeCurrency > 0 ?
                 'H' : 'S'
-        }else if (destino.tipoOperacao_operacao = 'debito'){
+        }else if (destino.tipoOperacao_operacao == 'debito'){
             return saldoItem.AmountInCompanyCodeCurrency > 0 ?
                 'S' : 'H'
         }
@@ -198,22 +195,38 @@ class RateioProcess{
         return Math.abs(saldoItem.AmountInCompanyCodeCurrency * destino.porcentagemRateio / 100)
     }
 
+    async registrarDocumento(item, documento){
+        await cds.transaction(this.req).run(
+            INSERT
+                .into(Documentos)
+                .columns('CompanyCode', 'AccountingDocument', 'FiscalYear', 'moeda', 'itemExecutado_execucao_ID', 'itemExecutado_configuracaoOrigem_ID')
+                .entries([documento.CompanyCode, documento.AccountingDocument, documento.FiscalYear, item.execucao_ID, item.configuracaoOrigem_ID])
+        )
+    }
+
+    getPostingDate(){
+        // O ultimo dia do periodo indicado na execução.
+        const d = new Date(Date.UTC(Number(this.execucao.ano), Number(this.execucao.periodo), 0))
+        return d.toISOString().split('T')[0];
+    }
+
     async criarDocumento(item, saldoItem){
 
         const destinos = await this.getConfigDestinos(item.configuracaoOrigem_ID)
 
-        const documentoExistente = await this.getDocumentoSeJaExiste(saldoItem)
+        const documentoExistente = await this.getDocumentoSeJaExiste(item, saldoItem)
+
         if (documentoExistente){
             const { CompanyCode, AccountingDocument, FiscalYear } = documentoExistente
             // TODO implementar
             //this.logItemExecucao.warning(item, `Documento ${CompanyCode} ${AccountingDocument} ${FiscalYear} já gerado para o origem ${JSON.stringify(saldoItem)}.`)
-            return
+            return            
         }
 
-        const documento = new Documento(srv)
+        const documento = createDocumento(this.srv)
 
         documento.setDadosCabecalho({
-            PostingDate: this.getPostingDate(), // TODO Definir
+            PostingDate: this.getPostingDate(),
             CompanyCode: item.CompanyCode,
         })
 
@@ -224,13 +237,15 @@ class RateioProcess{
                 GLAccount: destino.contaDestino_GLAccount,
                 CostCenter: destino.centroCustoDestino_CostCenter,
                 DebitCreditCode: this.getItemDebitCreditCode(saldoItem, destino),
-                DocumentItemText: `Rateio ${this.getPeriodoFim}`,
+                DocumentItemText: `Rateio ${this.getPeriodoFim()}`,
                 // TODO Passar o valor do item.atribuicao e ver como enviar pela API SOAP
             })
         }
 
         // Geração do documento utilizando a API SOAP.
         await documento.post()
+
+        await this.registrarDocumento(item, documento)
 
     }
 
@@ -275,7 +290,10 @@ class RateioProcess{
         await this.selectSaldos(itensAProcessar)
 
         // Por cada item processa el item
-        await Promise.all(itensAProcessar.map( item => this.processarItem(item) ))
+        // TODO Ver se paralelizar
+        // await Promise.all(itensAProcessar.map( item => this.processarItem(item) ))
+        for (const item of itensAProcessar)
+            await this.processarItem(item)
 
     }
 

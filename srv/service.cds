@@ -49,36 +49,9 @@ service ConfigService @(requires_:'config') {
     // Para uso interno na logica de processamento (é necessario por problemas com sqlite)
 
     @readonly
-    entity EtapasExecucoes
-        as 
-        SELECT 
-            key execucao.ID as execucao_ID,
-            key configuracaoOrigem.ID as configuracaoOrigem_ID,
-            configuracaoOrigem.etapasProcesso.sequencia as sequencia,
-            configuracaoOrigem.empresa_CompanyCode as CompanyCode,
-            configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
-            configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
-            configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
-            configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter
-            // documentosGerados: redirected to Documentos
-        from rateio.ItensExecucoes
-        order by configuracaoOrigem.etapasProcesso.sequencia;
+    entity EtapasExecucoes as projection on rateio.EtapasExecucoes;
 
     @readonly
-    entity DocumentosPorOrigem as
-        select
-            key CompanyCode,
-            key AccountingDocument,
-            key FiscalYear,
-            moeda,
-            cancelado,
-            itemExecutado.configuracaoOrigem.etapasProcesso.sequencia as sequencia,
-            // itemExecutado.configuracaoOrigem.empresa_CompanyCode as CompanyCode, // o valor é o mesmo que o da chave
-            itemExecutado.configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
-            itemExecutado.configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
-            itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
-            itemExecutado.configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter,
-            itemExecutado: redirected to ItensExecucoes
-        from rateio.Documentos;
+    entity DocumentosPorOrigem as projection on rateio.DocumentosPorOrigem;
 
 }

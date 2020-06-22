@@ -2,14 +2,17 @@ class Documento{
 
     constructor(srv){
         this.srv = srv
+        this.itens = []
     }
 
     setDadosCabecalho(dados) {
         // TODO Implementar
+        this.header = dados
     }
 
     addItem(dados){
         // TODO Implementar
+        this.itens.push(dados)
     }
 
     async post(){
@@ -17,3 +20,5 @@ class Documento{
     }
 
 }
+
+module.exports = Documento
