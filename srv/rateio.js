@@ -90,7 +90,7 @@ class RateioProcess{
 
     compareSaldosEntry(a, b){
 
-        const compare = (a,b,field) => {
+        const compare = (a,b) => {
             if ( a < b )
                 return -1
             if ( a > b )
@@ -197,12 +197,12 @@ class RateioProcess{
     getItemAmountInTransactionCurrency(saldoItem, destino){
         return Math.abs(saldoItem.AmountInCompanyCodeCurrency * destino.porcentagemRateio / 100)
     }
-    
+
     async criarDocumento(item, saldoItem){
 
         const destinos = await this.getConfigDestinos(item.configuracaoOrigem_ID)
 
-        const documentoExistente = await this.validarSeDocumentoExiste(saldoItem)
+        const documentoExistente = await this.getDocumentoSeJaExiste(saldoItem)
         if (documentoExistente){
             const { CompanyCode, AccountingDocument, FiscalYear } = documentoExistente
             // TODO implementar
@@ -241,6 +241,7 @@ class RateioProcess{
         if (index < 0){
             // TODO implementar
             //this.logItemExecucao.warning(item, `Saldo não encontrado para o item ${JSON.stringify(item)}.`)
+            return
         }
 
         let from = index
@@ -250,11 +251,11 @@ class RateioProcess{
             (this.compareSaldosEntry(this.saldosEtapaProcessada[from-1],this.saldosEtapaProcessada[from]) == 0))
             from -= 1
 
-        while ((to < this.saldosEtapaProcessada.length) && 
+        while ((to < (this.saldosEtapaProcessada.length-1)) && 
             (this.compareSaldosEntry(this.saldosEtapaProcessada[to],this.saldosEtapaProcessada[to+1]) == 0))
             to += 1
 
-        for (const i = from; i <= to; i++){
+        for (let i = from; i <= to; i++){
             const saldoItem = this.saldosEtapaProcessada[i]
             try {
                 await this.criarDocumento(item, saldoItem)
