@@ -49,20 +49,22 @@ class ConfigDestinosImplementation{
                     and:[
                         { origem_ID: origem_ID },
                         { tipoOperacao_operacao: tipoOperacao_operacao },
+                        {
+                            // Excluimos o registro existente
+                            or: [
+                                { contaDestino_ChartOfAccounts: { '!=': contaDestino_ChartOfAccounts } },
+                                { contaDestino_GLAccount: { '!=': contaDestino_GLAccount } },
+                                { centroCustoDestino_ControllingArea: { '!=': centroCustoDestino_ControllingArea } },
+                                { centroCustoDestino_CostCenter: { '!=': centroCustoDestino_CostCenter } },
+                                { atribuicao: { '!=': atribuicao } },
+                            ]
+                        }
                     ]
                 })
         )
 
         // Adiciona as porcentagens junto com o novo destino.
         const porcentagemTotal = result
-            // TODO Ver de excluir o registro existente a nivel da query.
-            .filter( o => 
-                !( o.contaDestino_ChartOfAccounts == contaDestino_ChartOfAccounts &&
-                o.contaDestino_GLAccount == contaDestino_GLAccount &&
-                o.centroCustoDestino_ControllingArea == centroCustoDestino_ControllingArea &&
-                o.centroCustoDestino_CostCenter == centroCustoDestino_CostCenter &&
-                o.atribuicao == atribuicao )
-            )
             .reduce( (total, o) => total + o.porcentagemRateio, Number(porcentagemRateio))
 
         // Se for maior a 100, então temos um erro
