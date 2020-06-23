@@ -13,11 +13,11 @@ class RateioProcess{
 
     async getEtapas(){
 
-        const { EtapasExecucoes } = this.srv.entities
+        const { ConfigOrigensExecucoes } = this.srv.entities
 
         const etapas = await cds.transaction(this.req).run(
             SELECT(['sequencia'])
-                .from(EtapasExecucoes)
+                .from(ConfigOrigensExecucoes)
                 .where('execucao_ID = ', this.execucoes_ID)
                 .groupBy('sequencia')
                 .orderBy('sequencia')
@@ -55,11 +55,11 @@ class RateioProcess{
 
     async getItensExecucao(etapa){
 
-        const { EtapasExecucoes } = this.srv.entities
+        const { ConfigOrigensExecucoes } = this.srv.entities
 
         return cds.transaction(this.req).run(
             SELECT
-                .from(EtapasExecucoes)
+                .from(ConfigOrigensExecucoes)
                 .where('execucao_ID = ', this.execucoes_ID)
                 .and('sequencia =', etapa.sequencia)
         )
@@ -152,7 +152,7 @@ class RateioProcess{
 
     async getDocumentoSeJaExiste(item, saldoItem){
         
-        const { DocumentosPorOrigem } = this.srv.entities
+        const { ConfigOrigensDocumentos } = this.srv.entities
 
         const filter = {
             and: [
@@ -167,7 +167,7 @@ class RateioProcess{
 
         const documento = await cds.transaction(this.req).run(
             SELECT.one
-                .from(DocumentosPorOrigem)
+                .from(ConfigOrigensDocumentos)
                 .where(filter)
                 .and({ cancelado: false })
                 .and({ moeda: saldoItem.CompanyCodeCurrency })

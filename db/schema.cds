@@ -173,7 +173,7 @@ entity ItensExecucoesLogs: log{
 }
 
 @readonly
-entity EtapasExecucoes
+entity ConfigOrigensExecucoes
     as 
     SELECT 
         key execucao.ID as execucao_ID,
@@ -189,7 +189,7 @@ entity EtapasExecucoes
     order by configuracaoOrigem.etapasProcesso.sequencia;
 
 @readonly
-entity DocumentosPorOrigem as
+entity ConfigOrigensDocumentos as
     select
         key CompanyCode,
         key AccountingDocument,

@@ -49,9 +49,9 @@ service ConfigService @(requires_:'config') {
     // Para uso interno na logica de processamento (é necessario por problemas com sqlite)
 
     @readonly
-    entity EtapasExecucoes as projection on rateio.EtapasExecucoes;
+    entity ConfigOrigensExecucoes as projection on rateio.ConfigOrigensExecucoes;
 
     @readonly
-    entity DocumentosPorOrigem as projection on rateio.DocumentosPorOrigem;
+    entity ConfigOrigensDocumentos as projection on rateio.ConfigOrigensDocumentos;
 
 }
