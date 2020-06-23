@@ -1,4 +1,4 @@
-const Documento = require("./documento")
+const { Documento } = require("./documento")
 
 function createDocumento(srv){
     return new Documento(srv)

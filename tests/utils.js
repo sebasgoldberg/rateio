@@ -300,6 +300,16 @@ class TestUtils{
 
     }
 
+    cancelarDocumento(documento){
+        const key = [
+            'CompanyCode', 'AccountingDocument', 'FiscalYear'
+        ].map(fieldname => `${fieldname}='${documento[fieldname]}'`).join(',')
+        return this.request
+            .post(`/config/Documentos(${key})/ConfigService.cancelar`) 
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+    }
+
     executarExecucao(ID){
         return this.request
             .post(`/config/Execucoes(${ID})/ConfigService.executar`) 

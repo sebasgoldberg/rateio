@@ -151,7 +151,7 @@ class RateioProcess{
     }
 
     async getDocumentoSeJaExiste(item, saldoItem){
-
+        
         const { DocumentosPorOrigem } = this.srv.entities
 
         const filter = {
@@ -169,8 +169,10 @@ class RateioProcess{
             SELECT.one
                 .from(DocumentosPorOrigem)
                 .where(filter)
-                .and( 'cancelado =', false)
-                .and( 'moeda =', saldoItem.CompanyCodeCurrency)
+                .and({ cancelado: false })
+                .and({ moeda: saldoItem.CompanyCodeCurrency })
+                .and({ periodo: this.execucao.periodo })
+                .and({ ano: this.execucao.ano })
             )
 
         return documento
@@ -195,13 +197,25 @@ class RateioProcess{
         return Math.abs(saldoItem.AmountInCompanyCodeCurrency * destino.porcentagemRateio / 100)
     }
 
-    async registrarDocumento(item, documento){
+    async registrarDocumento(item, documento, saldoItem){
+        
+        const { Documentos } = this.srv.entities
+
+        const entries = [
+            documento.CompanyCode, documento.AccountingDocument, documento.FiscalYear,
+            saldoItem.CompanyCodeCurrency, item.execucao_ID, item.configuracaoOrigem_ID
+        ]
+
         await cds.transaction(this.req).run(
             INSERT
                 .into(Documentos)
-                .columns('CompanyCode', 'AccountingDocument', 'FiscalYear', 'moeda', 'itemExecutado_execucao_ID', 'itemExecutado_configuracaoOrigem_ID')
-                .entries([documento.CompanyCode, documento.AccountingDocument, documento.FiscalYear, item.execucao_ID, item.configuracaoOrigem_ID])
+                .columns(
+                    'CompanyCode', 'AccountingDocument', 'FiscalYear', 'moeda', 
+                    'itemExecutado_execucao_ID', 'itemExecutado_configuracaoOrigem_ID'
+                    )
+                .entries(entries)
         )
+
     }
 
     getPostingDate(){
@@ -245,7 +259,7 @@ class RateioProcess{
         // Geração do documento utilizando a API SOAP.
         await documento.post()
 
-        await this.registrarDocumento(item, documento)
+        await this.registrarDocumento(item, documento, saldoItem)
 
     }
 
@@ -283,7 +297,7 @@ class RateioProcess{
     }
 
     async processEtapa(etapa){
-
+        
         // Obtiene los itens de la etapa a ser processados
         const itensAProcessar = await this.getItensExecucao(etapa)
 

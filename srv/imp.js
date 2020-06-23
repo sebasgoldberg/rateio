@@ -20,6 +20,7 @@ function ODataV2toODataV4Date(value){
 const { ConfigOrigensImplementation } = require("./")
 const { ConfigDestinosImplementation } = require("./")
 const { ExecucoesImplementation } = require("./")
+const { DocumentosImplementation } = require('./documento')
 
 class ImplementationRegistration{
 
@@ -33,6 +34,10 @@ class ImplementationRegistration{
 
         const execucoesImp = new ExecucoesImplementation(this)
         execucoesImp.registerHandles()
+
+        const documentosImp = new DocumentosImplementation(this)
+        documentosImp.registerHandles()
+
     }
 
     async registerImpForExternalModels(){

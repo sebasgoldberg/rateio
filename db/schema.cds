@@ -99,8 +99,8 @@ entity StatusExecucoes: sap.common.CodeList{
     key status: StatusExecucao;
 }
 
-// TODO A busca dos saldos base para criação dos documentos deve ser realizado por etapa.
 // TODO Não deve ser possível realizar uma mesma execução em paralello.
+// TODO Quando uma etapa falhar, então não deve continuar com as seguintes etapas.
 entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
@@ -121,12 +121,10 @@ entity Execucoes: cuid, managed{
 
 }
 
-// TODO O processamento deve ser realizado seguindo a configuracaoOrigem.etapasProcesso.sequencia
 @autoexpose
 @readonly
 entity ItensExecucoes: managed {
     key execucao: Association to one Execucoes not null;
-    // TODO só poderão ser adicionadas configurações onde execucao.DataConfiguracoes esteja dentro do periodo de validez.
     key configuracaoOrigem: Association to one ConfigOrigens;
 
     documentosGerados: Association to one Documentos; // Um por configuracaoOrigem/moeda
@@ -135,14 +133,6 @@ entity ItensExecucoes: managed {
 
 type Moeda: String(3);
 
-// TODO Validar não seja possível a duplicidade de rateios:
-// Um documento X poderá ser criado se não existir outro documento Y onde:
-// Y.itemExecutado.configuracaoOrigem.equivalenteA(X.itemExecutado.configuracaoOrigem) e
-// Y.itemExecutado.execucao.mesmoPeriodo(X.itemExecutado.execucao) e
-// Y.modeda == X.moeda
-// not Y.cancelado
-// equivalenteA: Compara empresa, conta e centro de custo.
-// mesmoPeriodo: Compara o mes e o ano.
 // TODO Quando um documento for cancelado, deixar registrado no log associado ao item.
 @autoexpose
 entity Documentos: managed {
@@ -211,5 +201,7 @@ entity DocumentosPorOrigem as
         itemExecutado.configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
         itemExecutado.configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
         itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
-        itemExecutado.configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter
+        itemExecutado.configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter,
+        itemExecutado.execucao.ano,
+        itemExecutado.execucao.periodo
     from rateio.Documentos;

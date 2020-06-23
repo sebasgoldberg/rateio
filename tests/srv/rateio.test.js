@@ -1,7 +1,7 @@
 const { TestUtils, constants } = require('../utils');
 
 const createDocumento = require('../../srv/documento-factory');
-const Documento = require('../../srv/documento');
+const { Documento } = require('../../srv/documento');
 jest.mock('../../srv/documento-factory');
 
 const createRateioProcess = require('../../srv/rateio-factory');
@@ -605,52 +605,375 @@ describe('Processo: Rateio', () => {
 
     expect(actualDocumentsData).toEqual(expectedDocumentsData)
 
-    // const [ origemData3, origemData1, origemData2 ] = origensData.map( o => ({
-    //   sequencia: o.etapasProcesso_sequencia,
-    //   CostCenter: o.centroCustoOrigem_CostCenter,
-    // }))
+  })
 
-    // const order = (a,b) =>
-    //   a.CostCenter < b.CostCenter ? -1 : 
-    //   a.CostCenter > b.CostCenter ? 1 : 
-    //   a.CompanyCodeCurrency < b.CompanyCodeCurrency ? -1 :
-    //   a.CompanyCodeCurrency > b.CompanyCodeCurrency ? 1 :
-    //   0
+  it('Não é possível duplicidade de documentos de rateios: mesmo periodo, origem identica.', async () => {
 
-    // // Verificamos que criarDocumento seja chamado com os saldos
-    // // esperados da primeira etapa.
-    // expect([
-    //   rateioProcess.criarDocumento.mock.calls[0][1],
-    //   rateioProcess.criarDocumento.mock.calls[1][1],
-    //   rateioProcess.criarDocumento.mock.calls[2][1],
-    //   ].sort(order)).toEqual(
-    //     expect.arrayContaining([
-    //       expect.objectContaining(saldos[constants.SEQUENCIA_1][0]),
-    //       expect.objectContaining(saldos[constants.SEQUENCIA_1][1]),
-    //       expect.objectContaining(saldos[constants.SEQUENCIA_1][2]),
-    //     ].sort(order))
-    //   );
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
 
-    // // Verificamos que criarDocumento seja chamado com os saldos
-    // // esperados da segunda etapa.
-    // expect([
-    //   rateioProcess.criarDocumento.mock.calls[3][1],
-    //   rateioProcess.criarDocumento.mock.calls[4][1],
-    //   ].sort(order)).toEqual(
-    //     expect.arrayContaining([
-    //       expect.objectContaining(saldos[constants.SEQUENCIA_3][0]),
-    //       expect.objectContaining(saldos[constants.SEQUENCIA_3][1]),
-    //     ].sort(order))
-    //   );    
+    const DATA_EXECUCAO_PERIODO_3 = "2020-07-19T00:00:00Z"
+    const DATA_EXECUCAO_PERIODO_4 = "2020-07-21T00:00:00Z"
 
-    // // Verificamos que em cada chamada a criarDocumento o item se
-    // // corresponda com o saldo.
-    // rateioProcess.criarDocumento.mock.calls
-    // .map( parametersCall => ({
-    //   item: parametersCall[0],
-    //   saldoItem: parametersCall[1]
-    // }))
-    // .forEach( ({item, saldoItem}) => expect(item.CostCenter).toBe(saldoItem.CostCenter))
+    const origensData = [
+      {
+        "validFrom": constants.PERIODO_3.VALID_FROM,
+        "validTo": constants.PERIODO_3.VALID_TO,
+      },
+      {
+        "validFrom": constants.PERIODO_4.VALID_FROM,
+        "validTo": constants.PERIODO_4.VALID_TO,
+      },
+    ]
+
+    const saldos = {
+      [constants.SEQUENCIA_1]: [
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_1,
+          AmountInCompanyCodeCurrency: -202,
+          CompanyCodeCurrency: 'USD',
+        },
+      ],
+    }
+
+    for (const origemData of origensData){
+
+      const response1 = await this.utils.createOrigem(origemData).expect(201)
+      
+      const origemID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.createDestino({
+        origem_ID: origemID,
+      })
+        .expect(201)
+  
+      const response3 = await this.utils.createDestino({
+        origem_ID: origemID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+      })
+        .expect(201)
+  
+      const response4 = await this.utils.activateOrigem(origemID)
+        .expect(204)
+    }
+
+    const processosRateio = []
+
+    createRateioProcess.mockImplementation( (ID, srv, req) => {
+      const rateioProcess = new RateioProcess(ID, srv, req)
+      
+      rateioProcess.selectSaldos = jest.fn()
+      rateioProcess.selectSaldos
+        .mockImplementation(function() {
+          this.saldosEtapaProcessada = saldos[constants.SEQUENCIA_1]
+          return Promise.resolve()
+        })
+      
+      const getDocumentoSeJaExiste = rateioProcess.getDocumentoSeJaExiste
+      
+      rateioProcess.getDocumentoSeJaExiste = jest.fn()
+      rateioProcess.getDocumentoSeJaExiste
+        .mockImplementation(function(item, saldoItem){
+          return getDocumentoSeJaExiste.call(this, item, saldoItem)
+        })
+      
+      processosRateio.push(rateioProcess)
+      return rateioProcess
+    })
+
+    let AccountingDocument = 0
+    let documentos = []
+
+    createDocumento.mockImplementation( srv => {
+      const documento = new Documento(srv)
+      documento.setDadosCabecalho = jest.fn()
+      documento.addItem = jest.fn()
+      documento.post = jest.fn()
+      documento.post.mockImplementation(function(){
+        this.CompanyCode = constants.COMPANY_CODE
+        AccountingDocument += 1
+        this.AccountingDocument = AccountingDocument.toString()
+        this.FiscalYear = '2020'
+        return Promise.resolve()
+      })
+      documentos.push(documento)
+      return documento
+    })
+
+    const execucoesIDs = []
+
+    // Criamos as execuções e executamos.
+    for (const dataConfiguracoes of [DATA_EXECUCAO_PERIODO_3, DATA_EXECUCAO_PERIODO_4]){
+
+      const response1 = await this.utils.createExecucao(
+        { dataConfiguracoes: dataConfiguracoes }
+      )
+        .expect(201)
+  
+      const execucaoID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.executarExecucao(execucaoID)
+        .expect(204)
+  
+      execucoesIDs.push(execucaoID)
+    }
+
+    // Verificamos que realmente só foi criado um unico documento em lugar de dois.
+    expect(documentos.length).toBe(1);
+
+    // Verificamos que a segunda chamada a getDocumentoSeJaExiste retorna
+    // o documento criado na primeira execução.
+
+    const documentoExistente = await processosRateio[1].getDocumentoSeJaExiste.mock.results[0].value
+    expect(documentoExistente.CompanyCode).toBe(documentos[0].CompanyCode)
+    expect(documentoExistente.AccountingDocument).toBe(documentos[0].AccountingDocument)
+    expect(documentoExistente.FiscalYear).toBe(documentos[0].FiscalYear)
+
+  })
+
+  it('É possível duplicidade de documentos de rateios: distinto periodo, origem identica.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const DATA_EXECUCAO_PERIODO_3 = "2020-06-15T00:00:00Z"
+    const DATA_EXECUCAO_PERIODO_4 = "2020-07-21T00:00:00Z"
+
+    const origensData = [
+      {
+        "validFrom": constants.PERIODO_3.VALID_FROM,
+        "validTo": constants.PERIODO_3.VALID_TO,
+      },
+      {
+        "validFrom": constants.PERIODO_4.VALID_FROM,
+        "validTo": constants.PERIODO_4.VALID_TO,
+      },
+    ]
+
+    const saldos = {
+      [constants.SEQUENCIA_1]: [
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_1,
+          AmountInCompanyCodeCurrency: -202,
+          CompanyCodeCurrency: 'USD',
+        },
+      ],
+    }
+
+    // Criação da configuração
+    for (const origemData of origensData){
+
+      const response1 = await this.utils.createOrigem(origemData).expect(201)
+      
+      const origemID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.createDestino({
+        origem_ID: origemID,
+      })
+        .expect(201)
+  
+      const response3 = await this.utils.createDestino({
+        origem_ID: origemID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+      })
+        .expect(201)
+  
+      const response4 = await this.utils.activateOrigem(origemID)
+        .expect(204)
+    }
+
+    createRateioProcess.mockImplementation( (ID, srv, req) => {
+      const rateioProcess = new RateioProcess(ID, srv, req)
+      
+      rateioProcess.selectSaldos = jest.fn()
+      rateioProcess.selectSaldos
+        .mockImplementation(function() {
+          this.saldosEtapaProcessada = saldos[constants.SEQUENCIA_1]
+          return Promise.resolve()
+        })
+      
+      return rateioProcess
+    })
+
+    let AccountingDocument = 0
+    let documentos = []
+
+    createDocumento.mockImplementation( srv => {
+      const documento = new Documento(srv)
+      documento.setDadosCabecalho = jest.fn()
+      documento.addItem = jest.fn()
+      documento.post = jest.fn()
+      documento.post.mockImplementation(function(){
+        this.CompanyCode = constants.COMPANY_CODE
+        AccountingDocument += 1
+        this.AccountingDocument = AccountingDocument.toString()
+        this.FiscalYear = '2020'
+        return Promise.resolve()
+      })
+      documentos.push(documento)
+      return documento
+    })
+
+    const execucoesIDs = []
+
+    // Criamos as execuções e executamos.
+    for (const dadosExecucao of [
+      {
+        dataConfiguracoes: DATA_EXECUCAO_PERIODO_3,
+        periodo: '006'
+      },
+      {
+        dataConfiguracoes: DATA_EXECUCAO_PERIODO_4,
+        periodo: '007'
+      }
+    ]){
+
+      const response1 = await this.utils.createExecucao(dadosExecucao)
+        .expect(201)
+  
+      const execucaoID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.executarExecucao(execucaoID)
+        .expect(204)
+  
+      execucoesIDs.push(execucaoID)
+    }
+
+    expect(documentos.length).toBe(2);
+
+  })
+
+  it('É possível duplicidade de documentos de rateios: periodo identico, origem identica, mas documento cancelado.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const DATA_EXECUCAO_PERIODO_3 = "2020-07-19T00:00:00Z"
+    const DATA_EXECUCAO_PERIODO_4 = "2020-07-21T00:00:00Z"
+
+    const origensData = [
+      {
+        "validFrom": constants.PERIODO_3.VALID_FROM,
+        "validTo": constants.PERIODO_3.VALID_TO,
+      },
+      {
+        "validFrom": constants.PERIODO_4.VALID_FROM,
+        "validTo": constants.PERIODO_4.VALID_TO,
+      },
+    ]
+
+    const saldos = {
+      [constants.SEQUENCIA_1]: [
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_1,
+          AmountInCompanyCodeCurrency: -202,
+          CompanyCodeCurrency: 'USD',
+        },
+      ],
+    }
+
+    for (const origemData of origensData){
+
+      const response1 = await this.utils.createOrigem(origemData).expect(201)
+      
+      const origemID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.createDestino({
+        origem_ID: origemID,
+      })
+        .expect(201)
+  
+      const response3 = await this.utils.createDestino({
+        origem_ID: origemID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+      })
+        .expect(201)
+  
+      const response4 = await this.utils.activateOrigem(origemID)
+        .expect(204)
+    }
+
+    const processosRateio = []
+
+    createRateioProcess.mockImplementation( (ID, srv, req) => {
+      const rateioProcess = new RateioProcess(ID, srv, req)
+      
+      rateioProcess.selectSaldos = jest.fn()
+      rateioProcess.selectSaldos
+        .mockImplementation(function() {
+          this.saldosEtapaProcessada = saldos[constants.SEQUENCIA_1]
+          return Promise.resolve()
+        })
+      
+      const getDocumentoSeJaExiste = rateioProcess.getDocumentoSeJaExiste
+      
+      rateioProcess.getDocumentoSeJaExiste = jest.fn()
+      rateioProcess.getDocumentoSeJaExiste
+        .mockImplementation(function(item, saldoItem){
+          return getDocumentoSeJaExiste.call(this, item, saldoItem)
+        })
+      
+      processosRateio.push(rateioProcess)
+      return rateioProcess
+    })
+
+    let AccountingDocument = 0
+    let documentos = []
+
+    createDocumento.mockImplementation( srv => {
+      const documento = new Documento(srv)
+      documento.setDadosCabecalho = jest.fn()
+      documento.addItem = jest.fn()
+      documento.post = jest.fn()
+      documento.post.mockImplementation(function(){
+        this.CompanyCode = constants.COMPANY_CODE
+        AccountingDocument += 1
+        this.AccountingDocument = AccountingDocument.toString()
+        this.FiscalYear = '2020'
+        return Promise.resolve()
+      })
+      documentos.push(documento)
+      return documento
+    })
+
+    const execucoesIDs = []
+
+    // Criamos as execuções e executamos.
+    for (const dataConfiguracoes of [DATA_EXECUCAO_PERIODO_3, DATA_EXECUCAO_PERIODO_4]){
+
+      const response1 = await this.utils.createExecucao(
+        { dataConfiguracoes: dataConfiguracoes }
+      )
+        .expect(201)
+  
+      const execucaoID = JSON.parse(response1.text).ID
+
+      execucoesIDs.push(execucaoID)
+    }
+
+    const response10 = await this.utils.executarExecucao(execucoesIDs[0])
+      .expect(204)
+
+    const response11 = await this.utils.cancelarDocumento(documentos[0])
+      .expect(204)
+
+    const response12 = await this.utils.executarExecucao(execucoesIDs[1])
+      .expect(204)
+
+    // Verificamos que realmente só foi criado um unico documento em lugar de dois.
+    expect(documentos.length).toBe(2);
 
   })
 
