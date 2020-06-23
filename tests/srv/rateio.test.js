@@ -617,6 +617,7 @@ describe('Processo: Rateio', () => {
             CostCenter: constants.COST_CENTER_1,
             DebitCreditCode: 'H',
             DocumentItemText: `Rateio 006/2020`,
+            AssignmentReference: '1',
           }),
           expect.objectContaining({
             AmountInTransactionCurrency: 40.4,
@@ -625,6 +626,7 @@ describe('Processo: Rateio', () => {
             CostCenter: constants.COST_CENTER_1,
             DebitCreditCode: 'S',
             DocumentItemText: `Rateio 006/2020`,
+            AssignmentReference: '1',
           })
         ])
       }),
@@ -639,6 +641,7 @@ describe('Processo: Rateio', () => {
             CostCenter: constants.COST_CENTER_1,
             DebitCreditCode: 'S',
             DocumentItemText: `Rateio 006/2020`,
+            AssignmentReference: '1',
           }),
           expect.objectContaining({
             AmountInTransactionCurrency: 80.8,
@@ -647,6 +650,7 @@ describe('Processo: Rateio', () => {
             CostCenter: constants.COST_CENTER_1,
             DebitCreditCode: 'H',
             DocumentItemText: `Rateio 006/2020`,
+            AssignmentReference: '1',
           })
         ])
       }),
@@ -661,6 +665,7 @@ describe('Processo: Rateio', () => {
             CostCenter: constants.COST_CENTER_1,
             DebitCreditCode: 'H',
             DocumentItemText: `Rateio 006/2020`,
+            AssignmentReference: '1',
           }),
           expect.objectContaining({
             AmountInTransactionCurrency: 121.2,
@@ -669,6 +674,7 @@ describe('Processo: Rateio', () => {
             CostCenter: constants.COST_CENTER_1,
             DebitCreditCode: 'S',
             DocumentItemText: `Rateio 006/2020`,
+            AssignmentReference: '1',
           })
         ])
       }),

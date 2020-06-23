@@ -278,7 +278,7 @@ class RateioProcess{
                 CostCenter: destino.centroCustoDestino_CostCenter,
                 DebitCreditCode: this.getItemDebitCreditCode(saldoItem, destino),
                 DocumentItemText: `Rateio ${this.getPeriodoFim()}`,
-                // TODO Passar o valor do item.atribuicao e ver como enviar pela API SOAP
+                AssignmentReference: destino.atribuicao,
             })
         }
 
