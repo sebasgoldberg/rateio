@@ -21,14 +21,26 @@ class ExecucoesImplementation{
         const rateio = createRateioProcess(ID, this.srv, req)
         let status = STATUS_EXECUCAO.FINALIZADO
 
+        let logPromise;
         try{
             await rateio.execute()
+            logPromise = rateio.log({
+                messageType: 'I',
+                message: `Execução realizada com sucesso.`
+            })
         }catch(e){
+            logPromise = rateio.log({
+                messageType: 'E',
+                message: `Aconteceu o seguinte erro: '${String(e)}'.`
+            })
             status = STATUS_EXECUCAO.CANCELADO
             // req.error(400, e.toString())
         }
 
-        await this.finalizarExecucao(ID, status, req)
+        await Promise.all([
+            logPromise,
+            this.finalizarExecucao(ID, status, req)
+        ])
 
     }
 

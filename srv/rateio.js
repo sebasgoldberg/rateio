@@ -41,6 +41,23 @@ class RateioProcess{
 
     }
 
+    async log(data){
+        
+        const { ExecucoesLogs } = this.srv.entities
+
+        const _data = {
+            ...data,
+            ...{
+                execucao_ID: this.execucoes_ID,
+            }
+        }
+
+        await cds.transaction(this.req).run(
+            INSERT(_data)
+                .into(ExecucoesLogs)
+        )
+    }
+
     async execute(){
 
         this.execucao = await this.getDadosExecucao()
@@ -48,7 +65,16 @@ class RateioProcess{
         const etapas = await this.getEtapas()
 
         for (const etapa of etapas){
-            await this.processEtapa(etapa)
+            try {
+                await this.processEtapa(etapa)   
+            } catch (error) {
+                await this.log({
+                    messageType: 'E',
+                    message: `Erro ao processar a etapa ${etapa.sequencia}. `+
+                        `É finalizada a execução e não serão processadas etapas subsequentes.`
+                })
+                throw error
+            }
         }
 
     }

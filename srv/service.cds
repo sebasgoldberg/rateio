@@ -46,6 +46,10 @@ service ConfigService @(requires_:'config') {
             action cancelar();
         }
 
+    entity ExecucoesLogs as projection on rateio.ExecucoesLogs;
+    entity ItensExecucoesLogs as projection on rateio.ItensExecucoesLogs
+        { *, item: redirected to ItensExecucoes };
+
     // Para uso interno na logica de processamento (é necessario por problemas com sqlite)
 
     @readonly

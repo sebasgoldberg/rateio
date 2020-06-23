@@ -100,7 +100,6 @@ entity StatusExecucoes: sap.common.CodeList{
 }
 
 // TODO Não deve ser possível realizar uma mesma execução em paralello.
-// TODO Quando uma etapa falhar, então não deve continuar com as seguintes etapas.
 entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
@@ -154,7 +153,7 @@ entity ItensDocumentos {
     configuracaoDestino: Association to one ConfigDestinos not null;
 }
 
-@insertonly
+@readonly
 @autoexpose
 aspect log: cuid, managed{
     messageType: String(1) not null;
@@ -162,12 +161,10 @@ aspect log: cuid, managed{
     message: String(255) not null;
 }
 
-@autoexpose
 entity ExecucoesLogs: log{
     execucao: Association to Execucoes;
 }
 
-@autoexpose
 entity ItensExecucoesLogs: log{
     item: Association to ItensExecucoes;
 }

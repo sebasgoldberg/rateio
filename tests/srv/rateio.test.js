@@ -100,6 +100,101 @@ describe('Processo: Rateio', () => {
 
   })
 
+  it('Quando uma etapa falhar, não deve continuar com as seguintes etapas.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    // Criamos as configurações
+
+    const origensData = [
+      {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      },
+      {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      },
+      {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_2,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      }
+    ]
+
+    for (const origemData of origensData){
+
+      const response1 = await this.utils.createOrigem(origemData).expect(201)
+      
+      const origemID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.createDestino({
+        origem_ID: origemID,
+      })
+        .expect(201)
+  
+      const response3 = await this.utils.createDestino({
+        origem_ID: origemID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+      })
+        .expect(201)
+  
+      const response4 = await this.utils.activateOrigem(origemID)
+        .expect(204)
+    }
+
+    let rateioProcess;
+
+    createRateioProcess.mockImplementationOnce( (ID, srv, req) => {
+      rateioProcess = new RateioProcess(ID, srv, req)
+      rateioProcess.processEtapa = jest.fn()
+      rateioProcess.processEtapa
+        .mockImplementationOnce(() => Promise.resolve())
+        .mockImplementationOnce(() => Promise.reject('12345'))
+      return rateioProcess
+    })
+
+    // Criamos a execução
+    const response9 = await this.utils.createExecucao(
+      { dataConfiguracoes: "2020-06-15T00:00:00Z" }
+    )
+      .expect(201)
+
+    const execucaoID = JSON.parse(response9.text).ID
+
+    const response10 = await this.utils.executarExecucao(execucaoID)
+      .expect(204)
+
+    expect(rateioProcess.processEtapa.mock.calls.length).toBe(2);
+    
+    expect(rateioProcess.processEtapa.mock.calls[0][0]).toEqual(
+      expect.objectContaining({ sequencia: constants.SEQUENCIA_1 }));
+
+    expect(rateioProcess.processEtapa.mock.calls[1][0]).toEqual(
+      expect.objectContaining({ sequencia: constants.SEQUENCIA_2 }));
+
+    response11 = await this.utils.getLogsExecucao(execucaoID)
+      .expect(200)
+
+    const logs = JSON.parse(response11.text).value
+
+    expect(logs)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ message: `Aconteceu o seguinte erro: '12345'.`}),
+          expect.objectContaining({ message: `Erro ao processar a etapa ${constants.SEQUENCIA_2}. `+
+            `É finalizada a execução e não serão processadas etapas subsequentes.`})
+        ]))
+
+
+  })
+
   it('O processamento de cada etapa, processa cada item conforme esperado.', async () => {
 
     await this.utils.deployAndServe()
