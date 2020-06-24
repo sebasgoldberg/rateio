@@ -1,7 +1,7 @@
 const cds = require('@sap/cds')
 const bs = require("binary-search");
 const createDocumento = require('./documento-factory');
-const Log = require('./log');
+const { Log, MESSAGE_TYPES } = require('./log');
 
 class RateioProcess{
 
@@ -57,22 +57,43 @@ class RateioProcess{
 
     async execute(){
 
+        await this.log({
+            messageType: MESSAGE_TYPES.DEBUG,
+            message: `Processo de rateio iniciado.`
+        })
+
         this.execucao = await this.getDadosExecucao()
 
         const etapas = await this.getEtapas()
 
         for (const etapa of etapas){
+
             try {
+
                 await this.processEtapa(etapa)   
+
             } catch (error) {
+
                 await this.log({
-                    messageType: 'E',
+                    messageType: MESSAGE_TYPES.ERROR,
                     message: `Erro ao processar a etapa ${etapa.sequencia}. `+
                         `É finalizada a execução e não serão processadas etapas subsequentes.`
                 })
+
+                await this.log({
+                    messageType: MESSAGE_TYPES.DEBUG,
+                    message: `Processo de rateio finalizado.`
+                })        
+
                 throw error
             }
+
         }
+
+        await this.log({
+            messageType: MESSAGE_TYPES.DEBUG,
+            message: `Processo de rateio finalizado.`
+        })
 
     }
 
@@ -256,7 +277,7 @@ class RateioProcess{
         if (documentoExistente){
             const { CompanyCode, AccountingDocument, FiscalYear } = documentoExistente
             await this.logItem(item, {
-                messageType: 'W',
+                messageType: MESSAGE_TYPES.WARNING,
                 message: `Documento ${CompanyCode} ${AccountingDocument} ${FiscalYear} já gerado para o origem ${JSON.stringify(saldoItem)}.`
             })
             return            
@@ -284,7 +305,17 @@ class RateioProcess{
         // Geração do documento utilizando a API SOAP.
         await documento.post()
 
-        await this.registrarDocumento(item, documento, saldoItem)
+        const { CompanyCode, AccountingDocument, FiscalYear } = documento
+
+        await Promise.all([
+            this.registrarDocumento(item, documento, saldoItem),
+            await this.logItem(item, {
+                messageType: MESSAGE_TYPES.INFO,
+                message: `Documento criado com sucesso ${CompanyCode} ${AccountingDocument} ${FiscalYear}.`
+            })
+        ])
+
+
 
     }
 
@@ -295,7 +326,7 @@ class RateioProcess{
         if (index < 0){
 
             await this.logItem(item, {
-                messageType: 'W',
+                messageType: MESSAGE_TYPES.WARNING,
                 message: `Saldo não encontrado para o item ${JSON.stringify(item)}.`
             })
             return
@@ -318,7 +349,7 @@ class RateioProcess{
                 await this.criarDocumento(item, saldoItem)
             } catch (error) {
                 await this.logItem(item, {
-                    messageType: 'E',
+                    messageType: MESSAGE_TYPES.ERROR,
                     message: `Aconteceu um erro ao tentar criar o documento para o saldo ${JSON.stringify(saldoItem)}.`
                 })
                 throw error
@@ -328,18 +359,66 @@ class RateioProcess{
     }
 
     async processEtapa(etapa){
-        
-        // Obtiene los itens de la etapa a ser processados
-        const itensAProcessar = await this.getItensExecucao(etapa)
 
-        await this.selectSaldos(itensAProcessar)
+        await this.log({
+            messageType: MESSAGE_TYPES.DEBUG,
+            message: `Processamento da etapa ${etapa.sequencia} iniciado.`
+        })        
 
-        // Por cada item processa el item
-        // TODO Ver se paralelizar
-        // await Promise.all(itensAProcessar.map( item => this.processarItem(item) ))
-        for (const item of itensAProcessar)
-            await this.processarItem(item)
+        try {
 
+            // Obtiene los itens de la etapa a ser processados
+            const itensAProcessar = await this.getItensExecucao(etapa)
+
+            await this.selectSaldos(itensAProcessar)
+
+            // Por cada item processa el item
+            // TODO Ver se paralelizar
+            // await Promise.all(itensAProcessar.map( item => this.processarItem(item) ))
+            for (const item of itensAProcessar){
+
+                await this.log({
+                    messageType: MESSAGE_TYPES.DEBUG,
+                    message: `Inicio processamento do item ${JSON.stringify(item)}.`
+                })
+
+                try {
+
+                    await this.processarItem(item)
+
+                    await this.log({
+                        messageType: MESSAGE_TYPES.DEBUG,
+                        message: `Fim processamento do item ${JSON.stringify(item)}.`
+                    })
+    
+                } catch (error) {
+
+                    await this.log({
+                        messageType: MESSAGE_TYPES.DEBUG,
+                        message: `Fim processamento do item ${JSON.stringify(item)}.`
+                    })
+
+                    throw error
+                }
+
+            }
+
+            await this.log({
+                messageType: MESSAGE_TYPES.DEBUG,
+                message: `Processamento da etapa ${etapa.sequencia} finalizado.`
+            })        
+
+        } catch (error) {
+            
+            await this.log({
+                messageType: MESSAGE_TYPES.DEBUG,
+                message: `Processamento da etapa ${etapa.sequencia} finalizado.`
+            })
+            
+            throw error
+            
+        }
+    
     }
 
 }

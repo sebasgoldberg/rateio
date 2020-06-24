@@ -1,6 +1,13 @@
 const cds = require('@sap/cds')
 const LOG_MESSAGE_MAX_POSITION = 511
 
+const MESSAGE_TYPES = {
+    ERROR: 'E',
+    WARNING: 'W',
+    INFO: 'I',
+    DEBUG: 'D'
+}
+
 class Log{
 
     constructor(srv, req){
@@ -52,4 +59,7 @@ class Log{
     }
 }
 
-module.exports = Log
+module.exports = {
+    Log: Log,
+    MESSAGE_TYPES: MESSAGE_TYPES
+}

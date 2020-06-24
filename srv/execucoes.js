@@ -1,6 +1,7 @@
 const cds = require('@sap/cds')
 const ExternalData = require("./external-data")
 const createRateioProcess = require('./rateio-factory')
+const { MESSAGE_TYPES } = require('./log')
 
 const STATUS_EXECUCAO = {
     NAO_EXECUTADO: 'nao_executado',
@@ -25,12 +26,12 @@ class ExecucoesImplementation{
         try{
             await rateio.execute()
             logPromise = rateio.log({
-                messageType: 'I',
+                messageType: MESSAGE_TYPES.INFO,
                 message: `Execução realizada com sucesso.`
             })
         }catch(e){
             logPromise = rateio.log({
-                messageType: 'E',
+                messageType: MESSAGE_TYPES.ERROR,
                 message: `Aconteceu o seguinte erro: '${String(e)}'.`
             })
             status = STATUS_EXECUCAO.CANCELADO

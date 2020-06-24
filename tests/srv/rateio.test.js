@@ -8,6 +8,7 @@ const createRateioProcess = require('../../srv/rateio-factory');
 const RateioProcess = require('../../srv/rateio');
 jest.mock('../../srv/rateio-factory');
 
+const { MESSAGE_TYPES } = require('../../srv/log');
 
 describe('Processo: Rateio', () => {
 
@@ -844,7 +845,7 @@ describe('Processo: Rateio', () => {
       .toEqual(
         expect.arrayContaining([
           expect.objectContaining({
-            messageType: 'W',
+            messageType: MESSAGE_TYPES.WARNING,
             message: expect.stringMatching(new RegExp(`Documento ${CompanyCode} ${AccountingDocument} ${FiscalYear} já gerado para o origem .*`))
         }),
       ]))
@@ -1248,7 +1249,7 @@ describe('Processo: Rateio', () => {
       .toEqual(
         expect.arrayContaining([
           expect.objectContaining({ 
-            messageType: 'E',
+            messageType: MESSAGE_TYPES.ERROR,
             message: expect.stringMatching(new RegExp(`Aconteceu um erro ao tentar criar o documento para o saldo .*\\.`))
           }),
         ]))
@@ -1354,7 +1355,7 @@ describe('Processo: Rateio', () => {
       .toEqual(
         expect.arrayContaining([
           expect.objectContaining({ 
-            messageType: 'W',
+            messageType: MESSAGE_TYPES.WARNING,
             message: expect.stringMatching(new RegExp(`Saldo não encontrado para o item .*\\.`))
           }),
         ]))
@@ -1479,7 +1480,7 @@ describe('Processo: Rateio', () => {
       .toEqual(
         expect.arrayContaining([
           expect.objectContaining({ 
-            messageType: 'W',
+            messageType: MESSAGE_TYPES.WARNING,
             message: expect.stringMatching(new RegExp(`O seguinte documento foi cancelado: .*\\.`))
           }),
         ]))

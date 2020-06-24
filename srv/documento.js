@@ -1,4 +1,4 @@
-const Log = require("./log")
+const { Log, MESSAGE_TYPES } = require("./log")
 
 class Documento{
 
@@ -60,7 +60,7 @@ class DocumentosImplementation{
             log.logItemExecucao(
                 documento.execucao_ID, documento.configuracaoOrigem_ID,
                 {
-                    messageType: 'W',
+                    messageType: MESSAGE_TYPES.WARNING,
                     message: `O seguinte documento foi cancelado: ${CompanyCode} ${AccountingDocument} ${FiscalYear}.`
                 })
         ])
