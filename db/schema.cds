@@ -99,7 +99,6 @@ entity StatusExecucoes: sap.common.CodeList{
     key status: StatusExecucao;
 }
 
-// TODO Não deve ser possível realizar uma mesma execução em paralello.
 entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
@@ -107,7 +106,6 @@ entity Execucoes: cuid, managed{
     periodo: FiscalPeriod not null; // TODO Validar formato
     ano: FiscalYear not null; // TODO Validar formato
 
-    // TODO Modificar para Date e mudar $now para $today se existir, já que Date é incompatível com $now.
     dataConfiguracoes: DateTime not null default $now;
 
     @readonly

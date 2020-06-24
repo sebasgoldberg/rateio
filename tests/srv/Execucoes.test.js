@@ -314,4 +314,49 @@ describe('OData: Rateio: Execucoes', () => {
 
   })
 
+  it('Uma execução não pode ter multiplas instancias concorrentes.', async () => {
+
+    createRateioProcess.mockImplementationOnce( (ID, srv, req) => {
+      rateioProcess = new RateioProcess(ID, srv, req)
+      rateioProcess.execute = jest.fn()
+      rateioProcess.execute.mockImplementation(() => Promise.resolve());
+      return rateioProcess
+    })
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const origemID = this.utils.createdData.configOrigem.ID
+
+    const response1 = await this.utils.createDestino()
+      .expect(201)
+
+    const response2 = await this.utils.createDestino({ 
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+    })
+      .expect(201)
+
+    const response3 = await this.utils.activateOrigem(origemID)
+      .expect(204)
+
+    const response4 = await this.utils.createExecucao()
+      .expect(201)
+
+    const execucaoID = JSON.parse(response4.text).ID
+
+    const execucoesPromises = []
+    for (let i=0; i<4; i++)
+      execucoesPromises.push(this.utils.executarExecucao(execucaoID))
+
+    const responses = await Promise.all(execucoesPromises)
+
+    const responsesStatus = responses.reduce((reduced, current) => {
+      reduced[current.status]+=1
+      return reduced
+    }, {204:0, 409:0})
+
+    expect(responsesStatus).toStrictEqual(expect.objectContaining({204:1, 409:3}))
+
+  })
+
 })
