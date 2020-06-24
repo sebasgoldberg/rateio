@@ -1,6 +1,7 @@
 const cds = require('@sap/cds')
 const bs = require("binary-search");
 const createDocumento = require('./documento-factory');
+const LOG_MESSAGE_MAX_POSITION = 511
 
 class RateioProcess{
 
@@ -41,6 +42,12 @@ class RateioProcess{
 
     }
 
+    toLogMessage(message){
+        if (message){
+            return message.substring(0,LOG_MESSAGE_MAX_POSITION)
+        }
+    }
+
     async log(data){
         
         const { ExecucoesLogs } = this.srv.entities
@@ -52,6 +59,8 @@ class RateioProcess{
             }
         }
 
+        _data.message = this.toLogMessage(_data.message)
+
         await cds.transaction(this.req).run(
             INSERT(_data)
                 .into(ExecucoesLogs)
@@ -59,7 +68,7 @@ class RateioProcess{
     }
 
     async logItem(item, data){
-        
+
         const { ItensExecucoesLogs } = this.srv.entities
 
         const _data = {
@@ -69,6 +78,8 @@ class RateioProcess{
                 item_configuracaoOrigem_ID: item.configuracaoOrigem_ID
             }
         }
+
+        _data.message = this.toLogMessage(_data.message)
 
         await cds.transaction(this.req).run(
             INSERT(_data)
@@ -314,8 +325,11 @@ class RateioProcess{
         const index = bs(this.saldosEtapaProcessada, item, this.compareSaldosEntry)
 
         if (index < 0){
-            // TODO implementar
-            //this.logItemExecucao.warning(item, `Saldo não encontrado para o item ${JSON.stringify(item)}.`)
+
+            await this.logItem(item, {
+                messageType: 'W',
+                message: `Saldo não encontrado para o item ${JSON.stringify(item)}.`
+            })
             return
         }
 

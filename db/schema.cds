@@ -158,7 +158,7 @@ entity ItensDocumentos {
 aspect log: cuid, managed{
     messageType: String(1) not null;
     messageCode: String(10);
-    message: String(255) not null;
+    message: String(512) not null;
 }
 
 entity ExecucoesLogs: log{

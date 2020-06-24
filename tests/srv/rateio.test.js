@@ -1256,4 +1256,109 @@ describe('Processo: Rateio', () => {
 
   })
 
+  it('Quando não existir saldo para um item, deve ser informado no log de execução do item.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    // Criamos as configurações
+
+    const origensData = [
+      {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      },
+      {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_2,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      }
+    ]
+
+    const saldos = {
+      [constants.SEQUENCIA_1]: [
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_2,
+          AmountInCompanyCodeCurrency: 101,
+          CompanyCodeCurrency: 'BRL',
+        },
+      ],
+    }
+
+    const origensIDs = []
+
+    for (const origemData of origensData){
+
+      const response1 = await this.utils.createOrigem(origemData).expect(201)
+      
+      const origemID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.createDestino({
+        origem_ID: origemID,
+      })
+        .expect(201)
+  
+      const response3 = await this.utils.createDestino({
+        origem_ID: origemID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+      })
+        .expect(201)
+  
+      const response4 = await this.utils.activateOrigem(origemID)
+        .expect(204)
+
+      origensIDs.push(origemID)
+    }
+
+    // Criamos a execução
+    const response9 = await this.utils.createExecucao(
+      { dataConfiguracoes: "2020-06-15T00:00:00Z" }
+    )
+      .expect(201)
+
+    const execucaoID = JSON.parse(response9.text).ID
+
+    let rateioProcess;
+
+    createRateioProcess.mockImplementationOnce( (ID, srv, req) => {
+      rateioProcess = new RateioProcess(ID, srv, req)
+      rateioProcess.selectSaldos = jest.fn()
+      rateioProcess.selectSaldos
+        .mockImplementationOnce(function() {
+          this.saldosEtapaProcessada = saldos[constants.SEQUENCIA_1]
+          return Promise.resolve()
+        })
+      rateioProcess.criarDocumento = jest.fn()
+      rateioProcess.criarDocumento.mockImplementation( () => Promise.resolve() )
+      return rateioProcess
+    })
+
+    const response10 = await this.utils.executarExecucao(execucaoID)
+      .expect(204)
+      
+    expect(rateioProcess.criarDocumento.mock.calls.length).toBe(1);
+
+   const response11 = await this.utils.getLogsItemExecucao(execucaoID, origensIDs[0])
+      .expect(200)
+
+    const logsItem = JSON.parse(response11.text).value
+
+    expect(logsItem)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ 
+            messageType: 'W',
+            message: expect.stringMatching(new RegExp(`Saldo não encontrado para o item .*\\.`))
+          }),
+        ]))
+
+  })
+
 })
