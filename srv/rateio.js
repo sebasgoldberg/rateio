@@ -58,6 +58,24 @@ class RateioProcess{
         )
     }
 
+    async logItem(item, data){
+        
+        const { ItensExecucoesLogs } = this.srv.entities
+
+        const _data = {
+            ...data,
+            ...{
+                item_execucao_ID: this.execucoes_ID,
+                item_configuracaoOrigem_ID: item.configuracaoOrigem_ID
+            }
+        }
+
+        await cds.transaction(this.req).run(
+            INSERT(_data)
+                .into(ItensExecucoesLogs)
+        )
+    }
+
     async execute(){
 
         this.execucao = await this.getDadosExecucao()
@@ -258,8 +276,10 @@ class RateioProcess{
 
         if (documentoExistente){
             const { CompanyCode, AccountingDocument, FiscalYear } = documentoExistente
-            // TODO implementar
-            //this.logItemExecucao.warning(item, `Documento ${CompanyCode} ${AccountingDocument} ${FiscalYear} já gerado para o origem ${JSON.stringify(saldoItem)}.`)
+            this.logItem(item, {
+                messageType: 'W',
+                message: `Documento ${CompanyCode} ${AccountingDocument} ${FiscalYear} já gerado para o origem ${JSON.stringify(saldoItem)}.`
+            })
             return            
         }
 

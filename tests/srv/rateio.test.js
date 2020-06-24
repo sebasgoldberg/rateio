@@ -786,7 +786,7 @@ describe('Processo: Rateio', () => {
       return rateioProcess
     })
 
-    let AccountingDocument = 0
+    let ActualAccountingDocument = 0
     let documentos = []
 
     createDocumento.mockImplementation( srv => {
@@ -796,8 +796,8 @@ describe('Processo: Rateio', () => {
       documento.post = jest.fn()
       documento.post.mockImplementation(function(){
         this.CompanyCode = constants.COMPANY_CODE
-        AccountingDocument += 1
-        this.AccountingDocument = AccountingDocument.toString()
+        ActualAccountingDocument += 1
+        this.AccountingDocument = ActualAccountingDocument.toString()
         this.FiscalYear = 2020
         return Promise.resolve()
       })
@@ -830,9 +830,24 @@ describe('Processo: Rateio', () => {
     // o documento criado na primeira execução.
 
     const documentoExistente = await processosRateio[1].getDocumentoSeJaExiste.mock.results[0].value
-    expect(documentoExistente.CompanyCode).toBe(documentos[0].CompanyCode)
-    expect(documentoExistente.AccountingDocument).toBe(documentos[0].AccountingDocument)
-    expect(documentoExistente.FiscalYear).toBe(documentos[0].FiscalYear)
+    const { CompanyCode, AccountingDocument, FiscalYear } = documentoExistente
+    expect(CompanyCode).toBe(documentos[0].CompanyCode)
+    expect(AccountingDocument).toBe(documentos[0].AccountingDocument)
+    expect(FiscalYear).toBe(documentos[0].FiscalYear)
+
+    const response100 = await this.utils.getLogsItensExecucao(execucoesIDs[1])
+      .expect(200)
+
+    const logs = JSON.parse(response100.text).value
+
+    expect(logs)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({
+            messageType: 'W',
+            message: expect.stringMatching(new RegExp(`Documento ${CompanyCode} ${AccountingDocument} ${FiscalYear} já gerado para o origem .*`))
+        }),
+      ]))
 
   })
 

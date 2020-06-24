@@ -116,6 +116,8 @@ entity Execucoes: cuid, managed{
 
     logs: Association to many ExecucoesLogs on logs.execucao = $self;
 
+    logsItens: Association to many LogsItensExecucao on logsItens.execucao_ID = $self.ID
+
 }
 
 @autoexpose
@@ -200,3 +202,15 @@ entity ConfigOrigensDocumentos as
         itemExecutado.execucao.ano,
         itemExecutado.execucao.periodo
     from rateio.Documentos;
+
+@readonly
+@autoexpose
+entity LogsItensExecucao as
+    select
+        key ID,
+        item.execucao.ID as execucao_ID,
+        item.configuracaoOrigem as configuracao_ID,
+        messageType,
+        message
+    from ItensExecucoesLogs;
+    

@@ -37,7 +37,11 @@ service ConfigService @(requires_:'config') {
 
     @readonly
     entity ItensExecucoes as projection on rateio.ItensExecucoes
-        { *, documentosGerados: redirected to Documentos };
+        { 
+            *,
+            documentosGerados: redirected to Documentos,
+            logs: redirected to ItensExecucoesLogs 
+        };
 
     @readonly
     entity Documentos as projection on rateio.Documentos
@@ -57,5 +61,8 @@ service ConfigService @(requires_:'config') {
 
     @readonly
     entity ConfigOrigensDocumentos as projection on rateio.ConfigOrigensDocumentos;
+
+    @readonly
+    entity LogsItensExecucao as projection on rateio.LogsItensExecucao;
 
 }

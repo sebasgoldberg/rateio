@@ -322,6 +322,13 @@ class TestUtils{
             .expect('Content-Type', /^application\/json/)
     }
 
+    getLogsItensExecucao(ID){
+        return this.request
+            //.get(`/config/ItensExecucoesLogs?$filter=item_execucao_ID eq ${ID}`)
+            .get(`/config/Execucoes(${ID})/logsItens`)
+            .expect('Content-Type', /^application\/json/)
+    }
+
     getLogsExecucao(ID){
         return this.request
             .get(`/config/Execucoes(${ID})/logs`)
