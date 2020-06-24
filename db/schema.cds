@@ -132,7 +132,6 @@ entity ItensExecucoes: managed {
 
 type Moeda: String(3);
 
-// TODO Quando um documento for cancelado, deixar registrado no log associado ao item.
 @autoexpose
 entity Documentos: managed {
     key CompanyCode: CompanyCode not null;
@@ -200,7 +199,9 @@ entity ConfigOrigensDocumentos as
         itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
         itemExecutado.configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter,
         itemExecutado.execucao.ano,
-        itemExecutado.execucao.periodo
+        itemExecutado.execucao.periodo,
+        itemExecutado.execucao.ID as execucao_ID,
+        itemExecutado.configuracaoOrigem.ID as configuracaoOrigem_ID
     from rateio.Documentos;
 
 @readonly

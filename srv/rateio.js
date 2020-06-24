@@ -1,7 +1,7 @@
 const cds = require('@sap/cds')
 const bs = require("binary-search");
 const createDocumento = require('./documento-factory');
-const LOG_MESSAGE_MAX_POSITION = 511
+const Log = require('./log');
 
 class RateioProcess{
 
@@ -10,6 +10,7 @@ class RateioProcess{
         this.srv = srv
         this.req = req
         this.saldosEtapaProcessada = []
+        this._log = new Log(this.srv, this.req)
     }
 
     async getEtapas(){
@@ -42,49 +43,16 @@ class RateioProcess{
 
     }
 
-    toLogMessage(message){
-        if (message){
-            return message.substring(0,LOG_MESSAGE_MAX_POSITION)
-        }
-    }
-
     async log(data){
-        
-        const { ExecucoesLogs } = this.srv.entities
 
-        const _data = {
-            ...data,
-            ...{
-                execucao_ID: this.execucoes_ID,
-            }
-        }
+        await this._log.logExecucao(this.execucoes_ID, data)   
 
-        _data.message = this.toLogMessage(_data.message)
-
-        await cds.transaction(this.req).run(
-            INSERT(_data)
-                .into(ExecucoesLogs)
-        )
     }
 
     async logItem(item, data){
 
-        const { ItensExecucoesLogs } = this.srv.entities
+        await this._log.logItemExecucao(this.execucoes_ID, item.configuracaoOrigem_ID, data)
 
-        const _data = {
-            ...data,
-            ...{
-                item_execucao_ID: this.execucoes_ID,
-                item_configuracaoOrigem_ID: item.configuracaoOrigem_ID
-            }
-        }
-
-        _data.message = this.toLogMessage(_data.message)
-
-        await cds.transaction(this.req).run(
-            INSERT(_data)
-                .into(ItensExecucoesLogs)
-        )
     }
 
     async execute(){

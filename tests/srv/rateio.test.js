@@ -1361,4 +1361,128 @@ describe('Processo: Rateio', () => {
 
   })
 
+  it('Ao cancelar um documento, uma mensagem deve ficar registrada no log do item de execução.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    const DATA_EXECUCAO_PERIODO_3 = "2020-07-19T00:00:00Z"
+
+    const origensData = [
+      {
+        "validFrom": constants.PERIODO_3.VALID_FROM,
+        "validTo": constants.PERIODO_3.VALID_TO,
+      },
+    ]
+
+    const saldos = {
+      [constants.SEQUENCIA_1]: [
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_1,
+          AmountInCompanyCodeCurrency: -202,
+          CompanyCodeCurrency: 'USD',
+        },
+      ],
+    }
+
+    const origensIDs = []
+
+    for (const origemData of origensData){
+
+      const response1 = await this.utils.createOrigem(origemData).expect(201)
+      
+      const origemID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.createDestino({
+        origem_ID: origemID,
+      })
+        .expect(201)
+  
+      const response3 = await this.utils.createDestino({
+        origem_ID: origemID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+      })
+        .expect(201)
+  
+      const response4 = await this.utils.activateOrigem(origemID)
+        .expect(204)
+
+      origensIDs.push(origemID)
+    }
+
+    const processosRateio = []
+
+    createRateioProcess.mockImplementation( (ID, srv, req) => {
+      const rateioProcess = new RateioProcess(ID, srv, req)
+      
+      rateioProcess.selectSaldos = jest.fn()
+      rateioProcess.selectSaldos
+        .mockImplementation(function() {
+          this.saldosEtapaProcessada = saldos[constants.SEQUENCIA_1]
+          return Promise.resolve()
+        })
+      
+      processosRateio.push(rateioProcess)
+      return rateioProcess
+    })
+
+    let AccountingDocument = 0
+    let documentos = []
+
+    createDocumento.mockImplementation( srv => {
+      const documento = new Documento(srv)
+      documento.setDadosCabecalho = jest.fn()
+      documento.addItem = jest.fn()
+      documento.post = jest.fn()
+      documento.post.mockImplementation(function(){
+        this.CompanyCode = constants.COMPANY_CODE
+        AccountingDocument += 1
+        this.AccountingDocument = AccountingDocument.toString()
+        this.FiscalYear = 2020
+        return Promise.resolve()
+      })
+      documentos.push(documento)
+      return documento
+    })
+
+    const execucoesIDs = []
+
+    // Criamos as execuções e executamos.
+    for (const dataConfiguracoes of [DATA_EXECUCAO_PERIODO_3, ]){
+
+      const response1 = await this.utils.createExecucao(
+        { dataConfiguracoes: dataConfiguracoes }
+      )
+        .expect(201)
+  
+      const execucaoID = JSON.parse(response1.text).ID
+
+      execucoesIDs.push(execucaoID)
+    }
+
+    const response10 = await this.utils.executarExecucao(execucoesIDs[0])
+      .expect(204)
+
+    const response11 = await this.utils.cancelarDocumento(documentos[0])
+      .expect(204)
+
+    const response12 = await this.utils.getLogsItemExecucao(execucoesIDs[0], origensIDs[0])
+      .expect(200)
+
+    const logsItem = JSON.parse(response12.text).value
+
+    expect(logsItem)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ 
+            messageType: 'W',
+            message: expect.stringMatching(new RegExp(`O seguinte documento foi cancelado: .*\\.`))
+          }),
+        ]))
+  })
+
 })
