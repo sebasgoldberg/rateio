@@ -13,7 +13,7 @@ entity EtapasProcesso: managed, sap.common.CodeList{
 type TipoOperacao: String enum { credito; debito }
 
 entity TiposOperacoes: sap.common.CodeList{
-    key operacao: TipoOperacao;
+    key operacao: TipoOperacao @assert.range: TipoOperacao;
 }
 
 type CompanyCode : String(4);
@@ -90,21 +90,21 @@ entity ConfigDestinos: managed{
 // Execução
 /**************************************************/
 
-type FiscalYear: String(4);
-type FiscalPeriod: String(3);
+type FiscalYear: Integer;
+type FiscalPeriod: Integer;
 
 type StatusExecucao: String enum { nao_executado; em_execucao; finalizado; cancelado; }
 
 entity StatusExecucoes: sap.common.CodeList{
-    key status: StatusExecucao;
+    key status: StatusExecucao @assert.range: StatusExecucao;
 }
 
 entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
 
-    periodo: FiscalPeriod not null; // TODO Validar formato
-    ano: FiscalYear not null; // TODO Validar formato
+    periodo: FiscalPeriod not null @assert.range: [ 0, 12 ];
+    ano: FiscalYear not null @assert.range: [ 1900, 9999 ];
 
     dataConfiguracoes: DateTime not null default $now;
 

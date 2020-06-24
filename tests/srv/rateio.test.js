@@ -593,7 +593,7 @@ describe('Processo: Rateio', () => {
         this.CompanyCode = this.header.CompanyCode
         AccountingDocument += 1
         this.AccountingDocument = AccountingDocument.toString()
-        this.FiscalYear = '2020'
+        this.FiscalYear = 2020
         return Promise.resolve()
       })
       documentos.push(documento)
@@ -798,7 +798,7 @@ describe('Processo: Rateio', () => {
         this.CompanyCode = constants.COMPANY_CODE
         AccountingDocument += 1
         this.AccountingDocument = AccountingDocument.toString()
-        this.FiscalYear = '2020'
+        this.FiscalYear = 2020
         return Promise.resolve()
       })
       documentos.push(documento)
@@ -916,7 +916,7 @@ describe('Processo: Rateio', () => {
         this.CompanyCode = constants.COMPANY_CODE
         AccountingDocument += 1
         this.AccountingDocument = AccountingDocument.toString()
-        this.FiscalYear = '2020'
+        this.FiscalYear = 2020
         return Promise.resolve()
       })
       documentos.push(documento)
@@ -929,11 +929,11 @@ describe('Processo: Rateio', () => {
     for (const dadosExecucao of [
       {
         dataConfiguracoes: DATA_EXECUCAO_PERIODO_3,
-        periodo: '006'
+        periodo: 6
       },
       {
         dataConfiguracoes: DATA_EXECUCAO_PERIODO_4,
-        periodo: '007'
+        periodo: 7
       }
     ]){
 
@@ -1042,7 +1042,7 @@ describe('Processo: Rateio', () => {
         this.CompanyCode = constants.COMPANY_CODE
         AccountingDocument += 1
         this.AccountingDocument = AccountingDocument.toString()
-        this.FiscalYear = '2020'
+        this.FiscalYear = 2020
         return Promise.resolve()
       })
       documentos.push(documento)

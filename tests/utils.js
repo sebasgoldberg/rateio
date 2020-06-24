@@ -56,8 +56,8 @@ const constants = {
     },
     EXECUCAO: {
         DESCRICAO: "Test",
-        PERIODO: "006",
-        ANO: "2020",
+        PERIODO: 6,
+        ANO: 2020,
         DATA_P123: "2020-06-15T00:00:00Z",
         DATA_P6: "2020-08-15T00:00:00Z",
     }
@@ -301,9 +301,8 @@ class TestUtils{
     }
 
     cancelarDocumento(documento){
-        const key = [
-            'CompanyCode', 'AccountingDocument', 'FiscalYear'
-        ].map(fieldname => `${fieldname}='${documento[fieldname]}'`).join(',')
+        const { CompanyCode, AccountingDocument, FiscalYear } = documento
+        const key = `CompanyCode='${CompanyCode}',AccountingDocument='${AccountingDocument}',FiscalYear=${FiscalYear}`
         return this.request
             .post(`/config/Documentos(${key})/ConfigService.cancelar`) 
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
