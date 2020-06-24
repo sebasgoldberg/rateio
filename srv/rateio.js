@@ -276,7 +276,7 @@ class RateioProcess{
 
         if (documentoExistente){
             const { CompanyCode, AccountingDocument, FiscalYear } = documentoExistente
-            this.logItem(item, {
+            await this.logItem(item, {
                 messageType: 'W',
                 message: `Documento ${CompanyCode} ${AccountingDocument} ${FiscalYear} já gerado para o origem ${JSON.stringify(saldoItem)}.`
             })
@@ -335,8 +335,11 @@ class RateioProcess{
             try {
                 await this.criarDocumento(item, saldoItem)
             } catch (error) {
-                // TODO implementar
-                // this.logItemExecucao.error(item, error)
+                await this.logItem(item, {
+                    messageType: 'E',
+                    message: `Aconteceu um erro ao tentar criar o documento para o saldo ${JSON.stringify(saldoItem)}.`
+                })
+                throw error
             }
         }
         

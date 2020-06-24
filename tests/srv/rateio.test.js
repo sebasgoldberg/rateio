@@ -590,7 +590,7 @@ describe('Processo: Rateio', () => {
       documento.addItem = jest.fn()
       documento.post = jest.fn()
       documento.post.mockImplementation(function(){
-        this.CompanyCode = this.header.CompanyCode
+        this.CompanyCode = constants.COMPANY_CODE
         AccountingDocument += 1
         this.AccountingDocument = AccountingDocument.toString()
         this.FiscalYear = 2020
@@ -1090,6 +1090,169 @@ describe('Processo: Rateio', () => {
 
     // Verificamos que realmente só foi criado um unico documento em lugar de dois.
     expect(documentos.length).toBe(2);
+
+  })
+
+  it('Ao falhar a criação do documento, deve ser gerado o erro correspondente no log e deve ser cancelada a seguinte etapa.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    // Criamos as configurações
+
+    const origensData = [
+      {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      },
+      {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      },
+      {
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_2,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      }
+    ]
+
+    const saldos = {
+      [constants.SEQUENCIA_1]: [
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_2,
+          AmountInCompanyCodeCurrency: 101,
+          CompanyCodeCurrency: 'BRL',
+        },
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_2,
+          AmountInCompanyCodeCurrency: 202,
+          CompanyCodeCurrency: 'USD',
+        },
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_1,
+          AmountInCompanyCodeCurrency: 303,
+          CompanyCodeCurrency: 'BRL',
+        }
+      ],
+      [constants.SEQUENCIA_3]: [
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_1,
+          AmountInCompanyCodeCurrency: 404,
+          CompanyCodeCurrency: 'BRL',
+        },
+        {
+          CompanyCode: constants.COMPANY_CODE,
+          ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
+          GLAccount: constants.GL_ACCOUNT_1,
+          ControllingArea: constants.CONTROLLING_AREA,
+          CostCenter: constants.COST_CENTER_1,
+          AmountInCompanyCodeCurrency: 505,
+          CompanyCodeCurrency: 'EUR',
+        },
+      ]
+    }
+
+    for (const origemData of origensData){
+
+      const response1 = await this.utils.createOrigem(origemData).expect(201)
+      
+      const origemID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.createDestino({
+        origem_ID: origemID,
+      })
+        .expect(201)
+  
+      const response3 = await this.utils.createDestino({
+        origem_ID: origemID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+      })
+        .expect(201)
+  
+      const response4 = await this.utils.activateOrigem(origemID)
+        .expect(204)
+    }
+
+    // Criamos a execução
+    const response9 = await this.utils.createExecucao(
+      { dataConfiguracoes: "2020-06-15T00:00:00Z" }
+    )
+      .expect(201)
+
+    const execucaoID = JSON.parse(response9.text).ID
+
+    let rateioProcess;
+
+    createRateioProcess.mockImplementationOnce( (ID, srv, req) => {
+      rateioProcess = new RateioProcess(ID, srv, req)
+      rateioProcess.selectSaldos = jest.fn()
+      rateioProcess.selectSaldos
+        .mockImplementationOnce(function() {
+          this.saldosEtapaProcessada = saldos[constants.SEQUENCIA_1]
+          return Promise.resolve()
+        })
+        .mockImplementationOnce(function(){
+          this.saldosEtapaProcessada = saldos[constants.SEQUENCIA_3]
+          return Promise.resolve()
+        });
+      rateioProcess.criarDocumento = jest.fn()
+      rateioProcess.criarDocumento.mockImplementation( () => Promise.reject('Erro criarDocumento') )
+      return rateioProcess
+    })
+
+    const response10 = await this.utils.executarExecucao(execucaoID)
+      .expect(204)
+      
+    expect(rateioProcess.criarDocumento.mock.calls.length).toBe(1);
+
+    const response11 = await this.utils.getLogsExecucao(execucaoID)
+      .expect(200)
+
+    const logsExecucao = JSON.parse(response11.text).value
+
+    expect(logsExecucao)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ message: `Aconteceu o seguinte erro: 'Erro criarDocumento'.`}),
+          expect.objectContaining({ message: `Erro ao processar a etapa ${constants.SEQUENCIA_1}. `+
+            `É finalizada a execução e não serão processadas etapas subsequentes.`})
+        ]))
+
+    const response12 = await this.utils.getLogsItensExecucao(execucaoID)
+      .expect(200)
+
+    const logsItens = JSON.parse(response12.text).value
+
+    expect(logsItens)
+      .toEqual(
+        expect.arrayContaining([
+          expect.objectContaining({ 
+            messageType: 'E',
+            message: expect.stringMatching(new RegExp(`Aconteceu um erro ao tentar criar o documento para o saldo .*\\.`))
+          }),
+        ]))
+
 
   })
 

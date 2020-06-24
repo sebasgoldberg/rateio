@@ -209,7 +209,7 @@ entity LogsItensExecucao as
     select
         key ID,
         item.execucao.ID as execucao_ID,
-        item.configuracaoOrigem as configuracao_ID,
+        item.configuracaoOrigem.ID as configuracao_ID,
         messageType,
         message
     from ItensExecucoesLogs;
