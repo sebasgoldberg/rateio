@@ -135,7 +135,7 @@ describe('SOAP: Rateio: Documento', () => {
         const journalEntry = await createJournalEntry()
 
         const result = await journalEntry.post(args)
-        
+
         const [response, ] = result
 
         expect(response.JournalEntryCreateConfirmation[0].Log).toEqual(

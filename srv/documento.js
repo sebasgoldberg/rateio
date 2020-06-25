@@ -1,4 +1,5 @@
 const { Log, MESSAGE_TYPES } = require("./log")
+const createJournalEntry = require("./soap")
 
 class Documento{
 
@@ -7,18 +8,93 @@ class Documento{
         this.itens = []
     }
 
-    setDadosCabecalho(dados) {
-        // TODO Implementar
-        this.header = dados
+    setDadosCabecalho({ 
+        PostingDate, CompanyCode, DocumentReferenceID, DocumentHeaderText 
+    }) {
+
+        this.JournalEntry = {
+            OriginalReferenceDocumentType: 'BKPFF',
+            OriginalReferenceDocument: DocumentReferenceID,
+            OriginalReferenceDocumentLogicalSystem: 'RATEIO',
+            BusinessTransactionType: 'RFBU',
+            AccountingDocumentType: 'RF',
+            DocumentReferenceID: DocumentReferenceID,
+            DocumentHeaderText: DocumentHeaderText,
+            CreatedByUser: 'CBUSER', // TODO Obter usuário
+            CompanyCode: CompanyCode,
+            DocumentDate: PostingDate,
+            PostingDate: PostingDate,
+            Item:[]
+        }
+
     }
 
-    addItem(dados){
-        // TODO Implementar
-        this.itens.push(dados)
+    addItem({
+        AmountInTransactionCurrency, currencyCode, GLAccount,
+        CostCenter, DebitCreditCode, DocumentItemText, AssignmentReference
+    }){
+
+        const ReferenceDocumentItem = (this.JournalEntry.Item.length + 1)
+            .toString().padStart(2, '0')
+
+        this.JournalEntry.Item.push({
+            ReferenceDocumentItem: `${ReferenceDocumentItem}`,
+            CompanyCode: this.JournalEntry.CompanyCode,
+            GLAccount: GLAccount,
+            AmountInTransactionCurrency:{
+                attributes:{
+                    currencyCode: currencyCode
+                },
+                $value: AmountInTransactionCurrency,
+            },
+            DebitCreditCode: DebitCreditCode,
+            DocumentItemText: DocumentItemText,
+            AccountAssignment:{
+                CostCenter: CostCenter,
+            },
+            AssignmentReference: AssignmentReference
+        })
+
     }
 
     async post(){
-        // TODO Implementar
+
+        const journalEntry = createJournalEntry()
+
+        const ID = 'MSG_20200201_APIRATEIO'
+        const CreationDateTime = (new Date()).toISOString()
+
+        const [response, ] = await journalEntry.post({ 
+            MessageHeader: {
+                ID: ID,
+                CreationDateTime: CreationDateTime
+            },
+            JournalEntryCreateRequest: {
+                MessageHeader: {
+                    ID: ID,
+                    CreationDateTime: CreationDateTime
+                },
+                JournalEntry: this.JournalEntry
+            }
+        })
+
+        const documentCreated = response.JournalEntryCreateConfirmation
+            .JournalEntryCreateConfirmation
+
+        if (documentCreated.AccountingDocument){
+
+            const { AccountingDocument, CompanyCode, FiscalYear } = documentCreated
+
+            this.AccountingDocument = AccountingDocument
+            this.CompanyCode = CompanyCode
+            this.FiscalYear = FiscalYear
+
+        } else {
+
+            throw response.JournalEntryCreateConfirmation.Log
+
+        }
+
     }
 
 }

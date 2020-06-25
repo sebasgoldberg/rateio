@@ -288,6 +288,8 @@ class RateioProcess{
         documento.setDadosCabecalho({
             PostingDate: this.getPostingDate(),
             CompanyCode: item.CompanyCode,
+            DocumentReferenceID: this.getPeriodoFim(),
+            DocumentHeaderText: `Rateio ${this.getPeriodoFim()}`
         })
 
         for (const destino of destinos){
