@@ -153,6 +153,13 @@ async function full(){
         json: true,
     })
 
+    // Obtemos os dados dos documentos criados.
+    response = await request({
+        method: 'GET',
+        uri: '/config/ConfigOrigensDocumentos',
+        qs: `$filter=execucao_ID = ${execucaoID}`,
+        json: true,
+    })
 
 }
 
