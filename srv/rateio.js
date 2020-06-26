@@ -241,7 +241,10 @@ class RateioProcess{
     }
 
     getItemAmountInTransactionCurrency(saldoItem, destino){
-        return Math.abs(saldoItem.AmountInCompanyCodeCurrency * destino.porcentagemRateio / 100)
+        // Deixamos só 2 decimais.
+        return Math.abs(Math.round(saldoItem.AmountInCompanyCodeCurrency * destino.porcentagemRateio) / 100) * (
+            this.getItemDebitCreditCode(saldoItem, destino) == 'H' ? -1 : 1
+        )
     }
 
     async registrarDocumento(item, documento, saldoItem){
@@ -295,9 +298,23 @@ class RateioProcess{
             DocumentHeaderText: `Rateio ${this.getPeriodoFim()}`
         })
 
-        for (const destino of destinos){
+        let saldoUltimoItem = 0
+
+        for (let i=0; i<destinos.length; i++){
+            
+            const destino = destinos[i]
+
+            let AmountInTransactionCurrency
+            
+            if (i === (destinos.length-1))
+                AmountInTransactionCurrency = saldoUltimoItem * -1
+            else{
+                AmountInTransactionCurrency = this.getItemAmountInTransactionCurrency(saldoItem, destino)
+                saldoUltimoItem += AmountInTransactionCurrency
+            }
+
             documento.addItem({
-                AmountInTransactionCurrency: this.getItemAmountInTransactionCurrency(saldoItem, destino),
+                AmountInTransactionCurrency: AmountInTransactionCurrency,
                 currencyCode: saldoItem.CompanyCodeCurrency,
                 GLAccount: destino.contaDestino_GLAccount,
                 CostCenter: destino.centroCustoDestino_CostCenter,
@@ -305,6 +322,7 @@ class RateioProcess{
                 DocumentItemText: `Rateio ${this.getPeriodoFim()}`,
                 AssignmentReference: destino.atribuicao,
             })
+
         }
 
         // Geração do documento utilizando a API SOAP.

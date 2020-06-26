@@ -51,7 +51,7 @@ class ImplementationRegistration{
             this.on('READ', entity, async req => {
                 let response = await journalEntryItemBasicSrv.tx(req).run(req.query)
     
-                const dateAttributes = ['ValidityEndDate', 'ValidityStartDate', 'CostCenterCreationDate']
+                const dateAttributes = ['ValidityEndDate', 'ValidityStartDate', 'CostCenterCreationDate', 'CreationDate']
                 const dateTimeAttributes = ['LastChangeDateTime']
             
                 // Conversão de datas de OData 2.0 para 4.0

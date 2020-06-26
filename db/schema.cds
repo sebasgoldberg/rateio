@@ -70,7 +70,11 @@ entity ConfigDestinos: managed{
 
     key tipoOperacao: Association to one TiposOperacoes not null;
 
-    key contaDestino: Association to one ext.A_GLAccountInChartOfAccounts not null;
+    key contaDestino_ChartOfAccounts: ChartOfAccounts not null;
+    key contaDestino_GLAccount: GLAccount not null;
+    contaDestino: Association to one ext.A_GLAccountInChartOfAccounts on
+        contaDestino.ChartOfAccounts = $self.contaDestino_ChartOfAccounts and
+        contaDestino.GLAccount = $self.contaDestino_GLAccount;
 
     key centroCustoDestino_ControllingArea: ControllingArea not null;
     key centroCustoDestino_CostCenter: CostCenter not null;

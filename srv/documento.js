@@ -59,7 +59,7 @@ class Documento{
 
     async post(){
 
-        const journalEntry = createJournalEntry()
+        const journalEntry = await createJournalEntry()
 
         const ID = 'MSG_20200201_APIRATEIO'
         const CreationDateTime = (new Date()).toISOString()
@@ -78,7 +78,7 @@ class Documento{
             }
         })
 
-        const documentCreated = response.JournalEntryCreateConfirmation
+        const documentCreated = response.JournalEntryCreateConfirmation[0]
             .JournalEntryCreateConfirmation
 
         if (documentCreated.AccountingDocument){
@@ -91,7 +91,7 @@ class Documento{
 
         } else {
 
-            throw response.JournalEntryCreateConfirmation.Log
+            throw JSON.stringify(response.JournalEntryCreateConfirmation[0].Log)
 
         }
 

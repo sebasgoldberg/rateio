@@ -613,7 +613,7 @@ describe('Processo: Rateio', () => {
         CompanyCode: constants.COMPANY_CODE,
         items: expect.arrayContaining([
           expect.objectContaining({
-            AmountInTransactionCurrency: 40.4,
+            AmountInTransactionCurrency: -40.4,
             currencyCode: 'BRL',
             GLAccount: constants.GL_ACCOUNT_1,
             CostCenter: constants.COST_CENTER_1,
@@ -646,7 +646,7 @@ describe('Processo: Rateio', () => {
             AssignmentReference: '1',
           }),
           expect.objectContaining({
-            AmountInTransactionCurrency: 80.8,
+            AmountInTransactionCurrency: -80.8,
             currencyCode: 'USD',
             GLAccount: constants.GL_ACCOUNT_1,
             CostCenter: constants.COST_CENTER_1,
@@ -661,7 +661,7 @@ describe('Processo: Rateio', () => {
         CompanyCode: constants.COMPANY_CODE,
         items: expect.arrayContaining([
           expect.objectContaining({
-            AmountInTransactionCurrency: 121.2,
+            AmountInTransactionCurrency: -121.2,
             currencyCode: 'BRL',
             GLAccount: constants.GL_ACCOUNT_1,
             CostCenter: constants.COST_CENTER_1,
