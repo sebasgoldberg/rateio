@@ -1,9 +1,16 @@
-const rp = require('request-promise')
+const rp = require('request-promise');
+const { constants } = require('../utils');
+
 
 async function request(options){
     const _options = {
         ...options,
         ...{ uri: `http://localhost:4004${options.uri}` },
+        ...{
+            auth: {
+				user: constants.ADMIN_USER,
+			},
+        }
     }
     
     const result = await rp(_options)

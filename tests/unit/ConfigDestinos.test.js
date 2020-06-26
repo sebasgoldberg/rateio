@@ -12,6 +12,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Service $metadata document', async () => {
     const response = await this.utils.request
       .get('/config/$metadata')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/xml/)
       .expect(200)
 
@@ -25,6 +26,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Não é possível criar uma configuração de destino para um origem que não existe.', async () => {
     const response = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: constants.GUID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -46,6 +48,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Não é possível criar uma configuração de destino para um tipo de operação que não existe.', async () => {
     const response = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: "outra",
@@ -67,6 +70,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Não é possível criar uma configuração de destino para uma conta que não existe.', async () => {
     const response = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -89,6 +93,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Não é possível criar uma configuração de destino para um centro que não existe.', async () => {
     const response = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -111,6 +116,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Não é possível indicar uma porcentagem maior a 100.', async () => {
     const response = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -133,6 +139,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Não é possível indicar uma porcentagem menor a 0.', async () => {
     const response = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -159,6 +166,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -176,6 +184,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -193,6 +202,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -219,6 +229,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -236,6 +247,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -253,6 +265,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_2,
@@ -277,6 +290,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -294,6 +308,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -322,6 +337,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino3)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -330,6 +346,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response4 = await this.utils.request
       .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino3)})`) 
+      .auth(constants.ADMIN_USER)
       .send({
         porcentagemRateio: "19",
       })
@@ -350,6 +367,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -367,6 +385,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -395,6 +414,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino3)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -403,6 +423,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response4 = await this.utils.request
       .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino3)})`) 
+      .auth(constants.ADMIN_USER)
       .send({
         porcentagemRateio: "18.99",
       })
@@ -420,6 +441,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -448,6 +470,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino2)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -456,12 +479,14 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .post(`/config/ConfigOrigens(${destino2.origem_ID})/ConfigService.ativar`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(204)
 
     const response4 = await this.utils.request
       .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino2)})`) 
+      .auth(constants.ADMIN_USER)
       .send({
         porcentagemRateio: "18.99",
       })
@@ -483,6 +508,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -511,6 +537,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino2)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -519,6 +546,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .post(`/config/ConfigOrigens(${destino2.origem_ID})/ConfigService.ativar`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(204)
@@ -536,6 +564,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response4 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino3)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -555,6 +584,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send({
         origem_ID: this.utils.createdData.configOrigem.ID,
         tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
@@ -583,6 +613,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino2)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -591,12 +622,14 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .post(`/config/ConfigOrigens(${destino2.origem_ID})/ConfigService.ativar`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(204)
 
     const response4 = await this.utils.request
       .delete(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino2)})`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect('Content-Type', /^application\/json/)

@@ -1,4 +1,4 @@
-const { TestUtils } = require('../utils')
+const { TestUtils, constants } = require('../utils')
 
 describe('OData: Rateio: TiposOperacoes', () => {
 
@@ -11,6 +11,7 @@ describe('OData: Rateio: TiposOperacoes', () => {
   it('Service $metadata document', async () => {
     const response = await this.utils.request
       .get('/config/$metadata')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/xml/)
       .expect(200)
 
@@ -23,6 +24,7 @@ describe('OData: Rateio: TiposOperacoes', () => {
   it('A tradução funciona corretamente', async () => {
     const response = await this.utils.request
       .get('/config/TiposOperacoes?sap-language=en')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 

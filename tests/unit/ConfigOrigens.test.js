@@ -21,6 +21,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Service $metadata document', async () => {
     const response = await this.utils.request
       .get('/config/$metadata')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/xml/)
       .expect(200)
 
@@ -34,6 +35,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Não é possível criar uma configuração para uma etapa que não existe.', async () => {
     const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send({
         "etapasProcesso_sequencia": 20,
         "empresa_CompanyCode": constants.COMPANY_CODE,
@@ -54,6 +56,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   it('Não é possível criar uma configuração para uma empresa que não existe.', async () => {
     const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send({
         "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": "1001",
@@ -75,6 +78,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send({
         "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": constants.COMPANY_CODE,
@@ -96,6 +100,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   
       const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send({
         "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": constants.COMPANY_CODE,
@@ -118,6 +123,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   
       const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send({
         "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": constants.COMPANY_CODE,
@@ -140,6 +146,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   
     const response = await this.utils.request
     .post('/config/ConfigOrigens')
+    .auth(constants.ADMIN_USER)
     .send({
       "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
@@ -162,6 +169,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   
     const response = await this.utils.request
     .post('/config/ConfigOrigens')
+    .auth(constants.ADMIN_USER)
     .send({
       "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
@@ -184,6 +192,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   
     const response = await this.utils.request
     .post('/config/ConfigOrigens')
+    .auth(constants.ADMIN_USER)
     .send({
       "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
@@ -206,6 +215,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   
     const response = await this.utils.request
     .post('/config/ConfigOrigens')
+    .auth(constants.ADMIN_USER)
     .send({
       "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
@@ -244,6 +254,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     const response1 = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -251,6 +262,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .get('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 
@@ -298,6 +310,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     const response1 = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -305,6 +318,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
+      .auth(constants.ADMIN_USER)
       .send({
         ativa: true
       })
@@ -314,6 +328,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .get('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 
@@ -360,6 +375,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     let response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -370,6 +386,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     response = await this.utils.request
       .get('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 
@@ -404,6 +421,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -422,6 +440,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       
     const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -453,6 +472,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -471,6 +491,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       
     const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -502,6 +523,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -520,6 +542,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       
     const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -551,6 +574,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -569,6 +593,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       
     const response = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -600,6 +625,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -618,6 +644,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -625,6 +652,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     let response = await this.utils.request
       .get('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 
@@ -659,6 +687,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -677,6 +706,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -684,6 +714,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     let response = await this.utils.request
       .get('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 
@@ -718,6 +749,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -736,6 +768,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -743,6 +776,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     let response = await this.utils.request
       .get('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 
@@ -777,6 +811,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     const response1 = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -795,6 +830,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -802,6 +838,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response = await this.utils.request
       .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
+      .auth(constants.ADMIN_USER)
       .send({
         validTo: constants.PERIODO_5.VALID_FROM
       })
@@ -835,6 +872,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     const response1 = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -853,6 +891,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData2)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -860,6 +899,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     await this.utils.request
       .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
+      .auth(constants.ADMIN_USER)
       .send({
         validTo: constants.PERIODO_2.VALID_TO
       })
@@ -871,6 +911,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response = await this.utils.request
       .get('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/json/)
       .expect(200)
 
@@ -905,6 +946,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     const response1 = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -912,6 +954,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     await this.utils.request
       .post('/config/EtapasProcesso')
+      .auth(constants.ADMIN_USER)
       .send({
         sequencia: 1234
       })
@@ -936,6 +979,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
       const response = await this.utils.request
         .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
+        .auth(constants.ADMIN_USER)
         .send(data)
         .set('Accept', 'application/json')
         .expect('Content-Type', /^application\/json/)
@@ -966,6 +1010,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     
     const response1 = await this.utils.request
       .post('/config/ConfigOrigens')
+      .auth(constants.ADMIN_USER)
       .send(configOrigemData1)
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
@@ -973,6 +1018,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response = await this.utils.request
       .patch(`/config/ConfigOrigens(${JSON.parse(response1.text).ID})`)
+      .auth(constants.ADMIN_USER)
       .send({
         validTo: constants.PERIODO_1.VALID_FROM
       })
@@ -995,6 +1041,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response = await this.utils.request
       .post(`/config/ConfigOrigens(${ID})/ConfigService.ativar`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(409)
@@ -1023,6 +1070,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino1)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -1042,6 +1090,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino2)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -1061,6 +1110,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response3 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino3)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -1080,6 +1130,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response4 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino4)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -1088,6 +1139,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
   
     const response = await this.utils.request
       .post(`/config/ConfigOrigens(${this.utils.createdData.configOrigem.ID})/ConfigService.ativar`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(409)
@@ -1118,6 +1170,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response1 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino1)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -1137,6 +1190,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response2 = await this.utils.request
       .post('/config/ConfigDestinos') 
+      .auth(constants.ADMIN_USER)
       .send(destino2)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -1146,6 +1200,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     // Ativação
     const respons3 = await this.utils.request
       .post(`/config/ConfigOrigens(${this.utils.createdData.configOrigem.ID})/ConfigService.ativar`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(204)
@@ -1160,6 +1215,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
 
     const response9 = await this.utils.request
       .post('/config/Execucoes') 
+      .auth(constants.ADMIN_USER)
       .send(execucao)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -1170,6 +1226,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       
     const response10 = await this.utils.request
       .post(`/config/Execucoes(${execucaoID})/ConfigService.executar`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(204)
@@ -1177,6 +1234,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     // Intento de desativação da configuração
     const response11 = await this.utils.request
       .post(`/config/ConfigOrigens(${this.utils.createdData.configOrigem.ID})/ConfigService.desativar`) 
+      .auth(constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect(409)

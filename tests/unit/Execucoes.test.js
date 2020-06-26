@@ -20,6 +20,7 @@ describe('OData: Rateio: Execucoes', () => {
   it('Service $metadata document', async () => {
     const response = await this.utils.request
       .get('/config/$metadata')
+      .auth(constants.ADMIN_USER)
       .expect('Content-Type', /^application\/xml/)
       .expect(200)
 
