@@ -162,21 +162,24 @@ class RateioProcess{
 
     async selectSaldos(itensExecucao){
 
-        const { A_JournalEntryItemBasic } = this.srv.entities
+        const journalEntryItemBasicSrv = await cds.connect.to('API_JOURNALENTRYITEMBASIC_SRV')
+        const { A_JournalEntryItemBasic } = journalEntryItemBasicSrv.entities
 
         const condicaoOrigens = this.buildSaldosOrigensCondition(itensExecucao)
 
         const periodoInicio = this.getPeriodoInicio()
         const periodoFim = this.getPeriodoFim()
 
+        // TODO Verificar que realmente funciona.
         this.saldosEtapaProcessada = await
-
-            this.srv.read(A_JournalEntryItemBasic)
+            journalEntryItemBasicSrv.tx(this.req).run(
+                journalEntryItemBasicSrv.read(A_JournalEntryItemBasic)
                 .columns(['CompanyCode', 'ChartOfAccounts', 'GLAccount', 'ControllingArea', 'CostCenter', 'AmountInCompanyCodeCurrency', 'CompanyCodeCurrency' ])
                 .where('Ledger =', '0L')
                 .and('FiscalYearPeriod >=', periodoInicio)
                 .and('FiscalYearPeriod <=', periodoFim)
                 .and(condicaoOrigens)
+            )
 
         this.saldosEtapaProcessada.sort(this.compareSaldosEntry)
     }

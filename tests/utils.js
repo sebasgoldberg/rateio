@@ -102,11 +102,6 @@ function registerImpForExternalModels(){
                     "CostCenter": constants.COST_CENTER_2,
                 },
             ]
-        },
-        {
-            entity: "A_JournalEntryItemBasic",
-            keyFields: [],
-            instances: []
         }
     ].forEach( o => {
 

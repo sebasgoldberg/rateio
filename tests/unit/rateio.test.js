@@ -259,6 +259,7 @@ describe('Processo: Rateio', () => {
       rateioProcess = new RateioProcess(ID, srv, req)
       rateioProcess.processarItem = jest.fn()
       rateioProcess.processarItem.mockImplementation(() => Promise.resolve());
+      rateioProcess.selectSaldos = jest.fn(() => Promise.resolve([1,2,3]))
       return rateioProcess
     })
 

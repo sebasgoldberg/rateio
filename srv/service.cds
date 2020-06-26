@@ -11,8 +11,6 @@ service ConfigService @(requires_:'config') {
     entity A_GLAccountInChartOfAccounts as projection on ext.A_GLAccountInChartOfAccounts;
     @readonly
     entity A_CostCenter as projection on ext.A_CostCenter;
-    @readonly
-    entity A_JournalEntryItemBasic as projection on ext.A_JournalEntryItemBasic;
 
     // Entidades de configuração
     entity EtapasProcesso as projection on rateio.EtapasProcesso;
