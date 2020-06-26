@@ -19,19 +19,32 @@ async function full(){
     let response = await request({
         uri: '/config/$metadata' 
     })
-    
-    // Criamos a etapa.
-    response = await request({
-        method: 'POST',
-        uri: '/config/EtapasProcesso',
-        headers:{
-            'Content-Type': 'application/json'
-        },
-        body: {
-                "sequencia": 90
+
+    try {
+
+        // Verificamos se já existe a etapa.
+        response = await request({
+            method: 'GET',
+            uri: '/config/EtapasProcesso(90)',
+            json: true,
+        })
+        
+    } catch (error) {
+
+        // Criamos a etapa.
+        response = await request({
+            method: 'POST',
+            uri: '/config/EtapasProcesso',
+            headers:{
+                'Content-Type': 'application/json'
             },
-        json: true,
-    })
+            body: {
+                    "sequencia": 90
+                },
+            json: true,
+        })
+
+    }
 
     // Criamos a origem.
     response = await request({
