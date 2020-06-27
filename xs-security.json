@@ -1,0 +1,21 @@
+{
+  "xsappname": "rateio",
+  "tenant-mode": "dedicated",
+  "scopes": [
+    {
+      "name": "$XSAPPNAME.rateioAdmin",
+      "description": "rateioAdmin"
+    }
+  ],
+  "attributes": [],
+  "role-templates": [
+    {
+      "name": "rateioAdmin",
+      "description": "generated",
+      "scope-references": [
+        "$XSAPPNAME.rateioAdmin"
+      ],
+      "attribute-references": []
+    }
+  ]
+}

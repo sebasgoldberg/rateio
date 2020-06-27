@@ -2,7 +2,7 @@ using { qintess.rateio as rateio } from '../db/schema';
 
 using { API_JOURNALENTRYITEMBASIC_SRV as ext } from '../srv/external/API_JOURNALENTRYITEMBASIC_SRV';
 
-service ConfigService @(requires:'rateio-admin') {
+service ConfigService @(requires:'rateioAdmin') {
 
     // Entidades externas
     @readonly
