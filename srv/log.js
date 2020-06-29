@@ -1,4 +1,5 @@
 const cds = require('@sap/cds')
+const utils = require('./utils')
 const LOG_MESSAGE_MAX_POSITION = 511
 
 const MESSAGE_TYPES = {
@@ -21,6 +22,10 @@ class Log{
         }
     }
 
+    addExtraInfo(data){
+        data.timestamp = utils.timestampISOString()
+    }
+
     async logExecucao(execucao_ID, data){
         const { ExecucoesLogs } = this.srv.entities
 
@@ -30,6 +35,8 @@ class Log{
                 execucao_ID: execucao_ID,
             }
         }
+
+        this.addExtraInfo(_data)
 
         _data.message = this.toLogMessage(_data.message)
 
@@ -49,6 +56,8 @@ class Log{
                 item_configuracaoOrigem_ID: item_configuracaoOrigem_ID
             }
         }
+
+        this.addExtraInfo(_data)
 
         _data.message = this.toLogMessage(_data.message)
 

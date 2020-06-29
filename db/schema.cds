@@ -158,10 +158,12 @@ entity ItensDocumentos {
 
 @readonly
 @autoexpose
-aspect log: cuid, managed{
+aspect log: cuid{
     messageType: String(1) not null;
     messageCode: String(10);
     message: String(512) not null;
+    timestamp: Timestamp; // Necessario para estabelecer ordem a nivel de aplicação.
+    createdBy: User @cds.on.insert: $user;
 }
 
 entity ExecucoesLogs: log{
@@ -216,6 +218,8 @@ entity LogsItensExecucao as
         item.execucao.ID as execucao_ID,
         item.configuracaoOrigem.ID as configuracao_ID,
         messageType,
-        message
+        message,
+        timestamp,
+        createdBy
     from ItensExecucoesLogs;
     
