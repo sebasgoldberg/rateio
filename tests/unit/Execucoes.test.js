@@ -13,7 +13,9 @@ describe('OData: Rateio: Execucoes', () => {
     await this.utils.deployAndServe()
     await this.utils.createTestData();
     createRateioProcess.mockImplementation( (ID, srv, req) => {
-      return new RateioProcess(ID, srv, req)
+      const rateio = new RateioProcess(ID, srv, req)
+      rateio.execute = jest.fn(()=>Promise.resolve())
+      return rateio
     })
   })
 
