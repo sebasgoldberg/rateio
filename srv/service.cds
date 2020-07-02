@@ -4,13 +4,20 @@ using { API_JOURNALENTRYITEMBASIC_SRV as ext } from '../srv/external/API_JOURNAL
 
 service ConfigService @(requires:'rateioAdmin') {
 
+    action sync();
+
     // Entidades externas
     @readonly
-    entity A_CompanyCode as projection on ext.A_CompanyCode;
+    entity A_CompanyCode as projection on rateio.A_CompanyCode;
+
     @readonly
-    entity A_GLAccountInChartOfAccounts as projection on ext.A_GLAccountInChartOfAccounts;
+    entity A_GLAccountInChartOfAccounts as projection on rateio.A_GLAccountInChartOfAccounts;
+    
     @readonly
-    entity A_CostCenter as projection on ext.A_CostCenter;
+    entity A_CostCenterCompleto as projection on rateio.A_CostCenterCompleto;
+
+    @readonly
+    entity A_CostCenter as projection on rateio.A_CostCenter;
 
     // Entidades de configuração
     entity EtapasProcesso as projection on rateio.EtapasProcesso;

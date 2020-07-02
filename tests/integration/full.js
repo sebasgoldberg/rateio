@@ -2,7 +2,7 @@ const rp = require('request-promise');
 const { constants } = require('../utils');
 
 
-async function request(options){
+async function request(options, log=true){
     const _options = {
         ...options,
         ...{ uri: `http://localhost:4004${options.uri}` },
@@ -14,7 +14,8 @@ async function request(options){
     }
     
     const result = await rp(_options)
-    console.log(result);
+    if (log)
+        console.log(result);
     return result
 }
 
@@ -25,6 +26,16 @@ async function full(){
     // Verificamos el servidor esté funcionando.
     let response = await request({
         uri: '/config/$metadata' 
+    }, false)
+
+    // Syncronizamos dados mestres com o S/4.
+    response = await request({
+        method: 'POST',
+        uri: '/config/sync',
+        headers:{
+            'Content-Type': 'application/json'
+        },
+        json: true,
     })
 
     try {
@@ -88,7 +99,7 @@ async function full(){
             contaDestino_ChartOfAccounts: 'YCOA',
             contaDestino_GLAccount: '4291010301',
             centroCustoDestino_ControllingArea: 'A000',
-            centroCustoDestino_CostCenter: '0000300101',
+            centroCustoDestino_CostCenter: '300101',
             atribuicao: "destino 1",
             porcentagemRateio: "1",
         },
@@ -108,7 +119,7 @@ async function full(){
             contaDestino_ChartOfAccounts: 'YCOA',
             contaDestino_GLAccount: '4211010300',
             centroCustoDestino_ControllingArea: 'A000',
-            centroCustoDestino_CostCenter: '0000300101',
+            centroCustoDestino_CostCenter: '300101',
             atribuicao: "destino 2",
             porcentagemRateio: "0.99",
         },
@@ -128,7 +139,7 @@ async function full(){
             contaDestino_ChartOfAccounts: 'YCOA',
             contaDestino_GLAccount: '4211010300',
             centroCustoDestino_ControllingArea: 'A000',
-            centroCustoDestino_CostCenter: '0000300101',
+            centroCustoDestino_CostCenter: '300101',
             atribuicao: "destino 3",
             porcentagemRateio: "0.01",
         },

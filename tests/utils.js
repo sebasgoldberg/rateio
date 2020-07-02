@@ -66,7 +66,7 @@ const constants = {
 
 function registerImpForExternalModels(){
 
-    [
+    const testData = [
         {
             entity: "A_CompanyCode",
             keyFields: ["CompanyCode"],
@@ -91,34 +91,41 @@ function registerImpForExternalModels(){
             ]
         },
         {
-            entity: "A_CostCenter",
-            keyFields: ["ControllingArea", "CostCenter"],
+            entity: "A_CostCenterCompleto",
+            keyFields: ["ControllingArea", "CostCenter", "ValidityEndDate"],
             instances: [
                 {
                     "ControllingArea": constants.CONTROLLING_AREA,
                     "CostCenter": constants.COST_CENTER_1,
+                    ValidityEndDate: constants.PERIODO_1.VALID_FROM
                 },
                 {
                     "ControllingArea": constants.CONTROLLING_AREA,
                     "CostCenter": constants.COST_CENTER_2,
+                    ValidityEndDate: constants.PERIODO_1.VALID_FROM
                 },
             ]
         }
-    ].forEach( o => {
+    ]
+    
+    this.on('sync', async req => {
 
-        this.on('READ',o.entity, req => {
-            let keysDefinedInReq = o.keyFields.filter( k => k in req.data)
-            const result = keysDefinedInReq.length > 0 ? 
-                o.instances.filter( instance => {
-                    for (let keyDefinedInReq of keysDefinedInReq){
-                        if (req.data[keyDefinedInReq] !== instance[keyDefinedInReq])
-                            return false
+        await cds.transaction(req).run(
+            testData    
+                .reduce( (result, actual) => {
+
+                    const entity = this.entities[actual.entity]
+
+                    for (const instance of actual.instances){
+                        result.push(
+                            INSERT(instance).into(entity)
+                        )
                     }
-                    return true
-                }) :
-                o.instances
-            req.reply(result)
-        })
+
+                    return result
+
+                }, [])
+        )
     
     })
 
@@ -158,6 +165,14 @@ class TestUtils{
         .expect('Content-Type', /^application\/json/)
     }
 
+    sync(){
+        return this.request
+            .post('/config/sync')
+            .auth(constants.ADMIN_USER)
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
+    }
+
     async createTestData(){
 
         this.createdData = {
@@ -184,6 +199,7 @@ class TestUtils{
             this.createEtapaProcesso({
                 sequencia: constants.SEQUENCIA_3,
             }).expect(201),
+            this.sync().expect(204)
         ])
 
         const results = await Promise.all([

@@ -22,6 +22,70 @@ const { ConfigDestinosImplementation } = require("./")
 const { ExecucoesImplementation } = require("./")
 const { DocumentosImplementation } = require('./documento')
 
+function ODataV2toODataV4(instance){
+    const dateAttributes = ['ValidityEndDate', 'ValidityStartDate', 'CostCenterCreationDate', 'CreationDate']
+    const dateTimeAttributes = ['LastChangeDateTime']
+
+    // Conversão de datas de OData 2.0 para 4.0
+    dateAttributes.forEach( attribute => {
+        if (instance[attribute]) 
+            instance[attribute] = ODataV2toODataV4Date(instance[attribute])
+    })
+    dateTimeAttributes.forEach( attribute => {
+        if (instance[attribute]) 
+            instance[attribute] = ODataV2toODataV4DateTime(instance[attribute])
+    })
+
+    return instance
+}
+
+async function sync(req){
+
+    const journalEntryItemBasicSrv = await cds.connect.to('API_JOURNALENTRYITEMBASIC_SRV')
+
+    const { 
+        A_CompanyCode: extA_CompanyCode,
+        A_GLAccountInChartOfAccounts: extA_GLAccountInChartOfAccounts,
+        A_CostCenter: extA_CostCenter
+    } = journalEntryItemBasicSrv.entities
+
+    const { 
+        A_CompanyCode,
+        A_GLAccountInChartOfAccounts,
+        A_CostCenterCompleto
+    } = this.entities;
+
+
+    const syncServices = [
+        {
+            src: extA_CompanyCode,
+            dst: A_CompanyCode
+        },
+        {
+            src: extA_GLAccountInChartOfAccounts,
+            dst: A_GLAccountInChartOfAccounts
+        },
+        {
+            src: extA_CostCenter,
+            dst: A_CostCenterCompleto
+        }
+    ]
+
+    await Promise.all(syncServices.map( async ({ src, dst }) => {
+
+        const entities = (await
+            journalEntryItemBasicSrv.tx(req).run(
+                journalEntryItemBasicSrv.read(src).limit(999999)
+            )).map(ODataV2toODataV4)
+
+        await cds.transaction(req).run(
+            entities.map( entity => INSERT(entity).into(dst) )
+        )
+
+    }))
+
+}
+
 class ImplementationRegistration{
 
     async registerImpForInternalModels(){
@@ -42,33 +106,8 @@ class ImplementationRegistration{
 
     async registerImpForExternalModels(){
 
-        const journalEntryItemBasicSrv = await cds.connect.to('API_JOURNALENTRYITEMBASIC_SRV')
-        const { A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter, } = this.entities
-    
-        const entities = [ A_CompanyCode, A_GLAccountInChartOfAccounts, A_CostCenter, ]
-    
-        entities.forEach( entity => {
-            this.on('READ', entity, async req => {
-                let response = await journalEntryItemBasicSrv.tx(req).run(req.query)
-    
-                const dateAttributes = ['ValidityEndDate', 'ValidityStartDate', 'CostCenterCreationDate', 'CreationDate']
-                const dateTimeAttributes = ['LastChangeDateTime']
-            
-                // Conversão de datas de OData 2.0 para 4.0
-                response.forEach( instance => {
-                    dateAttributes.forEach( attribute => {
-                        if (instance[attribute]) 
-                            instance[attribute] = ODataV2toODataV4Date(instance[attribute])
-                    })
-                    dateTimeAttributes.forEach( attribute => {
-                        if (instance[attribute]) 
-                            instance[attribute] = ODataV2toODataV4DateTime(instance[attribute])
-                    })
-                });
-    
-                return response;
-            })
-        });
+        this.on('sync', sync.bind(this))
+
     
     }
 

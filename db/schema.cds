@@ -25,6 +25,30 @@ type ControllingArea : String(4);
 type CostCenter : String(10);
 
 /**************************************************/
+// Externo Sincronizado
+/**************************************************/
+
+@cds.persistence.skip: false
+entity A_CompanyCode: ext.A_CompanyCode {
+}
+
+@cds.persistence.skip: false
+entity A_GLAccountInChartOfAccounts: ext.A_GLAccountInChartOfAccounts {
+}
+
+// TODO Verificar tema de zeros na frente: Teoricamente tem que tirar.
+@cds.persistence.skip: false
+entity A_CostCenterCompleto: ext.A_CostCenter {
+}
+
+entity A_CostCenter as 
+    select 
+        key ControllingArea,
+        key CostCenter
+    from A_CostCenterCompleto;
+
+
+/**************************************************/
 // Configuração
 /**************************************************/
 
@@ -34,20 +58,20 @@ entity ConfigOrigens: cuid, managed{
     etapasProcesso: Association to one EtapasProcesso not null;
 
     empresa_CompanyCode: CompanyCode not null;
-    empresa: Association to one ext.A_CompanyCode on
-        empresa.CompanyCode = $self.empresa_CompanyCode;
+    empresa: Association to one A_CompanyCode on
+        empresa.CompanyCode = $self.empresa.CompanyCode;
 
     contaOrigem_ChartOfAccounts: ChartOfAccounts not null;
     contaOrigem_GLAccount: GLAccount not null;
-    contaOrigem: Association to one ext.A_GLAccountInChartOfAccounts on
-        contaOrigem.ChartOfAccounts = $self.contaOrigem_ChartOfAccounts and
-        contaOrigem.GLAccount = $self.contaOrigem_GLAccount;
+    contaOrigem: Association to one A_GLAccountInChartOfAccounts on
+        contaOrigem.ChartOfAccounts = $self.contaOrigem.ChartOfAccounts and
+        contaOrigem.GLAccount = $self.contaOrigem.GLAccount;
 
     centroCustoOrigem_ControllingArea: ControllingArea not null;
     centroCustoOrigem_CostCenter: CostCenter not null;
-    centroCustoOrigem: Association to one ext.A_CostCenter on
-        centroCustoOrigem.ControllingArea = $self.centroCustoOrigem_ControllingArea and
-        centroCustoOrigem.CostCenter = $self.centroCustoOrigem_CostCenter;
+    centroCustoOrigem: Association to one A_CostCenter on
+        centroCustoOrigem.ControllingArea = $self.centroCustoOrigem.ControllingArea and
+        centroCustoOrigem.CostCenter = $self.centroCustoOrigem.CostCenter;
 
     validFrom : DateTime not null;
     validTo   : DateTime not null;
@@ -72,15 +96,15 @@ entity ConfigDestinos: managed{
 
     key contaDestino_ChartOfAccounts: ChartOfAccounts not null;
     key contaDestino_GLAccount: GLAccount not null;
-    contaDestino: Association to one ext.A_GLAccountInChartOfAccounts on
-        contaDestino.ChartOfAccounts = $self.contaDestino_ChartOfAccounts and
-        contaDestino.GLAccount = $self.contaDestino_GLAccount;
+    contaDestino: Association to one A_GLAccountInChartOfAccounts on
+        contaDestino.ChartOfAccounts = $self.contaDestino.ChartOfAccounts and
+        contaDestino.GLAccount = $self.contaDestino.GLAccount;
 
     key centroCustoDestino_ControllingArea: ControllingArea not null;
     key centroCustoDestino_CostCenter: CostCenter not null;
-    centroCustoDestino: Association to one ext.A_CostCenter on
-        centroCustoDestino.ControllingArea = $self.centroCustoDestino_ControllingArea and
-        centroCustoDestino.CostCenter = $self.centroCustoDestino_CostCenter;
+    centroCustoDestino: Association to one A_CostCenter on
+        centroCustoDestino.ControllingArea = $self.centroCustoDestino.ControllingArea and
+        centroCustoDestino.CostCenter = $self.centroCustoDestino.CostCenter;
 
     key atribuicao: String(18);
 
@@ -181,11 +205,11 @@ entity ConfigOrigensExecucoes
         key execucao.ID as execucao_ID,
         key configuracaoOrigem.ID as configuracaoOrigem_ID,
         configuracaoOrigem.etapasProcesso.sequencia as sequencia,
-        configuracaoOrigem.empresa_CompanyCode as CompanyCode,
-        configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
-        configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
-        configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
-        configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter
+        configuracaoOrigem.empresa.CompanyCode as CompanyCode,
+        configuracaoOrigem.contaOrigem.ChartOfAccounts as ChartOfAccounts,
+        configuracaoOrigem.contaOrigem.GLAccount as GLAccount,
+        configuracaoOrigem.centroCustoOrigem.ControllingArea as ControllingArea,
+        configuracaoOrigem.centroCustoOrigem.CostCenter as CostCenter
         // documentosGerados: redirected to Documentos
     from rateio.ItensExecucoes
     order by configuracaoOrigem.etapasProcesso.sequencia;
@@ -200,10 +224,10 @@ entity ConfigOrigensDocumentos as
         cancelado,
         itemExecutado.configuracaoOrigem.etapasProcesso.sequencia as sequencia,
         // itemExecutado.configuracaoOrigem.empresa_CompanyCode as CompanyCode, // o valor é o mesmo que o da chave
-        itemExecutado.configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
-        itemExecutado.configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
-        itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
-        itemExecutado.configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter,
+        itemExecutado.configuracaoOrigem.contaOrigem.ChartOfAccounts as ChartOfAccounts,
+        itemExecutado.configuracaoOrigem.contaOrigem.GLAccount as GLAccount,
+        itemExecutado.configuracaoOrigem.centroCustoOrigem.ControllingArea as ControllingArea,
+        itemExecutado.configuracaoOrigem.centroCustoOrigem.CostCenter as CostCenter,
         itemExecutado.execucao.ano,
         itemExecutado.execucao.periodo,
         itemExecutado.execucao.ID as execucao_ID,
