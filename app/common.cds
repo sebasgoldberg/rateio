@@ -175,12 +175,6 @@ annotate ConfigService.ConfigOrigens with @(
             ],
 
         LineItem: [
-            {
-                // ![@UI.InvocationGrouping]: #Isolated,
-                $Type: 'UI.DataFieldForAction',
-                Label: 'Ativar',
-                Action: 'ConfigService.ConfigOrigens/ativar'
-            },
             {$Type: 'UI.DataField', Value: etapasProcesso_sequencia},
             {$Type: 'UI.DataField', Value: empresa_CompanyCode},
             {$Type: 'UI.DataField', Value: contaOrigem_ChartOfAccounts},
@@ -190,10 +184,14 @@ annotate ConfigService.ConfigOrigens with @(
             {$Type: 'UI.DataField', Value: validFrom},
             {$Type: 'UI.DataField', Value: validTo},
             {$Type: 'UI.DataField', Value: ativa},
+            {$Type: 'UI.DataFieldForAction', Label: 'Ativar', Action: 'ConfigService/ConfigOrigens_ativar', Determining: true },
+            {$Type: 'UI.DataFieldForAction', Label: 'Desativar', Action: 'ConfigService/ConfigOrigens_desativar', Determining: true }
         ],
 
         Identification:[ //![@UI.Importance]: #High,
-            {$Type: 'UI.DataFieldForAction', Label: 'Ativar', Action: 'ConfigService.ConfigOrigens/ativar' }
+            {$Type: 'UI.DataFieldForAction', Label: 'Ativar', Action: 'ConfigService/ConfigOrigens_ativar'},
+            {$Type: 'UI.DataFieldForAction', Label: 'Desativar', Action: 'ConfigService/ConfigOrigens_desativar'}
+
         ],
 
         HeaderInfo: {
