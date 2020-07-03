@@ -5,16 +5,16 @@ class ExternalData{
         this.srv = srv;
     }
 
-    async validateEmpresa(req, CompanyCode){
+    async validateEmpresa(req, CompanyCode, target='empresa_CompanyCode'){
         const { A_CompanyCode } = this.srv.entities
         const result = await cds.transaction(req).run(
             SELECT.one.from(A_CompanyCode).where({CompanyCode: CompanyCode})
         )
         if (!result)
-            req.error(409, `A empresa ${CompanyCode} não existe`)
+            req.error(409, `A empresa ${CompanyCode} não existe`, target)
     }
 
-    async validateConta(req, ChartOfAccounts, GLAccount){
+    async validateConta(req, ChartOfAccounts, GLAccount, targets=['contaOrigem_ChartOfAccounts', 'contaOrigem_GLAccount']){
         const { A_GLAccountInChartOfAccounts } = this.srv.entities
         const result = await cds.transaction(req).run(
             SELECT.one.from(A_GLAccountInChartOfAccounts).where({
@@ -23,10 +23,12 @@ class ExternalData{
             })
         )
         if (!result)
-            req.error(409, `A conta ${ChartOfAccounts}/${GLAccount} não existe`)
+            targets.forEach( target =>
+                req.error(409, `A conta ${ChartOfAccounts}/${GLAccount} não existe`, target)
+            )
     }
 
-    async validateCentro(req, ControllingArea, CostCenter){
+    async validateCentro(req, ControllingArea, CostCenter, targets=['centroCustoOrigem_ControllingArea', 'centroCustoOrigem_CostCenter']){
         const { A_CostCenter } = this.srv.entities
         const result = await cds.transaction(req).run(
             SELECT.one.from(A_CostCenter).where({
@@ -35,7 +37,9 @@ class ExternalData{
             })
         )
         if (!result)
-            req.error(409, `O centro ${ControllingArea}/${CostCenter} não existe`)
+            targets.forEach( target =>
+                req.error(409, `O centro ${ControllingArea}/${CostCenter} não existe`, target)
+            )
     }
 
 }

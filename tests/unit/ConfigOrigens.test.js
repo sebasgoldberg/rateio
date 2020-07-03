@@ -48,9 +48,9 @@ describe('OData: Rateio: ConfigOrigens', () => {
       })
       .set('Accept', 'application/json')
       .expect('Content-Type', /^application\/json/)
-      .expect(400)
+      .expect(409)
 
-    expect(response.text).toEqual(expect.stringMatching(/Reference integrity is violated for association 'etapasProcesso'/))
+    expect(response.text).toEqual(expect.stringMatching(/A etapa 20 não existe\./))
   })
 
   it('Não é possível criar uma configuração para uma empresa que não existe.', async () => {

@@ -8,6 +8,24 @@ class ConfigDestinosImplementation{
         this.externalData = new ExternalData(srv)
     }
 
+    async validateDadosInternos(req){
+
+        const { tipoOperacao_operacao } = req.data
+
+        const { TiposOperacoes } = this.srv.entities
+
+        let tipoOperacao = await cds.transaction(req).run(
+            SELECT.one.from(TiposOperacoes)
+                .where({
+                    operacao: tipoOperacao_operacao
+                })
+        )
+
+        if (!tipoOperacao)
+            req.error(409, `O tipo de operação ${tipoOperacao_operacao} não existe.`, 'tipoOperacao_operacao')
+
+    }
+
     async validateDadosExternos(req){
 
         const { 
@@ -18,8 +36,10 @@ class ConfigDestinosImplementation{
         } = req.data
 
         await Promise.all([
-            this.externalData.validateConta(req, contaDestino_ChartOfAccounts, contaDestino_GLAccount),
-            this.externalData.validateCentro(req, centroCustoDestino_ControllingArea, centroCustoDestino_CostCenter),
+            this.externalData.validateConta(req, contaDestino_ChartOfAccounts, contaDestino_GLAccount,
+                ['contaDestino_ChartOfAccounts', 'contaDestino_GLAccount']),
+            this.externalData.validateCentro(req, centroCustoDestino_ControllingArea, centroCustoDestino_CostCenter,
+                ['centroCustoDestino_ControllingArea', 'centroCustoDestino_CostCenter']),
         ])
 
     }
@@ -69,7 +89,7 @@ class ConfigDestinosImplementation{
 
         // Se for maior a 100, então temos um erro
         if (porcentagemTotal > 100)
-            req.error(409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`)
+            req.error(409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`, 'porcentagemRateio')
 
     }
 
@@ -103,6 +123,7 @@ class ConfigDestinosImplementation{
             req.data.atribuicao = '';
 
         await Promise.all([
+            this.validateDadosInternos(req),
             this.validateOrigemAtivo(req),
             this.validateDadosExternos(req),
             this.validatePorcentagens(req),

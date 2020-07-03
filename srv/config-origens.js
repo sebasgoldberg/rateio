@@ -39,7 +39,10 @@ class ConfigOrigensImplementation{
         } = entityData
     
         if (validFrom > validTo){
-            req.error(409, `O periodo indicado ${validFrom} - ${validTo} é inválido.`)
+            ['validFrom', 'validTo']
+                .forEach(target =>
+                    req.error(409, `O periodo indicado ${validFrom} - ${validTo} é inválido.`, target)
+                )
             return
         }
 
@@ -73,9 +76,12 @@ class ConfigOrigensImplementation{
         )
 
         if (result.length > 0)
-            req.error(409, `O periodo indicado fica sobreposto com uma configuração `+
-                `já existente no periodo ${result[0].validFrom} - `+
-                `${result[0].validTo}.`)
+            ['validFrom', 'validTo']
+                .forEach(target =>
+                    req.error(409, `O periodo indicado fica sobreposto com uma configuração `+
+                    `já existente no periodo ${result[0].validFrom} - `+
+                    `${result[0].validTo}.`, target)
+                )
 
     }
 
@@ -89,14 +95,33 @@ class ConfigOrigensImplementation{
             'centroCustoOrigem_CostCenter',    
         ].forEach(fieldName => {
             if (fieldName in req.data)
-                req.error(409, `O campo ${fieldName} não deve ser modificado`)
+                req.error(409, `O campo ${fieldName} não deve ser modificado`, fieldName)
         })
     }
 
     async beforeUpdate(req){
 
         this.validarNaoExistemMudancasCamposChave(req);
-        await this.validatePeriodosSobrepostos(req);
+        await Promise.all([
+            this.validatePeriodosSobrepostos(req),
+        ]);
+
+    }
+
+    async validateDadosInternos(req){
+        const { etapasProcesso_sequencia } = req.data
+
+        const { EtapasProcesso } = this.srv.entities
+
+        let etapa = await cds.transaction(req).run(
+            SELECT.one.from(EtapasProcesso)
+                .where({
+                    sequencia: etapasProcesso_sequencia
+                })
+        )
+
+        if (!etapa)
+            req.error(409, `A etapa ${etapasProcesso_sequencia} não existe.`, 'etapasProcesso_sequencia')
 
     }
 
@@ -121,6 +146,7 @@ class ConfigOrigensImplementation{
     async beforeCreate(req){
 
         await Promise.all([
+            this.validateDadosInternos(req),
             this.validatePeriodosSobrepostos(req),
             this.validateDadosExternos(req)
         ]);
@@ -140,7 +166,7 @@ class ConfigOrigensImplementation{
           )
         
         if (result1.length == 0){
-            req.error(409, `Impossível ativar configuração ${ID}, a mesma não tem destinos definidos.`)
+            req.error(409, `Impossível ativar configuração ${ID}, a mesma não tem destinos definidos.`, 'destinos')
             return
         }
 
@@ -154,7 +180,7 @@ class ConfigOrigensImplementation{
 
         if (credito != debito){
             req.error(409, `Impossível ativar a configuração. A soma das porcentagens agrupadas `+
-                `por tipo de operação não coincidem: ${credito} distinto de ${debito}.`)
+                `por tipo de operação não coincidem: ${credito} distinto de ${debito}.`, 'destinos')
             return
         }
 
@@ -180,7 +206,7 @@ class ConfigOrigensImplementation{
         if (result1){
             const { execucao_ID } = result1
             req.error(409, `Impossível desativar a configuração. `+
-                `A mesma é utilizada na execução ${execucao_ID}.`)
+                `A mesma é utilizada na execução ${execucao_ID}.`, 'execucoes')
             return
         }
 

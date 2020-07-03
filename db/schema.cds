@@ -55,11 +55,9 @@ entity A_CostCenter as
 // Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
 entity ConfigOrigens: cuid, managed{
 
-    // TODO Descomentar e corrigir teste unitario.
-    // etapasProcesso_sequencia: Integer not null;
-    // etapasProcesso: Association to one EtapasProcesso on 
-    //     etapasProcesso.sequencia = $self.etapasProcesso_sequencia;
-    etapasProcesso: Association to one EtapasProcesso not null;
+    etapasProcesso_sequencia: Integer not null;
+    etapasProcesso: Association to one EtapasProcesso on 
+        etapasProcesso.sequencia = $self.etapasProcesso_sequencia;
 
     empresa_CompanyCode: CompanyCode not null;
     empresa: Association to one A_CompanyCode on
@@ -97,11 +95,9 @@ entity ConfigDestinos: managed{
     
     key origem: Association to one ConfigOrigens;
 
-    // TODO Descomentar e corrigir teste unitario.
-    // key tipoOperacao_operacao: TipoOperacao not null;
-    // tipoOperacao: Association to one TiposOperacoes on
-    //     tipoOperacao.operacao = $self.tipoOperacao_operacao;
-    key tipoOperacao: Association to one TiposOperacoes not null;
+    key tipoOperacao_operacao: TipoOperacao not null;
+    tipoOperacao: Association to one TiposOperacoes on
+        tipoOperacao.operacao = $self.tipoOperacao_operacao;
 
     key contaDestino_ChartOfAccounts: ChartOfAccounts not null;
     key contaDestino_GLAccount: GLAccount not null;

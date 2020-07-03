@@ -62,9 +62,9 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
       .expect('Content-Type', /^application\/json/)
-      .expect(400)
+      .expect(409)
 
-    expect(response.text).toEqual(expect.stringMatching(/Reference integrity is violated for association 'tipoOperacao'/))
+    expect(response.text).toEqual(expect.stringMatching(/O tipo de operação outra não existe./))
   })
 
   it('Não é possível criar uma configuração de destino para uma conta que não existe.', async () => {

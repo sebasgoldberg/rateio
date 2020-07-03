@@ -70,7 +70,7 @@ class ExecucoesImplementation{
         )
 
         if (status != STATUS_EXECUCAO.NAO_EXECUTADO){
-            req.error(409, `A execução ${ID} não pode ser executada já que atualmente esta com o status ${status}.`)
+            req.error(409, `A execução ${ID} não pode ser executada já que atualmente esta com o status ${status}.`, 'status_status')
             return
         }
 
@@ -83,7 +83,7 @@ class ExecucoesImplementation{
         )
 
         if (configAtivasPeriodo.length == 0){
-            req.error(409, `Não existem configurações ativas na data ${dataConfiguracoes}. Não é possível realizar a execução ${ID}.`)
+            req.error(409, `Não existem configurações ativas na data ${dataConfiguracoes}. Não é possível realizar a execução ${ID}.`, 'dataConfiguracoes')
         }
 
         const [result1, result2] = await cds.transaction(req).run([
@@ -126,7 +126,7 @@ class ExecucoesImplementation{
 
         if (status != STATUS_EXECUCAO.NAO_EXECUTADO){
             req.error(409, `A execução ${ID} não pode ser modificada/eliminada já que `+
-            `atualmente esta com o status ${status}.`)
+            `atualmente esta com o status ${status}.`, 'status_status')
             return
         }
     }
