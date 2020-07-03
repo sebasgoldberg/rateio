@@ -32,6 +32,9 @@
             },
             "db": {
                 "kind": "sql",
+                "credentials": {
+                    "database": "rateio.db"
+                },
                 "[production]": {
                     "kind": "hana"
                 }
