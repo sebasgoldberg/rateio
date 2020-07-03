@@ -159,7 +159,7 @@ class TestUtils{
     createEtapaProcesso(data){
         return this.request
         .post('/config/EtapasProcesso')
-        .auth(constants.ADMIN_USER)
+        .auth(constants.ADMIN_USER, constants.ADMIN_USER)
         .send(data)
         .set('Accept', 'application/json')
         .expect('Content-Type', /^application\/json/)
@@ -168,7 +168,7 @@ class TestUtils{
     sync(){
         return this.request
             .post('/config/sync')
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
     }
@@ -205,7 +205,7 @@ class TestUtils{
         const results = await Promise.all([
             this.request
                 .post('/config/ConfigOrigens')
-                .auth(constants.ADMIN_USER)
+                .auth(constants.ADMIN_USER, constants.ADMIN_USER)
                 .send(configOrigemData)
                 .set('Accept', 'application/json')
                 .expect('Content-Type', /^application\/json/)
@@ -257,7 +257,7 @@ class TestUtils{
 
         return this.request
             .post('/config/ConfigOrigens')
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .send(origem)
             .set('Accept', 'application/json')
             .expect('Content-Type', /^application\/json/)
@@ -280,7 +280,7 @@ class TestUtils{
       
         return this.request
             .post('/config/ConfigDestinos')
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .send(data)
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -291,7 +291,7 @@ class TestUtils{
     activateOrigem(ID){
         return this.request
             .post(`/config/ConfigOrigens(${ID})/ConfigService.ativar`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
     }
@@ -310,7 +310,7 @@ class TestUtils{
       
         return this.request
             .post('/config/Execucoes')
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .send(data)
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -323,7 +323,7 @@ class TestUtils{
         const key = `CompanyCode='${CompanyCode}',AccountingDocument='${AccountingDocument}',FiscalYear=${FiscalYear}`
         return this.request
             .post(`/config/Documentos(${key})/ConfigService.cancelar`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
     }
@@ -331,7 +331,7 @@ class TestUtils{
     executarExecucao(ID){
         return this.request
             .post(`/config/Execucoes(${ID})/ConfigService.executar`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
     }
@@ -339,7 +339,7 @@ class TestUtils{
     getExecucao(ID){
         return this.request
             .get(`/config/Execucoes(${ID})`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .expect('Content-Type', /^application\/json/)
     }
 
@@ -347,7 +347,7 @@ class TestUtils{
         const key = `execucao_ID=${execucao_ID},configuracaoOrigem_ID=${configuracaoOrigem_ID}`
         return this.request
             .get(`/config/ItensExecucoes(${key})/logs`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .expect('Content-Type', /^application\/json/)
     }
 
@@ -355,28 +355,28 @@ class TestUtils{
         return this.request
             //.get(`/config/ItensExecucoesLogs?$filter=item_execucao_ID eq ${ID}`)
             .get(`/config/Execucoes(${ID})/logsItens`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .expect('Content-Type', /^application\/json/)
     }
 
     getLogsExecucao(ID){
         return this.request
             .get(`/config/Execucoes(${ID})/logs`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .expect('Content-Type', /^application\/json/)
     }
 
     getItensExecucao(ID){
         return this.request
             .get(`/config/Execucoes(${ID})/itensExecucoes`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .expect('Content-Type', /^application\/json/)
     }
 
     modificarExecucao(ID, data){
         return this.request
             .patch(`/config/Execucoes(${ID})`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .send(data)
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
@@ -385,7 +385,7 @@ class TestUtils{
     eliminarExecucao(ID){
         return this.request
             .delete(`/config/Execucoes(${ID})`)
-            .auth(constants.ADMIN_USER)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
             .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
             .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
     }

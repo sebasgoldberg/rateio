@@ -8,7 +8,8 @@ async function request(options, log=true){
         ...{ uri: `http://localhost:4004${options.uri}` },
         ...{
             auth: {
-				user: constants.ADMIN_USER,
+                user: constants.ADMIN_USER, 
+                password: constants.ADMIN_USER,
 			},
         }
     }
@@ -57,7 +58,8 @@ async function full(){
                 'Content-Type': 'application/json'
             },
             body: {
-                    "sequencia": 90
+                    sequencia: 90,
+                    name: 'Um teste'
                 },
             json: true,
         })

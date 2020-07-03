@@ -9,7 +9,30 @@ annotate ConfigService.A_CostCenter with @cds.odata.valuelist;
 
 annotate ConfigService.ConfigOrigens with{
 
-    etapasProcesso @Common.Label: 'Etapa';
+    etapasProcesso_sequencia @(
+		Common: {
+			Label: 'Etapa',
+			FieldControl: #Mandatory,
+            ValueList: {
+                Label: 'Etapas',
+                CollectionPath: 'EtapasProcesso',
+                SearchSupported: true,
+                Parameters: [
+                    {
+                        $Type: 'Common.ValueListParameterInOut',
+                        LocalDataProperty: 'etapasProcesso_sequencia',
+                        ValueListProperty: 'sequencia'
+                    },
+                    {
+                        $Type: 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty: 'name'
+                    }
+                ]
+            },
+		},
+        // TODO Deveria trazer as descrições.
+        sap.value.list: 'fixed-values',
+	);
 
     empresa_CompanyCode @(
 		Common: {
@@ -32,8 +55,7 @@ annotate ConfigService.ConfigOrigens with{
                     }
                 ]
             },
-		},
-		// ValueList.entity: 'A_CompanyCode',CompanyCodeName
+		}
 	);
 
     contaOrigem_ChartOfAccounts @(
@@ -143,7 +165,6 @@ annotate ConfigService.EtapasProcesso with {
     sequencia @Common.Label: 'Sequencia';
 }
 
-// @odata.draft.enabled
 annotate ConfigService.ConfigOrigens with @(
     UI: {
 
@@ -154,6 +175,12 @@ annotate ConfigService.ConfigOrigens with @(
             ],
 
         LineItem: [
+            {
+                // ![@UI.InvocationGrouping]: #Isolated,
+                $Type: 'UI.DataFieldForAction',
+                Label: 'Ativar',
+                Action: 'ConfigService.ConfigOrigens/ativar'
+            },
             {$Type: 'UI.DataField', Value: etapasProcesso_sequencia},
             {$Type: 'UI.DataField', Value: empresa_CompanyCode},
             {$Type: 'UI.DataField', Value: contaOrigem_ChartOfAccounts},
@@ -165,19 +192,15 @@ annotate ConfigService.ConfigOrigens with @(
             {$Type: 'UI.DataField', Value: ativa},
         ],
 
+        Identification:[ //![@UI.Importance]: #High,
+            {$Type: 'UI.DataFieldForAction', Label: 'Ativar', Action: 'ConfigService.ConfigOrigens/ativar' }
+        ],
 
         HeaderInfo: {
             TypeName: 'Configuração', TypeNamePlural: 'Configurações',
-            Title: { $Type: 'UI.DataField', Value: createdBy },
-            Description: { Value: createdBy }
+            Title: { $Type: 'UI.DataField', Value: descricao },
+            Description: { Value: descricao }
         },
-
-        Identification: [
-            {Value: etapasProcesso_sequencia, Label:'Etapa'},
-            {Value: empresa_CompanyCode, Label:'Empresa'},
-            {Value: contaOrigem_GLAccount, Label:'Conta'},
-            {Value: centroCustoOrigem_CostCenter, Label:'Centro de Custo'},
-	    ],
 
 
         HeaderFacets: [
@@ -217,6 +240,8 @@ annotate ConfigService.ConfigOrigens with @(
                 {Value: contaOrigem_GLAccount},
                 {Value: centroCustoOrigem_ControllingArea},
                 {Value: centroCustoOrigem_CostCenter},
+				{Value: validFrom},
+				{Value: validTo},
 			]
 		},
 		FieldGroup#Details: {
@@ -228,10 +253,32 @@ annotate ConfigService.ConfigOrigens with @(
     }
 );
 
-// @odata.draft.enabled
 annotate ConfigService.ConfigDestinos with{
 
-    tipoOperacao @Common.Label: 'Tipo de operação';
+    tipoOperacao_operacao @(
+		Common: {
+			Label: 'Tipo de operação',
+			FieldControl: #Mandatory,
+            ValueList: {
+                Label: 'Tipos de operações',
+                CollectionPath: 'TiposOperacoes',
+                SearchSupported: true,
+                Parameters: [
+                    {
+                        $Type: 'Common.ValueListParameterInOut',
+                        LocalDataProperty: 'tipoOperacao_operacao',
+                        ValueListProperty: 'operacao'
+                    },
+                    {
+                        $Type: 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty: 'name'
+                    }
+                ]
+            },
+		},
+        // TODO Deveria trazer as descrições.
+        sap.value.list: 'fixed-values',
+	);
 
     contaDestino_ChartOfAccounts @(
             Common: {
@@ -349,16 +396,10 @@ annotate ConfigService.ConfigDestinos with @(
         
         HeaderInfo: {
             TypeName: 'Destino', TypeNamePlural: 'Destinos',
-            Title: { $Type: 'UI.DataField', Value: createdBy }, // TODO 
-            Description: { Value: createdBy } // TODO 
+            Title: { $Type: 'UI.DataField', Value: origem.descricao }, // TODO 
+            Description: { Value: origem.descricao } // TODO 
         },
 
-        // Identification: [
-        //     {Value: etapasProcesso_sequencia, Label:'Etapa'},
-        //     {Value: empresa_CompanyCode, Label:'Empresa'},
-        //     {Value: contaOrigem_GLAccount, Label:'Conta'},
-        //     {Value: centroCustoOrigem_CostCenter, Label:'Centro de Custo'},
-	    // ],
 
         HeaderFacets: [
 			// {$Type: 'UI.ReferenceFacet', Label: 'Validez', Target: '@UI.FieldGroup#Origem'},

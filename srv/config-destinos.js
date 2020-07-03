@@ -98,6 +98,10 @@ class ConfigDestinosImplementation{
 
     async beforeCreate(req){
 
+        // TODO Se não for necessario, eliminar.
+        if (!req.data.atribuicao)
+            req.data.atribuicao = '';
+
         await Promise.all([
             this.validateOrigemAtivo(req),
             this.validateDadosExternos(req),
