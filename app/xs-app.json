@@ -1,8 +1,15 @@
 {
+    "welcomeFile": "/fiori.html",
     "routes": [ 
         {
+            "source": "^/rateio_api/(.*)",
+            "target": "$1",
+            "destination": "rateio_api"
+        },
+        {
             "source": "^/(.*)",
-            "destination": "srv_api"
-        } 
+            "localDir": "./",
+            "authenticationType": "xsuaa"
+        }
     ]
 }

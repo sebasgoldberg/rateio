@@ -1,9 +1,10 @@
 {
   "name": "approuter",
   "dependencies": {
-    "@sap/approuter": "^6"
+    "@sap/approuter": "^6",
+    "nodemon": "^2.0.4"
   },
   "scripts": {
-    "start": "node node_modules/@sap/approuter/approuter.js"
+    "start": "nodemon node_modules/@sap/approuter/approuter.js"
   }
 }
