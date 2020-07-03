@@ -85,6 +85,7 @@ entity ConfigOrigens: cuid, managed{
     destinos: Association to many ConfigDestinos on destinos.origem = $self;
 
     ativa: Boolean not null default false @readonly;
+    virtual ativaCriticality: Integer;
 
     itensExecucoes: Association to many ItensExecucoes on itensExecucoes.configuracaoOrigem = $self;
 

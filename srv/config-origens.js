@@ -191,6 +191,12 @@ class ConfigOrigensImplementation{
         return result2
     }
 
+    afterRead(origens){
+        origens.forEach( origem => {
+            origem.ativaCriticality = origem.ativa ? 3 : 1
+        })
+    }
+
     registerHandles(){
         
         const { ConfigOrigens } = this.srv.entities
@@ -199,6 +205,7 @@ class ConfigOrigensImplementation{
         this.srv.before('UPDATE', ConfigOrigens, this.beforeUpdate.bind(this))
         this.srv.on('ativar', ConfigOrigens, this.ativarConfiguracaoAction.bind(this))
         this.srv.on('desativar', ConfigOrigens, this.desativarConfiguracaoAction.bind(this))
+        this.srv.after("READ", ConfigOrigens, this.afterRead.bind(this))
     }
 
 }

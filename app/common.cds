@@ -183,7 +183,7 @@ annotate ConfigService.ConfigOrigens with @(
             {$Type: 'UI.DataField', Value: centroCustoOrigem_CostCenter},
             {$Type: 'UI.DataField', Value: validFrom},
             {$Type: 'UI.DataField', Value: validTo},
-            {$Type: 'UI.DataField', Value: ativa},
+            {$Type: 'UI.DataField', Value: ativa, Criticality: ativaCriticality },
             {$Type: 'UI.DataFieldForAction', Label: 'Ativar', Action: 'ConfigService/ConfigOrigens_ativar', Determining: true },
             {$Type: 'UI.DataFieldForAction', Label: 'Desativar', Action: 'ConfigService/ConfigOrigens_desativar', Determining: true }
         ],
@@ -208,6 +208,7 @@ annotate ConfigService.ConfigOrigens with @(
 		],
 		FieldGroup#Validez: {
 			Data: [
+                {Value: ativa, Criticality: ativaCriticality},
 				{Value: validFrom},
 				{Value: validTo},
 			]
@@ -227,11 +228,11 @@ annotate ConfigService.ConfigOrigens with @(
 
         Facets: [
 			{$Type: 'UI.ReferenceFacet', Label: 'Origem', Target: '@UI.FieldGroup#Origem'},
-			{$Type: 'UI.ReferenceFacet', Label: 'Detalhes', Target: '@UI.FieldGroup#Details'},
 			{$Type: 'UI.ReferenceFacet', Label: 'Destinos', Target: 'destinos/@UI.LineItem'},
 		],
 		FieldGroup#Origem: {
 			Data: [
+                {Value: descricao, Label:'Descrição'},
                 {Value: etapasProcesso_sequencia},
                 {Value: empresa_CompanyCode},
                 {Value: contaOrigem_ChartOfAccounts},
@@ -240,12 +241,6 @@ annotate ConfigService.ConfigOrigens with @(
                 {Value: centroCustoOrigem_CostCenter},
 				{Value: validFrom},
 				{Value: validTo},
-			]
-		},
-		FieldGroup#Details: {
-			Data: [
-				{Value: descricao, Label:'Descrição'},
-				{Value: ativa, Label:'Configuração ativa'},
 			]
 		},
     }
