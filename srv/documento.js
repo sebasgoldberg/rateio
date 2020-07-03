@@ -20,7 +20,7 @@ class Documento{
             AccountingDocumentType: 'RF',
             DocumentReferenceID: DocumentReferenceID,
             DocumentHeaderText: DocumentHeaderText,
-            CreatedByUser: 'CBUSER', // TODO Obter usuário
+            CreatedByUser: CreatedByUser,
             CompanyCode: CompanyCode,
             DocumentDate: PostingDate,
             PostingDate: PostingDate,

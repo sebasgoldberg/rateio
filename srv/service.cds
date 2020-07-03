@@ -24,7 +24,6 @@ service ConfigService @(requires:'rateioAdmin') {
     entity ConfigOrigens as projection on rateio.ConfigOrigens
         { *, itensExecucoes: redirected to ItensExecucoes }
         actions{
-            // TODO Ver de mudar para não estar relacionado a nenhuma entidade.
             action ativar();
             action desativar();
         };

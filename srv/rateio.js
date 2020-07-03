@@ -170,7 +170,6 @@ class RateioProcess{
         const periodoInicio = this.getPeriodoInicio()
         const periodoFim = this.getPeriodoFim()
 
-        // TODO Verificar que realmente funciona.
         this.saldosEtapaProcessada = await
             journalEntryItemBasicSrv.tx(this.req).run(
                 journalEntryItemBasicSrv.read(A_JournalEntryItemBasic)
@@ -295,7 +294,8 @@ class RateioProcess{
             PostingDate: this.getPostingDate(),
             CompanyCode: item.CompanyCode,
             DocumentReferenceID: this.getPeriodoFim(),
-            DocumentHeaderText: `Rateio ${this.getPeriodoFim()}`
+            DocumentHeaderText: `Rateio ${this.getPeriodoFim()}`,
+            CreatedByUser: this.req.user.id,
         })
 
         let saldoUltimoItem = 0

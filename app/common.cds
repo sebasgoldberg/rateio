@@ -197,7 +197,7 @@ annotate ConfigService.ConfigOrigens with @(
         HeaderInfo: {
             TypeName: 'Configuração', TypeNamePlural: 'Configurações',
             Title: { $Type: 'UI.DataField', Value: descricao },
-            Description: { Value: descricao }
+            Description: { Value: ID }
         },
 
 
@@ -389,32 +389,16 @@ annotate ConfigService.ConfigDestinos with @(
         
         HeaderInfo: {
             TypeName: 'Destino', TypeNamePlural: 'Destinos',
-            Title: { $Type: 'UI.DataField', Value: origem.descricao }, // TODO 
-            Description: { Value: origem.descricao } // TODO 
+            Title: { $Type: 'UI.DataField', Value: origem.descricao },
+            Description: { Value: tipoOperacao_operacao }
         },
 
 
         HeaderFacets: [
-			// {$Type: 'UI.ReferenceFacet', Label: 'Validez', Target: '@UI.FieldGroup#Origem'},
-			// {$Type: 'UI.ReferenceFacet', Label: 'Validez', Target: '@UI.FieldGroup#Validez'},
 			{$Type: 'UI.ReferenceFacet', Label: 'Criado', Target: '@UI.FieldGroup#Created'},
 			{$Type: 'UI.ReferenceFacet', Label: 'Modificado', Target: '@UI.FieldGroup#Modified'},
 		],
-		// FieldGroup#Origem: {
-		// 	Data: [
-        //         {Value: origem.empresa_CompanyCode}, // TODO Ver se funciona.
-        //         {Value: origem.contaOrigem_ChartOfAccounts}, // TODO Ver se funciona.
-        //         {Value: origem.contaOrigem_GLAccount}, // TODO Ver se funciona.
-        //         {Value: origem.centroCustoOrigem_ControllingArea}, // TODO Ver se funciona.
-        //         {Value: origem.centroCustoOrigem_CostCenter}, // TODO Ver se funciona.
-		// 	]
-		// },
-		// FieldGroup#Validez: {
-		// 	Data: [
-		// 		{Value: origem.validFrom}, // TODO Ver se funciona.
-		// 		{Value: origem.validTo}, // TODO Ver se funciona.
-		// 	]
-		// },
+
 		FieldGroup#Created: {
 			Data: [
 				{Value: createdBy},

@@ -1,4 +1,3 @@
-// TODO Ver se realmente são necessarias estas validações.
 class ExternalData{
 
     constructor(srv){
