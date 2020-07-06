@@ -3,12 +3,7 @@ const ExternalData = require("./external-data")
 const createRateioProcess = require('./rateio-factory')
 const { MESSAGE_TYPES } = require('./log')
 
-const STATUS_EXECUCAO = {
-    NAO_EXECUTADO: 'nao_executado',
-    EM_EXECUCAO: 'em_execucao',
-    FINALIZADO: 'finalizado',
-    CANCELADO: 'cancelado',
-}
+const { STATUS_EXECUCAO } = require('./constants')
 
 class ExecucoesImplementation{
 
@@ -139,24 +134,24 @@ class ExecucoesImplementation{
         await this.validateStatusOnChange(req)
     }
 
-    afterRead(execucoes){
-        execucoes.forEach( execucao => {
-            execucao.statusCriticality = 
-                execucao.status_status == STATUS_EXECUCAO.FINALIZADO ? 3 :
-                execucao.status_status == STATUS_EXECUCAO.EM_EXECUCAO ? 2 :
-                execucao.status_status == STATUS_EXECUCAO.CANCELADO ? 1 :
+    afterRead(instances){
+        instances.forEach( instance => {
+            instance.statusCriticality = 
+                instance.status_status == STATUS_EXECUCAO.FINALIZADO ? 3 :
+                instance.status_status == STATUS_EXECUCAO.EM_EXECUCAO ? 2 :
+                instance.status_status == STATUS_EXECUCAO.CANCELADO ? 1 :
                 0
         })
     }
 
     registerHandles(){
         
-        const { Execucoes } = this.srv.entities
+        const { Execucoes, ItensExecucoes } = this.srv.entities
 
         this.srv.before('UPDATE', Execucoes, this.beforeUpdate.bind(this))
         this.srv.before('DELETE', Execucoes, this.beforeDelete.bind(this))
         this.srv.on('executar', Execucoes, this.executarExecucaoAction.bind(this))
-        this.srv.after("READ", Execucoes, this.afterRead.bind(this))
+        this.srv.after("READ", [Execucoes, ItensExecucoes], this.afterRead.bind(this))
     }
 
 }

@@ -2,6 +2,7 @@ const cds = require('@sap/cds')
 const bs = require("binary-search");
 const createDocumento = require('./documento-factory');
 const { Log, MESSAGE_TYPES } = require('./log');
+const { STATUS_EXECUCAO } = require('./constants');
 
 class RateioProcess{
 
@@ -381,6 +382,23 @@ class RateioProcess{
         
     }
 
+    async setItemStatus(item, status){
+
+        const { ItensExecucoes } = this.srv.entities
+
+        const { execucao_ID, configuracaoOrigem_ID } = item
+
+        await cds.transaction(this.req).run(
+            UPDATE(ItensExecucoes)
+                .set({status_status: status})
+                .where({
+                    execucao_ID: execucao_ID,
+                    configuracaoOrigem_ID: configuracaoOrigem_ID,
+                })
+        )
+
+    }
+
     async processEtapa(etapa){
 
         await this.log({
@@ -409,17 +427,23 @@ class RateioProcess{
 
                     await this.processarItem(item)
 
-                    await this.log({
-                        messageType: MESSAGE_TYPES.DEBUG,
-                        message: `Fim processamento do item ${JSON.stringify(item)}.`
-                    })
+                    await Promise.all([
+                        this.setItemStatus(item, STATUS_EXECUCAO.FINALIZADO),
+                        this.log({
+                            messageType: MESSAGE_TYPES.DEBUG,
+                            message: `Fim processamento do item ${JSON.stringify(item)}.`
+                        })    
+                    ])
     
                 } catch (error) {
 
-                    await this.log({
-                        messageType: MESSAGE_TYPES.DEBUG,
-                        message: `Fim processamento do item ${JSON.stringify(item)}.`
-                    })
+                    await Promise.all([
+                        this.setItemStatus(item, STATUS_EXECUCAO.CANCELADO),
+                        this.log({
+                            messageType: MESSAGE_TYPES.DEBUG,
+                            message: `Fim processamento do item ${JSON.stringify(item)}.`
+                        }),
+                    ])
 
                     throw error
                 }

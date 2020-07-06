@@ -149,7 +149,7 @@ entity Execucoes: cuid, managed{
 
     logs: Association to many ExecucoesLogs on logs.execucao = $self;
 
-    logsItens: Association to many LogsItensExecucao on logsItens.execucao_ID = $self.ID
+    logsItens: Association to many LogsItensExecucao on logsItens.execucao_ID = $self.ID;
 
 }
 
@@ -158,6 +158,11 @@ entity Execucoes: cuid, managed{
 entity ItensExecucoes: managed {
     key execucao: Association to one Execucoes not null;
     key configuracaoOrigem: Association to one ConfigOrigens;
+
+    @readonly
+    status_status: StatusExecucao not null default 'nao_executado';
+    status: Association to one StatusExecucoes on status.status = $self.status_status;
+    virtual statusCriticality: Integer;
 
     documentosGerados: Association to many Documentos on
         documentosGerados.itemExecutado = $self; // Um por configuracaoOrigem/moeda

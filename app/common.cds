@@ -9,6 +9,8 @@ annotate ConfigService.A_CostCenter with @cds.odata.valuelist;
 
 annotate ConfigService.ConfigOrigens with{
 
+    descricao @Common.Label: 'Descricao';
+
     etapasProcesso_sequencia @(
 		Common: {
 			Label: 'Etapa',

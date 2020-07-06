@@ -3,6 +3,7 @@ using { ConfigService } from '../srv/service';
 
 annotate ConfigService.Execucoes with {
 
+
     descricao @(
 		Common: {
 			Label: 'Descrição',
@@ -30,10 +31,26 @@ annotate ConfigService.Execucoes with {
     status_status @(
 		Common: {
 			Label: 'Status',
-        },
+            ValueList: {
+                Label: 'Status',
+                CollectionPath: 'StatusExecucoes',
+                SearchSupported: true,
+                Parameters: [
+                    {
+                        $Type: 'Common.ValueListParameterInOut',
+                        LocalDataProperty: 'status_status',
+                        ValueListProperty: 'status'
+                    },
+                    {
+                        $Type: 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty: 'name'
+                    }
+                ]
+            },
+		},
+        // TODO Deveria trazer as descrições.
         sap.value.list: 'fixed-values',
-    );
-
+	);
 }
 
 annotate ConfigService.Execucoes with @(
@@ -334,10 +351,40 @@ annotate ConfigService.Documentos with @(
     }
 );
 
+annotate ConfigService.ItensExecucoes with {
+
+    status_status @(
+		Common: {
+			Label: 'Status',
+            ValueList: {
+                Label: 'Status',
+                CollectionPath: 'StatusExecucoes',
+                SearchSupported: true,
+                Parameters: [
+                    {
+                        $Type: 'Common.ValueListParameterInOut',
+                        LocalDataProperty: 'status_status',
+                        ValueListProperty: 'status'
+                    },
+                    {
+                        $Type: 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty: 'name'
+                    }
+                ]
+            },
+		},
+        // TODO Deveria trazer as descrições.
+        sap.value.list: 'fixed-values',
+	);
+
+};
+
+
 annotate ConfigService.ItensExecucoes with @(
     UI: {
 
         SelectionFields: [
+            status_status,
             configuracaoOrigem.etapasProcesso_sequencia,
             configuracaoOrigem.empresa_CompanyCode,
             configuracaoOrigem.contaOrigem_ChartOfAccounts,
@@ -347,6 +394,7 @@ annotate ConfigService.ItensExecucoes with @(
             ],
 
         LineItem: [
+            {$Type: 'UI.DataField', Value: status_status, Criticality: statusCriticality },
             {$Type: 'UI.DataField', Value: configuracaoOrigem.descricao},
             {$Type: 'UI.DataField', Value: configuracaoOrigem.etapasProcesso_sequencia},
             {$Type: 'UI.DataField', Value: configuracaoOrigem.empresa_CompanyCode},
@@ -365,6 +413,7 @@ annotate ConfigService.ItensExecucoes with @(
         HeaderFacets: [
 			{$Type: 'UI.ReferenceFacet', Label: 'Criado', Target: '@UI.FieldGroup#Created'},
 			{$Type: 'UI.ReferenceFacet', Label: 'Modificado', Target: '@UI.FieldGroup#Modified'},
+            {$Type: 'UI.ReferenceFacet', Label: 'Status', Target: '@UI.FieldGroup#Status'},
 		],
 		FieldGroup#Created: {
 			Data: [
@@ -376,6 +425,11 @@ annotate ConfigService.ItensExecucoes with @(
 			Data: [
 				{Value: modifiedBy},
 				{Value: modifiedAt},
+			]
+		},
+        FieldGroup#Status: {
+			Data: [
+                {Value: status_status, Criticality: statusCriticality},
 			]
 		},
         Facets: [
