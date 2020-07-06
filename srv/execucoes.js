@@ -139,6 +139,16 @@ class ExecucoesImplementation{
         await this.validateStatusOnChange(req)
     }
 
+    afterRead(execucoes){
+        execucoes.forEach( execucao => {
+            execucao.statusCriticality = 
+                execucao.status_status == STATUS_EXECUCAO.FINALIZADO ? 3 :
+                execucao.status_status == STATUS_EXECUCAO.EM_EXECUCAO ? 2 :
+                execucao.status_status == STATUS_EXECUCAO.CANCELADO ? 1 :
+                0
+        })
+    }
+
     registerHandles(){
         
         const { Execucoes } = this.srv.entities
@@ -146,7 +156,7 @@ class ExecucoesImplementation{
         this.srv.before('UPDATE', Execucoes, this.beforeUpdate.bind(this))
         this.srv.before('DELETE', Execucoes, this.beforeDelete.bind(this))
         this.srv.on('executar', Execucoes, this.executarExecucaoAction.bind(this))
-
+        this.srv.after("READ", Execucoes, this.afterRead.bind(this))
     }
 
 }

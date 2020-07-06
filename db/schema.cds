@@ -143,6 +143,7 @@ entity Execucoes: cuid, managed{
     @readonly
     status_status: StatusExecucao not null default 'nao_executado';
     status: Association to one StatusExecucoes on status.status = $self.status_status;
+    virtual statusCriticality: Integer;
 
     itensExecucoes: Association to many ItensExecucoes on itensExecucoes.execucao = $self;
 
@@ -158,7 +159,8 @@ entity ItensExecucoes: managed {
     key execucao: Association to one Execucoes not null;
     key configuracaoOrigem: Association to one ConfigOrigens;
 
-    documentosGerados: Association to one Documentos; // Um por configuracaoOrigem/moeda
+    documentosGerados: Association to many Documentos on
+        documentosGerados.itemExecutado = $self; // Um por configuracaoOrigem/moeda
     logs: Association to many ItensExecucoesLogs on logs.item = $self;
 }
 
@@ -179,7 +181,7 @@ type DocumentItemNumber: String(6);
 @readonly
 @autoexpose
 aspect log: cuid{
-    messageType: String(1) not null;
+    messageType: Integer;
     messageCode: String(10);
     message: String(512) not null;
     timestamp: Timestamp; // Necessario para estabelecer ordem a nivel de aplicação.

@@ -9,7 +9,7 @@ class Documento{
     }
 
     setDadosCabecalho({ 
-        PostingDate, CompanyCode, DocumentReferenceID, DocumentHeaderText 
+        PostingDate, CompanyCode, DocumentReferenceID, DocumentHeaderText, CreatedByUser
     }) {
 
         this.JournalEntry = {

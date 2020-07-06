@@ -3,10 +3,10 @@ const utils = require('./utils')
 const LOG_MESSAGE_MAX_POSITION = 511
 
 const MESSAGE_TYPES = {
-    ERROR: 'E',
-    WARNING: 'W',
-    INFO: 'I',
-    DEBUG: 'D'
+    ERROR: 1,
+    WARNING: 2,
+    INFO: 3,
+    DEBUG: 0
 }
 
 class Log{
