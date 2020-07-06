@@ -428,3 +428,53 @@ annotate ConfigService.ConfigDestinos with @(
 		},
     }
 );
+
+annotate ConfigService.EtapasProcesso with @(
+    UI: {
+        LineItem: [
+            {$Type: 'UI.DataField', Value: sequencia},
+            {$Type: 'UI.DataField', Value: name},
+            {$Type: 'UI.DataField', Value: descr},
+            {$Type: 'UI.DataField', Value: createdAt},
+            {$Type: 'UI.DataField', Value: createdBy},
+            {$Type: 'UI.DataField', Value: modifiedAt},
+            {$Type: 'UI.DataField', Value: modifiedBy},
+        ],
+        
+        HeaderInfo: {
+            TypeName: 'Etapa Processo', TypeNamePlural: 'Etapas Processo',
+            Title: { $Type: 'UI.DataField', Value: sequencia },
+            Description: { Value: name }
+        },
+
+
+        HeaderFacets: [
+			{$Type: 'UI.ReferenceFacet', Label: 'Criado', Target: '@UI.FieldGroup#Created'},
+			{$Type: 'UI.ReferenceFacet', Label: 'Modificado', Target: '@UI.FieldGroup#Modified'},
+		],
+
+		FieldGroup#Created: {
+			Data: [
+				{Value: createdBy},
+				{Value: createdAt},
+			]
+		},
+		FieldGroup#Modified: {
+			Data: [
+				{Value: modifiedBy},
+				{Value: modifiedAt},
+			]
+		},
+
+        Facets: [
+			{$Type: 'UI.ReferenceFacet', Label: 'Detalhes', Target: '@UI.FieldGroup#Details'},
+		],
+		FieldGroup#Details: {
+			Data: [
+                {Value: sequencia},
+                {Value: name},
+                {Value: descr},
+			]
+		},
+    }
+);
