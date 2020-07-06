@@ -15,11 +15,16 @@
         "cfenv": "^1.2.2",
         "express": "^4.17.1",
         "passport": "^0.4.1",
+        "request": "^2.88.2",
+        "request-promise": "^4.2.5",
         "soap": "^0.31.0"
     },
     "scripts": {
         "start": "npx cds run",
         "test": "jest"
+    },
+    "engines": {
+      "node": "12.x"
     },
     "cds": {
         "requires": {
@@ -62,8 +67,6 @@
     },
     "devDependencies": {
         "jest": "^26.0.1",
-        "request": "^2.88.2",
-        "request-promise": "^4.2.5",
         "sqlite3": "^4.2.0",
         "supertest": "^4.0.2"
     }

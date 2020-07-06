@@ -7,3 +7,4 @@ applications:
   services:
   - rateio-db-hdi-container
   - rateio-uaa
+  - rateio-destination

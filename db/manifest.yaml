@@ -7,3 +7,4 @@ applications:
   memory: 128M
   services:
   - rateio-db-hdi-container
+  - rateio-uaa

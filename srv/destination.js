@@ -5,6 +5,8 @@ var rp = require('request-promise');
 
 const appEnv = cfenv.getAppEnv();
 
+const log = console
+
 module.exports = class {
 
     constructor(){

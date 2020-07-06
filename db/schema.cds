@@ -116,8 +116,6 @@ entity ConfigDestinos: managed{
 
     porcentagemRateio: Decimal(5,2) not null @assert.range: [ 0, 100 ];
 
-    itensDocumentos: Association to many ItensDocumentos on itensDocumentos.configuracaoDestino = $self;
-
 }
 
 /**************************************************/
@@ -173,18 +171,10 @@ entity Documentos: managed {
     key FiscalYear: FiscalYear not null;
     moeda: Moeda;
     itemExecutado: Association to one ItensExecucoes not null;
-    itensDocumento: Association to many ItensDocumentos on itensDocumento.documento = $self;
     cancelado: Boolean not null default false;
 };
 
 type DocumentItemNumber: String(6);
-
-@autoexpose
-entity ItensDocumentos {
-    key documento: Association to one Documentos not null;
-    key documentItemNumber: DocumentItemNumber not null;
-    configuracaoDestino: Association to one ConfigDestinos not null;
-}
 
 @readonly
 @autoexpose
