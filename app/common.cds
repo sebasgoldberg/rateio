@@ -187,7 +187,8 @@ annotate ConfigService.ConfigOrigens with @(
             {$Type: 'UI.DataField', Value: validTo},
             {$Type: 'UI.DataField', Value: ativa, Criticality: ativaCriticality },
             {$Type: 'UI.DataFieldForAction', Label: 'Ativar', Action: 'ConfigService/ConfigOrigens_ativar', Determining: true },
-            {$Type: 'UI.DataFieldForAction', Label: 'Desativar', Action: 'ConfigService/ConfigOrigens_desativar', Determining: true }
+            {$Type: 'UI.DataFieldForAction', Label: 'Desativar', Action: 'ConfigService/ConfigOrigens_desativar', Determining: true },
+            {$Type: 'UI.DataFieldForAction', Label: 'Sincronizar', Action: 'ConfigService/sync', Determining: true },
         ],
 
         Identification:[ //![@UI.Importance]: #High,

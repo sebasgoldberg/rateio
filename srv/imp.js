@@ -78,9 +78,13 @@ async function sync(req){
                 journalEntryItemBasicSrv.read(src).limit(999999)
             )).map(ODataV2toODataV4)
 
-        await cds.transaction(req).run(
-            entities.map( entity => INSERT(entity).into(dst) )
-        )
+        try {
+            await cds.transaction(req).run(
+                entities.map( entity => INSERT(entity).into(dst) )
+            )                
+        } catch (error) {
+            
+        }
 
     }))
 
@@ -107,7 +111,6 @@ class ImplementationRegistration{
     async registerImpForExternalModels(){
 
         this.on('sync', sync.bind(this))
-
     
     }
 
