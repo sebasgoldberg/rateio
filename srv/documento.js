@@ -181,12 +181,19 @@ class DocumentosImplementation{
 
     }
 
+    afterRead(instances){
+        instances.forEach( instance => {
+            instance.canceladoCriticality = instance.cancelado ? 1 : 3
+        })
+    }
+
     registerHandles(){
         
         const { Documentos } = this.srv.entities
 
         this.srv.on('cancelar', Documentos, this.cancelarDocumentoAction.bind(this))
         this.srv.on('anularCancelamento', Documentos, this.anularCancelamentoDocumentoAction.bind(this))
+        this.srv.after("READ", Documentos, this.afterRead.bind(this))
 
     }
 

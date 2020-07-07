@@ -179,6 +179,7 @@ entity Documentos: managed {
     moeda: Moeda;
     itemExecutado: Association to one ItensExecucoes not null;
     cancelado: Boolean not null default false;
+    virtual canceladoCriticality: Integer;
 };
 
 type DocumentItemNumber: String(6);

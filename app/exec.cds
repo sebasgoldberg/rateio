@@ -112,8 +112,8 @@ annotate ConfigService.Execucoes with @(
 		},
         Facets: [
 			{$Type: 'UI.ReferenceFacet', Label: 'Detalhes', Target: '@UI.FieldGroup#Detalhes'},
-			{$Type: 'UI.ReferenceFacet', Label: 'Log Execução', Target: 'logs/@UI.LineItem'},
 			{$Type: 'UI.ReferenceFacet', Label: 'Itens', Target: 'itensExecucoes/@UI.LineItem'},
+			{$Type: 'UI.ReferenceFacet', Label: 'Log Execução', Target: 'logs/@UI.LineItem'},
 		],
 		FieldGroup#Detalhes: {
 			Data: [
@@ -305,15 +305,15 @@ annotate ConfigService.Documentos with @(
             {$Type: 'UI.DataField', Value: AccountingDocument },
             {$Type: 'UI.DataField', Value: FiscalYear },
             {$Type: 'UI.DataField', Value: moeda },
-            {$Type: 'UI.DataField', Value: cancelado }, // Agregar criticidad
-            {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar'},
-            {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento'},
+            {$Type: 'UI.DataField', Value: cancelado, Criticality: canceladoCriticality  },
+            {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar', Inline: true},
+            {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento', Inline: true},
         ],
 
-        Identification:[ //![@UI.Importance]: #High,
-            {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar'},
-            {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento'},
-        ],
+        // Identification:[ //![@UI.Importance]: #High,
+        //     {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar'},
+        //     {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento'},
+        // ],
 
         HeaderInfo: {
             TypeName: 'Documento', TypeNamePlural: 'Documentos',
@@ -347,7 +347,7 @@ annotate ConfigService.Documentos with @(
                 {Value: AccountingDocument },
                 {Value: FiscalYear },
                 {Value: moeda },
-                {Value: cancelado },
+                {Value: cancelado, Criticality: canceladoCriticality },
 			]
 		},
     }
@@ -436,8 +436,8 @@ annotate ConfigService.ItensExecucoes with @(
 		},
         Facets: [
 			{$Type: 'UI.ReferenceFacet', Label: 'Configuração Origem', Target: 'configuracaoOrigem/@UI.FieldGroup#Origem'},
-            {$Type: 'UI.ReferenceFacet', Label: 'Logs', Target: 'logs/@UI.LineItem'},
             {$Type: 'UI.ReferenceFacet', Label: 'Documentos', Target: 'documentosGerados/@UI.LineItem'},
+            {$Type: 'UI.ReferenceFacet', Label: 'Logs', Target: 'logs/@UI.LineItem'},
 		],
     }
 );
