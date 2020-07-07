@@ -143,11 +143,50 @@ class DocumentosImplementation{
 
     }
 
+    async anularCancelamentoDocumentoAction(req){
+
+        const { CompanyCode, AccountingDocument, FiscalYear } = req.params[0]
+
+        const { Documentos, ConfigOrigensDocumentos } = this.srv.entities
+
+        const log = new Log(this.srv, req)
+
+        const documento = await cds.transaction(req).run(
+            SELECT.one
+                .from(ConfigOrigensDocumentos)
+                .where(req.params[0])
+        )
+
+        if (!documento.cancelado){
+            req.error(409, `O documento não se encontra cancelado, impossível anular o cancelamento.`)
+            return
+        }
+
+        await Promise.all([
+            cds.transaction(req).run(
+                UPDATE(Documentos)
+                .set({cancelado: false})
+                .where({CompanyCode: CompanyCode })
+                .and({ AccountingDocument: AccountingDocument })
+                .and({ FiscalYear: FiscalYear })
+                .and({ cancelado: true })
+            ),
+            log.logItemExecucao(
+                documento.execucao_ID, documento.configuracaoOrigem_ID,
+                {
+                    messageType: MESSAGE_TYPES.WARNING,
+                    message: `Foi anulado o cancelamento para o seguinte documento: ${CompanyCode} ${AccountingDocument} ${FiscalYear}.`
+                })
+        ])
+
+    }
+
     registerHandles(){
         
         const { Documentos } = this.srv.entities
 
         this.srv.on('cancelar', Documentos, this.cancelarDocumentoAction.bind(this))
+        this.srv.on('anularCancelamento', Documentos, this.anularCancelamentoDocumentoAction.bind(this))
 
     }
 

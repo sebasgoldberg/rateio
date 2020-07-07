@@ -307,10 +307,12 @@ annotate ConfigService.Documentos with @(
             {$Type: 'UI.DataField', Value: moeda },
             {$Type: 'UI.DataField', Value: cancelado }, // Agregar criticidad
             {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar'},
+            {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento'},
         ],
 
         Identification:[ //![@UI.Importance]: #High,
             {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar'},
+            {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento'},
         ],
 
         HeaderInfo: {
