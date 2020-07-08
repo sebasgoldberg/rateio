@@ -49,6 +49,16 @@ class Log{
     }
 
     async logItemExecucao(item_execucao_ID, item_configuracaoOrigem_ID, data){
+
+        const dataExec = {
+            ...data,
+            ...{
+                message: `Item ${item_configuracaoOrigem_ID}: ${data.message}`
+            }
+        }
+
+        const logExecPromise = this.logExecucao(item_execucao_ID, dataExec)
+
         const { ItensExecucoesLogs } = this.srv.entities
 
         const _data = {
@@ -63,10 +73,13 @@ class Log{
 
         _data.message = this.toLogMessage(_data.message)
 
-        await cds.transaction(this.req).run(
-            INSERT(_data)
-                .into(ItensExecucoesLogs)
-        )
+        await Promise.all([
+            logExecPromise,
+            cds.transaction(this.req).run(
+                INSERT(_data)
+                    .into(ItensExecucoesLogs)
+            )
+        ])
     }
 }
 
