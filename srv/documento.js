@@ -20,7 +20,7 @@ class Documento{
             AccountingDocumentType: 'RF',
             DocumentReferenceID: DocumentReferenceID,
             DocumentHeaderText: DocumentHeaderText,
-            CreatedByUser: CreatedByUser,
+            CreatedByUser: CreatedByUser.substring(0,12), // Se não restringimos da erro.
             CompanyCode: CompanyCode,
             DocumentDate: PostingDate,
             PostingDate: PostingDate,
