@@ -11,33 +11,36 @@ module.exports = class {
 
     constructor(){
 
-        if (appEnv.isLocal)
-            return
+        try {
 
-        this.destination = xsenv.getServices({
-            destination: {
-                tag: 'destination'
-            }
-        }).destination;                
+            this.destination = xsenv.getServices({
+                destination: {
+                    tag: 'destination'
+                }
+            }).destination;                
+    
+        } catch (error) {
+            console.error(`Erro ao tentar obter o serviço destination: ${String(console.error())}`);
+        }
 
     }
 
     async createToken() {
 
-        let body = await rp({
-
+        const options = {
             url: `${this.destination.url}/oauth/token`,
             method: 'POST',
             json: true,
-            form: {
-                grant_type: 'client_credentials',
-                client_id: this.destination.clientid
+            qs:{
+                grant_type: 'client_credentials'
             },
             auth: {
                 user: this.destination.clientid,
                 pass: this.destination.clientsecret
             }
-        });
+        }
+
+        const body = await rp(options);
 
         return body.access_token;
     }
@@ -55,14 +58,10 @@ module.exports = class {
                 console.error(error.toString());
             }
 
-        // If fails, we try at service level.
-
-        if (appEnv.isLocal)
-            return
-
         let token = await this.createToken(this.destination.url, this.destination.clientid, this.destination.clientsecret);
 
-        return await rp({
+
+        const result = await rp({
             url: `${this.destination.uri}/destination-configuration/v1/instanceDestinations/${destinationName}`,
             method: 'GET',
             auth: {
@@ -70,6 +69,14 @@ module.exports = class {
             },
             json: true
         });
+
+        const { URL, User, Password } = result
+
+        return {
+            url: URL,
+            username: User,
+            password: Password
+        }
     }
      
     async deleteDestination(destinationName) {
