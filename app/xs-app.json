@@ -4,12 +4,14 @@
         {
             "source": "^/rateio_api/(.*)",
             "target": "$1",
-            "destination": "rateio_api"
+            "destination": "rateio_api",
+            "scope": "$XSAPPNAME.rateioAdmin"
         },
         {
             "source": "^/(.*)",
             "localDir": "./",
-            "authenticationType": "xsuaa"
+            "authenticationType": "xsuaa",
+            "scope": "$XSAPPNAME.rateioAdmin"
         }
     ]
 }

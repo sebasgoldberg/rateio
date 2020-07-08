@@ -17,6 +17,8 @@ class Log{
     }
 
     toLogMessage(message){
+        console.log(message);
+        
         if (message){
             return message.substring(0,LOG_MESSAGE_MAX_POSITION)
         }

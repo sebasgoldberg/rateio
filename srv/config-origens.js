@@ -145,6 +145,8 @@ class ConfigOrigensImplementation{
 
     async beforeCreate(req){
 
+        req.data.ativa = false
+
         await Promise.all([
             this.validateDadosInternos(req),
             this.validatePeriodosSobrepostos(req),
@@ -172,7 +174,7 @@ class ConfigOrigensImplementation{
 
         const somaPorcentagens = result1.reduce((prev, destino) => {
             const { tipoOperacao_operacao: operacao, porcentagemRateio } = destino
-            prev[operacao] += porcentagemRateio
+            prev[operacao] += Number(porcentagemRateio)
             return prev
         },{credito: 0, debito: 0})
 

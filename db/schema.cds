@@ -208,15 +208,15 @@ entity ConfigOrigensExecucoes
     SELECT 
         key execucao.ID as execucao_ID,
         key configuracaoOrigem.ID as configuracaoOrigem_ID,
-        configuracaoOrigem.etapasProcesso.sequencia as sequencia,
-        configuracaoOrigem.empresa.CompanyCode as CompanyCode,
-        configuracaoOrigem.contaOrigem.ChartOfAccounts as ChartOfAccounts,
-        configuracaoOrigem.contaOrigem.GLAccount as GLAccount,
-        configuracaoOrigem.centroCustoOrigem.ControllingArea as ControllingArea,
-        configuracaoOrigem.centroCustoOrigem.CostCenter as CostCenter
+        configuracaoOrigem.etapasProcesso_sequencia as sequencia,
+        configuracaoOrigem.empresa_CompanyCode as CompanyCode,
+        configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
+        configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
+        configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
+        configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter
         // documentosGerados: redirected to Documentos
     from rateio.ItensExecucoes
-    order by configuracaoOrigem.etapasProcesso.sequencia;
+    order by configuracaoOrigem.etapasProcesso_sequencia;
 
 @readonly
 entity ConfigOrigensDocumentos as
@@ -226,12 +226,12 @@ entity ConfigOrigensDocumentos as
         key FiscalYear,
         moeda,
         cancelado,
-        itemExecutado.configuracaoOrigem.etapasProcesso.sequencia as sequencia,
+        itemExecutado.configuracaoOrigem.etapasProcesso_sequencia as sequencia,
         // itemExecutado.configuracaoOrigem.empresa_CompanyCode as CompanyCode, // o valor é o mesmo que o da chave
-        itemExecutado.configuracaoOrigem.contaOrigem.ChartOfAccounts as ChartOfAccounts,
-        itemExecutado.configuracaoOrigem.contaOrigem.GLAccount as GLAccount,
-        itemExecutado.configuracaoOrigem.centroCustoOrigem.ControllingArea as ControllingArea,
-        itemExecutado.configuracaoOrigem.centroCustoOrigem.CostCenter as CostCenter,
+        itemExecutado.configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
+        itemExecutado.configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
+        itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
+        itemExecutado.configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter,
         itemExecutado.execucao.ano,
         itemExecutado.execucao.periodo,
         itemExecutado.execucao.ID as execucao_ID,

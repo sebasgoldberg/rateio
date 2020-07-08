@@ -242,7 +242,7 @@ class RateioProcess{
 
     getItemAmountInTransactionCurrency(saldoItem, destino){
         // Deixamos só 2 decimais.
-        return Math.abs(Math.round(saldoItem.AmountInCompanyCodeCurrency * destino.porcentagemRateio) / 100) * (
+        return Math.abs(Math.round(saldoItem.AmountInCompanyCodeCurrency * Number(destino.porcentagemRateio)) / 100) * (
             this.getItemDebitCreditCode(saldoItem, destino) == 'H' ? -1 : 1
         )
     }
@@ -253,7 +253,7 @@ class RateioProcess{
 
         const entries = [
             documento.CompanyCode, documento.AccountingDocument, documento.FiscalYear,
-            saldoItem.CompanyCodeCurrency, item.execucao_ID, item.configuracaoOrigem_ID
+            saldoItem.CompanyCodeCurrency, item.execucao_ID, item.configuracaoOrigem_ID, false
         ]
 
         await cds.transaction(this.req).run(
@@ -261,7 +261,7 @@ class RateioProcess{
                 .into(Documentos)
                 .columns(
                     'CompanyCode', 'AccountingDocument', 'FiscalYear', 'moeda', 
-                    'itemExecutado_execucao_ID', 'itemExecutado_configuracaoOrigem_ID'
+                    'itemExecutado_execucao_ID', 'itemExecutado_configuracaoOrigem_ID', 'cancelado'
                     )
                 .entries(entries)
         )
@@ -333,7 +333,7 @@ class RateioProcess{
 
         await Promise.all([
             this.registrarDocumento(item, documento, saldoItem),
-            await this.logItem(item, {
+            this.logItem(item, {
                 messageType: MESSAGE_TYPES.INFO,
                 message: `Documento criado com sucesso ${CompanyCode} ${AccountingDocument} ${FiscalYear}.`
             })

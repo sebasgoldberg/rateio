@@ -95,6 +95,10 @@ class ExecucoesImplementation{
         ])
     }
 
+    async beforeExecutarExecucaoAction(req){
+        await this.validateStatusOnChange(req)
+    }
+
     async executarExecucaoAction(req){
 
         const ID = req.params[0]
@@ -150,6 +154,7 @@ class ExecucoesImplementation{
 
         this.srv.before('UPDATE', Execucoes, this.beforeUpdate.bind(this))
         this.srv.before('DELETE', Execucoes, this.beforeDelete.bind(this))
+        this.srv.before('executar', Execucoes, this.beforeExecutarExecucaoAction.bind(this))
         this.srv.on('executar', Execucoes, this.executarExecucaoAction.bind(this))
         this.srv.after("READ", [Execucoes, ItensExecucoes], this.afterRead.bind(this))
     }

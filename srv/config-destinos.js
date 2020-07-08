@@ -85,7 +85,7 @@ class ConfigDestinosImplementation{
 
         // Adiciona as porcentagens junto com o novo destino.
         const porcentagemTotal = result
-            .reduce( (total, o) => total + o.porcentagemRateio, Number(porcentagemRateio))
+            .reduce( (total, o) => total + Number(o.porcentagemRateio), Number(porcentagemRateio))
 
         // Se for maior a 100, então temos um erro
         if (porcentagemTotal > 100)
