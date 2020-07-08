@@ -130,7 +130,7 @@ describe('OData: Rateio: Execucoes', () => {
       .expect(409)
 
     expect(response6.text).toEqual(expect.stringMatching(
-      new RegExp(`A execução ${execucaoID} não pode ser modificada/eliminada já que `+
+      new RegExp(`A execução ${execucaoID} não pode ser executada já que `+
         `atualmente esta com o status .*\\.`
         )))
 

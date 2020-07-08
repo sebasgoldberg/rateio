@@ -30,7 +30,6 @@ class ExecucoesImplementation{
                 message: `Aconteceu o seguinte erro: '${String(e)}'.`
             })
             status = STATUS_EXECUCAO.CANCELADO
-            // req.error(400, e.toString())
         }
 
         await Promise.all([
@@ -52,7 +51,10 @@ class ExecucoesImplementation{
 
     }
 
-    async iniciarExecucao(ID, req){
+    async iniciarExecucao(req){
+        
+        const ID = req.params[0]
+
         const { Execucoes, ConfigOrigens, ItensExecucoes } = this.srv.entities
 
         const {
@@ -79,9 +81,10 @@ class ExecucoesImplementation{
 
         if (configAtivasPeriodo.length == 0){
             req.error(409, `Não existem configurações ativas na data ${dataConfiguracoes}. Não é possível realizar a execução ${ID}.`, 'dataConfiguracoes')
+            return
         }
 
-        const [result1, result2] = await cds.transaction(req).run([
+        await cds.transaction(req).run([
             UPDATE(Execucoes)
                 .set({status_status: STATUS_EXECUCAO.EM_EXECUCAO})
                 .where({ID: ID}),
@@ -96,14 +99,12 @@ class ExecucoesImplementation{
     }
 
     async beforeExecutarExecucaoAction(req){
-        await this.validateStatusOnChange(req)
+        await this.iniciarExecucao(req)
     }
 
     async executarExecucaoAction(req){
 
         const ID = req.params[0]
-
-        await this.iniciarExecucao(ID, req)
 
         // FIXME Ver a possibilidade de  continuar executando após responder a request de execução.
         await this.realizarRateios(ID, req)
