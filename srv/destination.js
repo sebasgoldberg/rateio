@@ -142,7 +142,7 @@ module.exports = class {
                 Authentication: "NoAuthentication",
                 ProxyType: "Internet",
                 ForwardAuthToken: true,
-                Timeout: 900000, // 15 minutos
+                Timeout: 1800000, // 30 minutos
             });    
 
             log.debug(`Destination ${destinationName} criada com sucesso.`);

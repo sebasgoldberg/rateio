@@ -8,7 +8,9 @@ applications:
   services:
   - rateio-uaa
   - rateio-destination
-  env: 
+  env:
+    SESSION_TIMEOUT: 90
+    INCOMING_CONNECTION_TIMEOUT: 1800000
     destinations: > 
        [
         {"name":"ui5", "url":"https://sapui5.hana.ondemand.com"} 
