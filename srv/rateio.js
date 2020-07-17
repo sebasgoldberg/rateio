@@ -308,7 +308,7 @@ class RateioProcess{
             let AmountInTransactionCurrency
             
             if (i === (destinos.length-1))
-                AmountInTransactionCurrency = saldoUltimoItem * -1
+                AmountInTransactionCurrency = Math.round(saldoUltimoItem * -100) / 100
             else{
                 AmountInTransactionCurrency = this.getItemAmountInTransactionCurrency(saldoItem, destino)
                 saldoUltimoItem += AmountInTransactionCurrency

@@ -35,3 +35,5 @@ tests.http
 destinations.json
 soap.describe.json
 .cf-environment
+
+dist
