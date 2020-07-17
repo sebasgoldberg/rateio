@@ -345,7 +345,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const response4 = await this.utils.request
-      .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino3)})`) 
+      .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(response3)})`) 
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .send({
         porcentagemRateio: "19",
@@ -422,7 +422,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const response4 = await this.utils.request
-      .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino3)})`) 
+      .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(response3)})`) 
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .send({
         porcentagemRateio: "18.99",
@@ -485,7 +485,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(204)
 
     const response4 = await this.utils.request
-      .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino2)})`) 
+      .patch(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(response2)})`) 
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .send({
         porcentagemRateio: "18.99",
@@ -628,7 +628,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(204)
 
     const response4 = await this.utils.request
-      .delete(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(destino2)})`) 
+      .delete(`/config/ConfigDestinos(${this.utils.buildConfigDestinosUrlKey(response2)})`) 
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
       .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")

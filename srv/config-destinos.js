@@ -28,12 +28,29 @@ class ConfigDestinosImplementation{
 
     async validateDadosExternos(req){
 
+        const { ID } = req.data
+
+        const { ConfigDestinos } = this.srv.entities
+
+        let destino = await cds.transaction(req).run(
+            SELECT
+                .one
+                .from(ConfigDestinos)
+                .where({ ID: ID })
+        )
+
+        if (!destino)
+            destino = {}
+
         const { 
             contaDestino_ChartOfAccounts,
             contaDestino_GLAccount,
             centroCustoDestino_ControllingArea,
             centroCustoDestino_CostCenter,
-        } = req.data
+        } = {
+            ...destino,
+            ...req.data,
+        }
 
         await Promise.all([
             this.externalData.validateConta(req, contaDestino_ChartOfAccounts, contaDestino_GLAccount,
@@ -48,16 +65,26 @@ class ConfigDestinosImplementation{
 
         const { ConfigDestinos } = this.srv.entities
 
+        const { ID } = req.data
+
+        let destino = await cds.transaction(req).run(
+            SELECT
+                .one
+                .from(ConfigDestinos)
+                .where({ ID: ID })
+        )
+
+        if (!destino)
+            destino = {}
+
         const { 
             origem_ID,
             tipoOperacao_operacao,
-            contaDestino_ChartOfAccounts,
-            contaDestino_GLAccount,
-            centroCustoDestino_ControllingArea,
-            centroCustoDestino_CostCenter,
-            atribuicao,
             porcentagemRateio,
-        } = req.data
+        } = {
+            ...destino,
+            ...req.data
+        }
 
         if (!porcentagemRateio)
             return;
@@ -66,27 +93,18 @@ class ConfigDestinosImplementation{
         const result = await cds.transaction(req).run(
             SELECT.from(ConfigDestinos)
                 .where({
-                    and:[
-                        { origem_ID: origem_ID },
-                        { tipoOperacao_operacao: tipoOperacao_operacao },
-                        {
-                            // Excluimos o registro existente
-                            or: [
-                                { contaDestino_ChartOfAccounts: { '!=': contaDestino_ChartOfAccounts } },
-                                { contaDestino_GLAccount: { '!=': contaDestino_GLAccount } },
-                                { centroCustoDestino_ControllingArea: { '!=': centroCustoDestino_ControllingArea } },
-                                { centroCustoDestino_CostCenter: { '!=': centroCustoDestino_CostCenter } },
-                                { atribuicao: { '!=': atribuicao } },
-                            ]
-                        }
-                    ]
-                })
+                    origem_ID: origem_ID,
+                    tipoOperacao_operacao: tipoOperacao_operacao,
+                    ID: { '!=': ID }
+                 })
         )
 
         // Adiciona as porcentagens junto com o novo destino.
         const porcentagemTotal = result
             .reduce( (total, o) => total + Number(o.porcentagemRateio), Number(porcentagemRateio))
 
+        console.log(req.data, result, porcentagemTotal);
+    
         // Se for maior a 100, então temos um erro
         if (porcentagemTotal > 100)
             req.error(409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`, 'porcentagemRateio')
@@ -94,11 +112,25 @@ class ConfigDestinosImplementation{
     }
 
     async validateOrigemAtivo(req){
-        const { ConfigOrigens } = this.srv.entities
 
-        const { 
-            origem_ID,
-        } = req.data
+        const { ConfigDestinos, ConfigOrigens } = this.srv.entities
+
+        const { ID } = req.data
+
+        const destino = await cds.transaction(req).run(
+            SELECT
+                .one
+                .from(ConfigDestinos)
+                .where({ ID: ID })
+        )
+
+        let origem_ID
+
+        if (destino)
+            origem_ID = destino.origem_ID
+        else
+            origem_ID = req.data.origem_ID
+
 
         // Obtem os destinos para o mesmo origem.
         const result = await cds.transaction(req).run(

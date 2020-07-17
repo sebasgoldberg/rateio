@@ -91,28 +91,28 @@ entity ConfigOrigens: cuid, managed{
 
 type UUIDType: String(36);
 
-entity ConfigDestinos: managed{
+entity ConfigDestinos: cuid, managed{
     
-    key origem: Association to one ConfigOrigens;
+    origem: Association to one ConfigOrigens;
 
-    key tipoOperacao_operacao: TipoOperacao not null;
+    tipoOperacao_operacao: TipoOperacao not null;
     tipoOperacao: Association to one TiposOperacoes on
         tipoOperacao.operacao = $self.tipoOperacao_operacao;
 
-    key contaDestino_ChartOfAccounts: ChartOfAccounts not null;
-    key contaDestino_GLAccount: GLAccount not null;
+    contaDestino_ChartOfAccounts: ChartOfAccounts not null;
+    contaDestino_GLAccount: GLAccount not null;
     contaDestino: Association to one A_GLAccountInChartOfAccounts on
         contaDestino.ChartOfAccounts = $self.contaDestino.ChartOfAccounts and
         contaDestino.GLAccount = $self.contaDestino.GLAccount;
 
-    key centroCustoDestino_ControllingArea: ControllingArea not null;
-    key centroCustoDestino_CostCenter: CostCenter not null;
+    centroCustoDestino_ControllingArea: ControllingArea not null;
+    centroCustoDestino_CostCenter: CostCenter not null;
     centroCustoDestino: Association to one A_CostCenter on
         centroCustoDestino.ControllingArea = $self.centroCustoDestino.ControllingArea and
         centroCustoDestino.CostCenter = $self.centroCustoDestino.CostCenter;
 
     // TODO A atribução não deve ser obrigatoria
-    key atribuicao: String(18);
+    atribuicao: String(18);
 
     porcentagemRateio: Decimal(5,2) not null @assert.range: [ 0, 100 ];
 
