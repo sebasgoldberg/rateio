@@ -112,7 +112,7 @@ class RateioProcess{
     }
 
     getPeriodoInicio(){
-        return `001/${this.execucao.ano}`
+        return this.getPeriodoFim()
     }
 
     getPeriodoFim(){
