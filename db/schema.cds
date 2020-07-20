@@ -226,6 +226,11 @@ entity ConfigOrigensDocumentos as
         key FiscalYear,
         moeda,
         cancelado,
+        canceladoCriticality,
+        createdAt,
+        createdBy,
+        modifiedAt,
+        modifiedBy,
         itemExecutado.configuracaoOrigem.etapasProcesso_sequencia as sequencia,
         // itemExecutado.configuracaoOrigem.empresa_CompanyCode as CompanyCode, // o valor é o mesmo que o da chave
         itemExecutado.configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
