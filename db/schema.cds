@@ -241,6 +241,7 @@ entity ConfigOrigensDocumentos as projection on rateio.Documentos{
         itemExecutado.execucao.periodo,
         itemExecutado.execucao.ID as execucao_ID,
         itemExecutado.configuracaoOrigem.ID as configuracaoOrigem_ID,
+        itemExecutado: redirected to ItensExecucoes,
         };
 
 

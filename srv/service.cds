@@ -66,7 +66,9 @@ service ConfigService @(requires:'rateioAdmin') {
     entity ConfigOrigensExecucoes as projection on rateio.ConfigOrigensExecucoes;
 
     @readonly
-    entity ConfigOrigensDocumentos as projection on rateio.ConfigOrigensDocumentos;
+    entity ConfigOrigensDocumentos as projection on rateio.ConfigOrigensDocumentos{
+        *, itemExecutado: redirected to ItensExecucoes
+    };
 
     @readonly
     entity LogsItensExecucao as projection on rateio.LogsItensExecucao;
