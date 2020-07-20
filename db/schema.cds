@@ -235,10 +235,12 @@ entity ConfigOrigensDocumentos as projection on rateio.Documentos{
         itemExecutado.configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
         itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
         itemExecutado.configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter,
+        itemExecutado.configuracaoOrigem.validFrom,
+        itemExecutado.configuracaoOrigem.validTo,
         itemExecutado.execucao.ano,
         itemExecutado.execucao.periodo,
         itemExecutado.execucao.ID as execucao_ID,
-        itemExecutado.configuracaoOrigem.ID as configuracaoOrigem_ID
+        itemExecutado.configuracaoOrigem.ID as configuracaoOrigem_ID,
         };
 
 

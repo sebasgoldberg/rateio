@@ -30,6 +30,20 @@ annotate ConfigService.ConfigOrigensDocumentos with{
 
     FiscalYear @Common.Label: 'Exercicio';
 
+    moeda @(
+		Common: {
+			Label: 'Moeda',
+        }
+    );
+
+    cancelado @(
+		Common: {
+			Label: 'Cancelado',
+        }
+    );
+
+    configuracaoOrigem_ID @Common.Label: 'ID origem';
+
     sequencia @(
 		Common: {
 			Label: 'Etapa',
@@ -151,9 +165,16 @@ annotate ConfigService.ConfigOrigensDocumentos with{
             },
 	    );
     
+    validFrom @Common.Label: 'Valido de';
+
+    validTo @Common.Label: 'Valido até';
+
+    execucao_ID @Common.Label: 'ID execução';
+
     ano @Common.Label: 'Ano execução';
 
     periodo @Common.Label: 'Periodo execução';
+
 }
 
 
@@ -223,6 +244,7 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
         Facets: [
 			{$Type: 'UI.ReferenceFacet', Label: 'Detalhes', Target: '@UI.FieldGroup#Detalhes'},
             {$Type: 'UI.ReferenceFacet', Label: 'Configuração Origem', Target: '@UI.FieldGroup#Origem'},
+            {$Type: 'UI.ReferenceFacet', Label: 'Execucão', Target: '@UI.FieldGroup#Execucao'},
 		],
 		FieldGroup#Detalhes: {
 			Data: [
@@ -235,6 +257,7 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
 		},
 		FieldGroup#Origem: {
 			Data: [
+                {Value: configuracaoOrigem_ID},
                 {Value: sequencia},
                 {Value: CompanyCode},
                 {Value: ChartOfAccounts},
@@ -243,6 +266,13 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
                 {Value: CostCenter},
 				{Value: validFrom},
 				{Value: validTo},
+			]
+		},
+		FieldGroup#Execucao: {
+			Data: [
+                {Value: execucao_ID},
+                {Value: ano},
+                {Value: periodo},
 			]
 		},
     }
