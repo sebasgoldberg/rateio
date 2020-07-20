@@ -189,11 +189,11 @@ class DocumentosImplementation{
 
     registerHandles(){
         
-        const { Documentos } = this.srv.entities
+        const { Documentos, ConfigOrigensDocumentos } = this.srv.entities
 
         this.srv.on('cancelar', Documentos, this.cancelarDocumentoAction.bind(this))
         this.srv.on('anularCancelamento', Documentos, this.anularCancelamentoDocumentoAction.bind(this))
-        this.srv.after("READ", Documentos, this.afterRead.bind(this))
+        this.srv.after("READ", [ Documentos, ConfigOrigensDocumentos ], this.afterRead.bind(this))
 
     }
 

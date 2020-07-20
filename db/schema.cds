@@ -219,8 +219,7 @@ entity ConfigOrigensExecucoes
     order by configuracaoOrigem.etapasProcesso_sequencia;
 
 @readonly
-entity ConfigOrigensDocumentos as
-    select
+entity ConfigOrigensDocumentos as projection on rateio.Documentos{
         key CompanyCode,
         key AccountingDocument,
         key FiscalYear,
@@ -232,7 +231,6 @@ entity ConfigOrigensDocumentos as
         modifiedAt,
         modifiedBy,
         itemExecutado.configuracaoOrigem.etapasProcesso_sequencia as sequencia,
-        // itemExecutado.configuracaoOrigem.empresa_CompanyCode as CompanyCode, // o valor é o mesmo que o da chave
         itemExecutado.configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
         itemExecutado.configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
         itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,
@@ -241,7 +239,8 @@ entity ConfigOrigensDocumentos as
         itemExecutado.execucao.periodo,
         itemExecutado.execucao.ID as execucao_ID,
         itemExecutado.configuracaoOrigem.ID as configuracaoOrigem_ID
-    from rateio.Documentos;
+        };
+
 
 @readonly
 @autoexpose
