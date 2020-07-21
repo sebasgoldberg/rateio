@@ -12,7 +12,9 @@ class ExecucoesImplementation{
         this.externalData = new ExternalData(srv)
     }
 
-    async realizarRateios(ID, req){
+    async realizarRateios(req){
+
+        const ID = req.params[0]
 
         const rateio = createRateioProcess(ID, this.srv, req)
         let status = STATUS_EXECUCAO.FINALIZADO
@@ -51,6 +53,93 @@ class ExecucoesImplementation{
 
     }
 
+    async validarEtapaAnteriorProcessada(req, dadosExecucao){
+
+        const { Execucoes, ConfigOrigens } = this.srv.entities
+
+        const { 
+            ID,
+            etapaProcesso_sequencia,
+            dataConfiguracoes,
+            periodo,
+            ano
+        } = dadosExecucao
+
+        if (!etapaProcesso_sequencia)
+            return
+
+        const configAtivaPeriodoEtapaAnterior =  await cds.transaction(req).run(
+            SELECT('max(etapaProcesso_sequencia) as etapaAnterior')
+                .from(ConfigOrigens)
+                .where('validFrom <=', dataConfiguracoes)
+                .and('validTo >=', dataConfiguracoes)
+                .and('ativa', true)
+                .and('etapaProcesso_sequencia <', etapaProcesso_sequencia)
+        )
+
+        // Se não houver etapa anterior para as configurações ativas, quer dizer que a
+        // etapa definida nesta execução é a primeira etapa.
+        if (configAtivaPeriodoEtapaAnterior.length == 0)
+            return
+        
+        const { etapaAnterior } = configAtivaPeriodoEtapaAnterior[0]
+
+        const execucaoAnteriorFinalizada = await cds.transaction(req).run(
+            SELECT.one
+                .from(Execucoes)
+                .where({ etapaProcesso_sequencia: etapaAnterior})
+                .and({ periodo: periodo })
+                .and({ ano: ano })
+                .and({ status_status: STATUS_EXECUCAO.FINALIZADO })
+        )
+
+        if (execucaoAnteriorFinalizada)
+            return
+        
+        req.error(409, `A execução ${ID} não pode ser executada já que `+
+            `ainda não foi finalizada com sucesso a etapa anterior: ${etapaAnterior}.`, 'etapaProcesso_sequencia')
+
+    }
+
+    async validarInicioExecucao(req){
+        
+        const ID = req.params[0]
+
+        const { Execucoes, ConfigOrigens } = this.srv.entities
+
+        const dadosExecucao = await cds.transaction(req).run(
+            SELECT.one
+                .from(Execucoes)
+                .where('ID = ', ID)
+        )
+
+        const {
+            dataConfiguracoes,
+            status_status: status,
+        } = dadosExecucao
+
+        if (status != STATUS_EXECUCAO.NAO_EXECUTADO){
+            req.error(409, `A execução ${ID} não pode ser executada já que atualmente esta com o status ${status}.`, 'status_status')
+            return
+        }
+
+        const configAtivaPeriodo =  await cds.transaction(req).run(
+            SELECT.one
+                .from(ConfigOrigens)
+                .where('validFrom <=', dataConfiguracoes)
+                .and('validTo >=', dataConfiguracoes)
+                .and('ativa', true)
+        )
+
+        if (!configAtivaPeriodo){
+            req.error(409, `Não existem configurações ativas na data ${dataConfiguracoes}. Não é possível realizar a execução ${ID}.`, 'dataConfiguracoes')
+            return
+        }
+
+        await this.validarEtapaAnteriorProcessada(req, dadosExecucao)
+
+    }
+
     async iniciarExecucao(req){
         
         const ID = req.params[0]
@@ -59,30 +148,19 @@ class ExecucoesImplementation{
 
         const {
             dataConfiguracoes,
-            status_status: status
         } = await cds.transaction(req).run(
             SELECT.one
                 .from(Execucoes)
                 .where('ID = ', ID)
         )
 
-        if (status != STATUS_EXECUCAO.NAO_EXECUTADO){
-            req.error(409, `A execução ${ID} não pode ser executada já que atualmente esta com o status ${status}.`, 'status_status')
-            return
-        }
-
-        const configAtivasPeriodo =  await cds.transaction(req).run(
+        const configAtivasPeriodo = await cds.transaction(req).run(
             SELECT
                 .from(ConfigOrigens)
                 .where('validFrom <=', dataConfiguracoes)
                 .and('validTo >=', dataConfiguracoes)
                 .and('ativa', true)
         )
-
-        if (configAtivasPeriodo.length == 0){
-            req.error(409, `Não existem configurações ativas na data ${dataConfiguracoes}. Não é possível realizar a execução ${ID}.`, 'dataConfiguracoes')
-            return
-        }
 
         await cds.transaction(req).run([
             UPDATE(Execucoes)
@@ -99,15 +177,14 @@ class ExecucoesImplementation{
     }
 
     async beforeExecutarExecucaoAction(req){
-        await this.iniciarExecucao(req)
+        await this.validarInicioExecucao(req)
     }
 
     async executarExecucaoAction(req){
 
-        const ID = req.params[0]
-
+        await this.iniciarExecucao(req)
         // FIXME Ver a possibilidade de  continuar executando após responder a request de execução.
-        await this.realizarRateios(ID, req)
+        await this.realizarRateios(req)
 
     }
 

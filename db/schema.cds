@@ -135,6 +135,10 @@ entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
 
+    etapaProcesso_sequencia: Integer;
+    etapaProcesso: Association to one EtapasProcesso on 
+        etapaProcesso.sequencia = $self.etapaProcesso_sequencia;
+
     periodo: FiscalPeriod not null @assert.range: [ 0, 12 ];
     ano: FiscalYear not null @assert.range: [ 1900, 9999 ];
 

@@ -103,8 +103,6 @@ class ConfigDestinosImplementation{
         const porcentagemTotal = result
             .reduce( (total, o) => total + Number(o.porcentagemRateio), Number(porcentagemRateio))
 
-        console.log(req.data, result, porcentagemTotal);
-    
         // Se for maior a 100, então temos um erro
         if (porcentagemTotal > 100)
             req.error(409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`, 'porcentagemRateio')

@@ -362,4 +362,68 @@ describe('OData: Rateio: Execucoes', () => {
 
   })
 
+  it('Não é possível processar uma etapa sem antes ter processado a etapa anterior.', async () => {
+
+    await this.utils.deployAndServe()
+    await this.utils.createTestData();
+
+    // Criamos as configurações
+
+    const origensData = [
+      {
+        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      },
+      {
+        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
+        "validFrom": constants.PERIODO_1.VALID_FROM,
+        "validTo": constants.PERIODO_1.VALID_TO,
+      }
+    ]
+
+    for (const origemData of origensData){
+
+      const response1 = await this.utils.createOrigem(origemData).expect(201)
+      
+      const origemID = JSON.parse(response1.text).ID
+
+      const response2 = await this.utils.createDestino({
+        origem_ID: origemID,
+      })
+        .expect(201)
+  
+      const response3 = await this.utils.createDestino({
+        origem_ID: origemID,
+        tipoOperacao_operacao: constants.TIPO_OPERACAO_2 
+      })
+        .expect(201)
+  
+      const response4 = await this.utils.activateOrigem(origemID)
+        .expect(204)
+    }
+
+    // Criamos a execução da ultima etapa
+    const response9 = await this.utils.createExecucao(
+      { 
+        dataConfiguracoes: "2020-06-15T00:00:00Z",
+        etapaProcesso_sequencia: constants.SEQUENCIA_3,
+      }
+    )
+      .expect(201)
+
+    const execucaoID = JSON.parse(response9.text).ID
+
+    const response10 = await this.utils.executarExecucao(execucaoID)
+      .expect(409)
+
+    expect(response10.text).toEqual(expect.stringMatching(
+      new RegExp(`A execução ${execucaoID} não pode ser executada já que `+
+        `ainda não foi finalizada com sucesso a etapa anterior: ${constants.SEQUENCIA_1}\\.`
+        )))
+  
+  })
+
 })
