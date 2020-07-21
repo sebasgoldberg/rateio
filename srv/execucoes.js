@@ -65,7 +65,7 @@ class ExecucoesImplementation{
             ano
         } = dadosExecucao
 
-        if (!etapaProcesso_sequencia)
+        if (etapaProcesso_sequencia == null || etapaProcesso_sequencia == undefined)
             return
 
         const configAtivaPeriodoEtapaAnterior =  await cds.transaction(req).run(
@@ -83,6 +83,9 @@ class ExecucoesImplementation{
             return
         
         const { etapaAnterior } = configAtivaPeriodoEtapaAnterior[0]
+
+        if (etapaAnterior == null)
+            return
 
         const execucaoAnteriorFinalizada = await cds.transaction(req).run(
             SELECT.one
