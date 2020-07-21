@@ -74,7 +74,7 @@ async function full(){
             'Content-Type': 'application/json'
         },
         body: {
-            "etapasProcesso_sequencia": 90,
+            "etapaProcesso_sequencia": 90,
             "validFrom": now,
             "validTo": now,
             "empresa_CompanyCode": "1410",

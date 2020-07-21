@@ -11,7 +11,7 @@ annotate ConfigService.ConfigOrigens with{
 
     descricao @Common.Label: 'Descricao';
 
-    etapasProcesso_sequencia @(
+    etapaProcesso_sequencia @(
 		Common: {
 			Label: 'Etapa',
 			FieldControl: #Mandatory,
@@ -22,7 +22,7 @@ annotate ConfigService.ConfigOrigens with{
                 Parameters: [
                     {
                         $Type: 'Common.ValueListParameterInOut',
-                        LocalDataProperty: 'etapasProcesso_sequencia',
+                        LocalDataProperty: 'etapaProcesso_sequencia',
                         ValueListProperty: 'sequencia'
                     },
                     {
@@ -171,13 +171,13 @@ annotate ConfigService.ConfigOrigens with @(
     UI: {
 
         SelectionFields: [ 
-            etapasProcesso_sequencia, empresa_CompanyCode, contaOrigem_ChartOfAccounts,
+            etapaProcesso_sequencia, empresa_CompanyCode, contaOrigem_ChartOfAccounts,
             contaOrigem_GLAccount, centroCustoOrigem_ControllingArea, centroCustoOrigem_CostCenter, 
             validFrom, validTo, ativa
             ],
 
         LineItem: [
-            {$Type: 'UI.DataField', Value: etapasProcesso_sequencia},
+            {$Type: 'UI.DataField', Value: etapaProcesso_sequencia},
             {$Type: 'UI.DataField', Value: empresa_CompanyCode},
             {$Type: 'UI.DataField', Value: contaOrigem_ChartOfAccounts},
             {$Type: 'UI.DataField', Value: contaOrigem_GLAccount},
@@ -236,7 +236,7 @@ annotate ConfigService.ConfigOrigens with @(
 		FieldGroup#Origem: {
 			Data: [
                 {Value: descricao, Label:'Descrição'},
-                {Value: etapasProcesso_sequencia},
+                {Value: etapaProcesso_sequencia},
                 {Value: empresa_CompanyCode},
                 {Value: contaOrigem_ChartOfAccounts},
                 {Value: contaOrigem_GLAccount},

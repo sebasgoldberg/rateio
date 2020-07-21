@@ -387,7 +387,7 @@ annotate ConfigService.ItensExecucoes with @(
 
         SelectionFields: [
             status_status,
-            configuracaoOrigem.etapasProcesso_sequencia,
+            configuracaoOrigem.etapaProcesso_sequencia,
             configuracaoOrigem.empresa_CompanyCode,
             configuracaoOrigem.contaOrigem_ChartOfAccounts,
             configuracaoOrigem.contaOrigem_GLAccount,
@@ -398,7 +398,7 @@ annotate ConfigService.ItensExecucoes with @(
         LineItem: [
             {$Type: 'UI.DataField', Value: status_status, Criticality: statusCriticality },
             {$Type: 'UI.DataField', Value: configuracaoOrigem.descricao},
-            {$Type: 'UI.DataField', Value: configuracaoOrigem.etapasProcesso_sequencia},
+            {$Type: 'UI.DataField', Value: configuracaoOrigem.etapaProcesso_sequencia},
             {$Type: 'UI.DataField', Value: configuracaoOrigem.empresa_CompanyCode},
             {$Type: 'UI.DataField', Value: configuracaoOrigem.contaOrigem_ChartOfAccounts},
             {$Type: 'UI.DataField', Value: configuracaoOrigem.contaOrigem_GLAccount},

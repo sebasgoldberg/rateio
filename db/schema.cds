@@ -52,12 +52,12 @@ entity A_CostCenter as
 // Configuração
 /**************************************************/
 
-// Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
+// Chave: (etapaProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
 entity ConfigOrigens: cuid, managed{
 
-    etapasProcesso_sequencia: Integer not null;
-    etapasProcesso: Association to one EtapasProcesso on 
-        etapasProcesso.sequencia = $self.etapasProcesso_sequencia;
+    etapaProcesso_sequencia: Integer not null;
+    etapaProcesso: Association to one EtapasProcesso on 
+        etapaProcesso.sequencia = $self.etapaProcesso_sequencia;
 
     empresa_CompanyCode: CompanyCode not null;
     empresa: Association to one A_CompanyCode on
@@ -208,7 +208,7 @@ entity ConfigOrigensExecucoes
     SELECT 
         key execucao.ID as execucao_ID,
         key configuracaoOrigem.ID as configuracaoOrigem_ID,
-        configuracaoOrigem.etapasProcesso_sequencia as sequencia,
+        configuracaoOrigem.etapaProcesso_sequencia as sequencia,
         configuracaoOrigem.empresa_CompanyCode as CompanyCode,
         configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
         configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
@@ -216,7 +216,7 @@ entity ConfigOrigensExecucoes
         configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter
         // documentosGerados: redirected to Documentos
     from rateio.ItensExecucoes
-    order by configuracaoOrigem.etapasProcesso_sequencia;
+    order by configuracaoOrigem.etapaProcesso_sequencia;
 
 @readonly
 entity ConfigOrigensDocumentos as projection on rateio.Documentos{
@@ -230,7 +230,7 @@ entity ConfigOrigensDocumentos as projection on rateio.Documentos{
         createdBy,
         modifiedAt,
         modifiedBy,
-        itemExecutado.configuracaoOrigem.etapasProcesso_sequencia as sequencia,
+        itemExecutado.configuracaoOrigem.etapaProcesso_sequencia as sequencia,
         itemExecutado.configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
         itemExecutado.configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
         itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,

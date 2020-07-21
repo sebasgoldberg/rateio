@@ -179,7 +179,7 @@ class TestUtils{
         }
 
         const configOrigemData = {
-            "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+            "etapaProcesso_sequencia": constants.SEQUENCIA_1,
             "empresa_CompanyCode": constants.COMPANY_CODE,
             "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
             "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -223,7 +223,7 @@ class TestUtils{
         return `centroCustoOrigem_ControllingArea='${data.centroCustoOrigem_ControllingArea}',`+
             `centroCustoOrigem_CostCenter='${data.centroCustoOrigem_CostCenter}',`+
             `validFrom=${data.validFrom},`+
-            `etapasProcesso_sequencia=${data.etapasProcesso_sequencia},`+
+            `etapaProcesso_sequencia=${data.etapaProcesso_sequencia},`+
             `empresa_CompanyCode='${data.empresa_CompanyCode}',`+
             `contaOrigem_ChartOfAccounts='${data.contaOrigem_ChartOfAccounts}',`+
             `contaOrigem_GLAccount='${data.contaOrigem_GLAccount}'`
@@ -237,7 +237,7 @@ class TestUtils{
 
         const origem = {
             ...{
-                "etapasProcesso_sequencia": constants.SEQUENCIA_1,
+                "etapaProcesso_sequencia": constants.SEQUENCIA_1,
                 "empresa_CompanyCode": constants.COMPANY_CODE,
                 "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
                 "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
