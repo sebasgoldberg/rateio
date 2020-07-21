@@ -52,12 +52,12 @@ entity A_CostCenter as
 // Configuração
 /**************************************************/
 
-// Chave: (etapaProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
+// Chave: (etapasProcesso, empresa, contaOrigem, centroCustoOrigem)+periodo
 entity ConfigOrigens: cuid, managed{
 
-    etapaProcesso_sequencia: Integer not null;
-    etapaProcesso: Association to one EtapasProcesso on 
-        etapaProcesso.sequencia = $self.etapaProcesso_sequencia;
+    etapasProcesso_sequencia: Integer not null;
+    etapasProcesso: Association to one EtapasProcesso on 
+        etapasProcesso.sequencia = $self.etapasProcesso_sequencia;
 
     empresa_CompanyCode: CompanyCode not null;
     empresa: Association to one A_CompanyCode on
@@ -135,9 +135,9 @@ entity Execucoes: cuid, managed{
 
     descricao: String(100) not null;
 
-    etapaProcesso_sequencia: Integer;
-    etapaProcesso: Association to one EtapasProcesso on 
-        etapaProcesso.sequencia = $self.etapaProcesso_sequencia;
+    etapasProcesso_sequencia: Integer null;
+    etapasProcesso: Association to one EtapasProcesso on 
+        etapasProcesso.sequencia = $self.etapasProcesso_sequencia;
 
     periodo: FiscalPeriod not null @assert.range: [ 0, 12 ];
     ano: FiscalYear not null @assert.range: [ 1900, 9999 ];
@@ -212,7 +212,7 @@ entity ConfigOrigensExecucoes
     SELECT 
         key execucao.ID as execucao_ID,
         key configuracaoOrigem.ID as configuracaoOrigem_ID,
-        configuracaoOrigem.etapaProcesso_sequencia as sequencia,
+        configuracaoOrigem.etapasProcesso_sequencia as sequencia,
         configuracaoOrigem.empresa_CompanyCode as CompanyCode,
         configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
         configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
@@ -220,7 +220,7 @@ entity ConfigOrigensExecucoes
         configuracaoOrigem.centroCustoOrigem_CostCenter as CostCenter
         // documentosGerados: redirected to Documentos
     from rateio.ItensExecucoes
-    order by configuracaoOrigem.etapaProcesso_sequencia;
+    order by configuracaoOrigem.etapasProcesso_sequencia;
 
 @readonly
 entity ConfigOrigensDocumentos as projection on rateio.Documentos{
@@ -234,7 +234,7 @@ entity ConfigOrigensDocumentos as projection on rateio.Documentos{
         createdBy,
         modifiedAt,
         modifiedBy,
-        itemExecutado.configuracaoOrigem.etapaProcesso_sequencia as sequencia,
+        itemExecutado.configuracaoOrigem.etapasProcesso_sequencia as sequencia,
         itemExecutado.configuracaoOrigem.contaOrigem_ChartOfAccounts as ChartOfAccounts,
         itemExecutado.configuracaoOrigem.contaOrigem_GLAccount as GLAccount,
         itemExecutado.configuracaoOrigem.centroCustoOrigem_ControllingArea as ControllingArea,

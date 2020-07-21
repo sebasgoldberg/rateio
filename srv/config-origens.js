@@ -28,7 +28,7 @@ class ConfigOrigensImplementation{
             
         const {
             ID,
-            etapaProcesso_sequencia,
+            etapasProcesso_sequencia,
             empresa_CompanyCode,
             contaOrigem_ChartOfAccounts,
             contaOrigem_GLAccount,
@@ -50,7 +50,7 @@ class ConfigOrigensImplementation{
             SELECT.from(ConfigOrigens)
                 .where({
                     and: [
-                        { etapaProcesso_sequencia: etapaProcesso_sequencia },
+                        { etapasProcesso_sequencia: etapasProcesso_sequencia },
                         { empresa_CompanyCode: empresa_CompanyCode },
                         { contaOrigem_ChartOfAccounts: contaOrigem_ChartOfAccounts },
                         { contaOrigem_GLAccount: contaOrigem_GLAccount },
@@ -87,7 +87,7 @@ class ConfigOrigensImplementation{
 
     validarNaoExistemMudancasCamposChave(req){
         [
-            'etapaProcesso_sequencia',
+            'etapasProcesso_sequencia',
             'empresa_CompanyCode',
             'contaOrigem_ChartOfAccounts',
             'contaOrigem_GLAccount',
@@ -109,19 +109,19 @@ class ConfigOrigensImplementation{
     }
 
     async validateDadosInternos(req){
-        const { etapaProcesso_sequencia } = req.data
+        const { etapasProcesso_sequencia } = req.data
 
         const { EtapasProcesso } = this.srv.entities
 
         let etapa = await cds.transaction(req).run(
             SELECT.one.from(EtapasProcesso)
                 .where({
-                    sequencia: etapaProcesso_sequencia
+                    sequencia: etapasProcesso_sequencia
                 })
         )
 
         if (!etapa)
-            req.error(409, `A etapa ${etapaProcesso_sequencia} não existe.`, 'etapaProcesso_sequencia')
+            req.error(409, `A etapa ${etapasProcesso_sequencia} não existe.`, 'etapasProcesso_sequencia')
 
     }
 

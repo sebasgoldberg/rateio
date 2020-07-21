@@ -10,7 +10,7 @@ annotate ConfigService.Execucoes with {
         }
     );
 
-    etapaProcesso_sequencia @(
+    etapasProcesso_sequencia @(
 		Common: {
 			Label: 'Etapa',
             FieldControl: #Mandatory,
@@ -21,7 +21,7 @@ annotate ConfigService.Execucoes with {
                 Parameters: [
                     {
                         $Type: 'Common.ValueListParameterInOut',
-                        LocalDataProperty: 'etapaProcesso_sequencia',
+                        LocalDataProperty: 'etapasProcesso_sequencia',
                         ValueListProperty: 'sequencia'
                     },
                     {
@@ -83,7 +83,7 @@ annotate ConfigService.Execucoes with @(
 
         SelectionFields: [ 
             descricao,
-            etapaProcesso_sequencia,
+            etapasProcesso_sequencia,
             periodo,
             ano,
             dataConfiguracoes,
@@ -92,7 +92,7 @@ annotate ConfigService.Execucoes with @(
 
         LineItem: [
             {$Type: 'UI.DataField', Value: descricao,},
-            {$Type: 'UI.DataField', Value: etapaProcesso_sequencia,},
+            {$Type: 'UI.DataField', Value: etapasProcesso_sequencia,},
             {$Type: 'UI.DataField', Value: periodo,},
             {$Type: 'UI.DataField', Value: ano,},
             {$Type: 'UI.DataField', Value: dataConfiguracoes,},
@@ -145,7 +145,7 @@ annotate ConfigService.Execucoes with @(
 		FieldGroup#Detalhes: {
 			Data: [
                 {Value: descricao,},
-                {Value: etapaProcesso_sequencia,},
+                {Value: etapasProcesso_sequencia,},
                 {Value: periodo,},
                 {Value: ano,},
                 {Value: dataConfiguracoes,},
@@ -415,7 +415,7 @@ annotate ConfigService.ItensExecucoes with @(
 
         SelectionFields: [
             status_status,
-            configuracaoOrigem.etapaProcesso_sequencia,
+            configuracaoOrigem.etapasProcesso_sequencia,
             configuracaoOrigem.empresa_CompanyCode,
             configuracaoOrigem.contaOrigem_ChartOfAccounts,
             configuracaoOrigem.contaOrigem_GLAccount,
@@ -426,7 +426,7 @@ annotate ConfigService.ItensExecucoes with @(
         LineItem: [
             {$Type: 'UI.DataField', Value: status_status, Criticality: statusCriticality },
             {$Type: 'UI.DataField', Value: configuracaoOrigem.descricao},
-            {$Type: 'UI.DataField', Value: configuracaoOrigem.etapaProcesso_sequencia},
+            {$Type: 'UI.DataField', Value: configuracaoOrigem.etapasProcesso_sequencia},
             {$Type: 'UI.DataField', Value: configuracaoOrigem.empresa_CompanyCode},
             {$Type: 'UI.DataField', Value: configuracaoOrigem.contaOrigem_ChartOfAccounts},
             {$Type: 'UI.DataField', Value: configuracaoOrigem.contaOrigem_GLAccount},

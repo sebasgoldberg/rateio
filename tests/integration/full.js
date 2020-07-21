@@ -74,7 +74,7 @@ async function fullEtapa(etapa){
             'Content-Type': 'application/json'
         },
         body: {
-            "etapaProcesso_sequencia": etapa,
+            "etapasProcesso_sequencia": etapa,
             "validFrom": now,
             "validTo": now,
             "empresa_CompanyCode": "1410",
@@ -167,7 +167,7 @@ async function fullEtapa(etapa){
         },
         body: {
             descricao: 'Full test',
-            etapaProcesso_sequencia: etapa,
+            etapasProcesso_sequencia: etapa,
             periodo: 6,
             ano: 2020,
             dataConfiguracoes: now,

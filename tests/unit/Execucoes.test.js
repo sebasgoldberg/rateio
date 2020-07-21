@@ -371,13 +371,13 @@ describe('OData: Rateio: Execucoes', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
@@ -409,7 +409,7 @@ describe('OData: Rateio: Execucoes', () => {
     const response9 = await this.utils.createExecucao(
       { 
         dataConfiguracoes: "2020-06-15T00:00:00Z",
-        etapaProcesso_sequencia: constants.SEQUENCIA_3,
+        etapasProcesso_sequencia: constants.SEQUENCIA_3,
       }
     )
       .expect(201)
@@ -435,13 +435,13 @@ describe('OData: Rateio: Execucoes', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
@@ -473,7 +473,7 @@ describe('OData: Rateio: Execucoes', () => {
     const response9 = await this.utils.createExecucao(
       { 
         dataConfiguracoes: "2020-06-15T00:00:00Z",
-        etapaProcesso_sequencia: constants.SEQUENCIA_1,
+        etapasProcesso_sequencia: constants.SEQUENCIA_1,
       }
     )
       .expect(201)
@@ -487,7 +487,7 @@ describe('OData: Rateio: Execucoes', () => {
     const response11 = await this.utils.createExecucao(
       { 
         dataConfiguracoes: "2020-06-15T00:00:00Z",
-        etapaProcesso_sequencia: constants.SEQUENCIA_3,
+        etapasProcesso_sequencia: constants.SEQUENCIA_3,
       }
     )
       .expect(201)

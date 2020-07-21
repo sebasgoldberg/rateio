@@ -59,22 +59,22 @@ class ExecucoesImplementation{
 
         const { 
             ID,
-            etapaProcesso_sequencia,
+            etapasProcesso_sequencia,
             dataConfiguracoes,
             periodo,
             ano
         } = dadosExecucao
 
-        if (etapaProcesso_sequencia == null || etapaProcesso_sequencia == undefined)
+        if (etapasProcesso_sequencia == null || etapasProcesso_sequencia == undefined)
             return
 
         const configAtivaPeriodoEtapaAnterior =  await cds.transaction(req).run(
-            SELECT('max(etapaProcesso_sequencia) as etapaAnterior')
+            SELECT('max(etapasProcesso_sequencia) as etapaAnterior')
                 .from(ConfigOrigens)
                 .where('validFrom <=', dataConfiguracoes)
                 .and('validTo >=', dataConfiguracoes)
                 .and('ativa', true)
-                .and('etapaProcesso_sequencia <', etapaProcesso_sequencia)
+                .and('etapasProcesso_sequencia <', etapasProcesso_sequencia)
         )
 
         // Se não houver etapa anterior para as configurações ativas, quer dizer que a
@@ -90,7 +90,7 @@ class ExecucoesImplementation{
         const execucaoAnteriorFinalizada = await cds.transaction(req).run(
             SELECT.one
                 .from(Execucoes)
-                .where({ etapaProcesso_sequencia: etapaAnterior})
+                .where({ etapasProcesso_sequencia: etapaAnterior})
                 .and({ periodo: periodo })
                 .and({ ano: ano })
                 .and({ status_status: STATUS_EXECUCAO.FINALIZADO })
@@ -100,7 +100,7 @@ class ExecucoesImplementation{
             return
         
         req.error(409, `A execução ${ID} não pode ser executada já que `+
-            `ainda não foi finalizada com sucesso a etapa anterior: ${etapaAnterior}.`, 'etapaProcesso_sequencia')
+            `ainda não foi finalizada com sucesso a etapa anterior: ${etapaAnterior}.`, 'etapasProcesso_sequencia')
 
     }
 

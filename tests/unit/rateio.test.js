@@ -28,19 +28,19 @@ describe('Processo: Rateio', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_2,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_2,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
@@ -110,19 +110,19 @@ describe('Processo: Rateio', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_2,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_2,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
@@ -205,19 +205,19 @@ describe('Processo: Rateio', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_2,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
@@ -269,7 +269,7 @@ describe('Processo: Rateio', () => {
     expect(rateioProcess.processarItem.mock.calls.length).toBe(3);
 
     const [ origemData3, origemData1, origemData2 ] = origensData.map( o => ({
-      sequencia: o.etapaProcesso_sequencia,
+      sequencia: o.etapasProcesso_sequencia,
       CostCenter: o.centroCustoOrigem_CostCenter,
     }))
 
@@ -302,19 +302,19 @@ describe('Processo: Rateio', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_2,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
@@ -427,7 +427,7 @@ describe('Processo: Rateio', () => {
     expect(rateioProcess.criarDocumento.mock.calls.length).toBe(5);
 
     const [ origemData3, origemData1, origemData2 ] = origensData.map( o => ({
-      sequencia: o.etapaProcesso_sequencia,
+      sequencia: o.etapasProcesso_sequencia,
       CostCenter: o.centroCustoOrigem_CostCenter,
     }))
 
@@ -484,19 +484,19 @@ describe('Processo: Rateio', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_2,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
@@ -1104,19 +1104,19 @@ describe('Processo: Rateio', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_3,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_3,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_2,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
@@ -1267,13 +1267,13 @@ describe('Processo: Rateio', () => {
 
     const origensData = [
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_1,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,
       },
       {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "centroCustoOrigem_CostCenter": constants.COST_CENTER_2,
         "validFrom": constants.PERIODO_1.VALID_FROM,
         "validTo": constants.PERIODO_1.VALID_TO,

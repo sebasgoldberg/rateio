@@ -37,7 +37,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .post('/config/ConfigOrigens')
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .send({
-        "etapaProcesso_sequencia": 20,
+        "etapasProcesso_sequencia": 20,
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -58,7 +58,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .post('/config/ConfigOrigens')
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .send({
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": "1001",
         "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -80,7 +80,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .post('/config/ConfigOrigens')
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .send({
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": GL_ACCOUNT,
@@ -102,7 +102,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .post('/config/ConfigOrigens')
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .send({
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": GL_ACCOUNT,
@@ -125,7 +125,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .post('/config/ConfigOrigens')
       .auth(constants.ADMIN_USER, constants.ADMIN_USER)
       .send({
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -148,7 +148,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     .post('/config/ConfigOrigens')
     .auth(constants.ADMIN_USER, constants.ADMIN_USER)
     .send({
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -171,7 +171,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     .post('/config/ConfigOrigens')
     .auth(constants.ADMIN_USER, constants.ADMIN_USER)
     .send({
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -194,7 +194,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     .post('/config/ConfigOrigens')
     .auth(constants.ADMIN_USER, constants.ADMIN_USER)
     .send({
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -217,7 +217,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     .post('/config/ConfigOrigens')
     .auth(constants.ADMIN_USER, constants.ADMIN_USER)
     .send({
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -241,7 +241,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -272,7 +272,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .toHaveProperty('value')
 
     const configOrigemDataExpected = {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -297,7 +297,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -338,7 +338,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .toHaveProperty('value')
 
     const configOrigemDataExpected = {
-        "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+        "etapasProcesso_sequencia": constants.SEQUENCIA_1,
         "empresa_CompanyCode": constants.COMPANY_CODE,
         "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
         "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -363,7 +363,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -409,7 +409,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -428,7 +428,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -460,7 +460,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -479,7 +479,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -511,7 +511,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -530,7 +530,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -562,7 +562,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -581,7 +581,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -613,7 +613,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -632,7 +632,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -675,7 +675,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -694,7 +694,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -737,7 +737,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -756,7 +756,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_2,
@@ -799,7 +799,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -818,7 +818,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -860,7 +860,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -879,7 +879,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const configOrigemData2 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -934,7 +934,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
@@ -963,7 +963,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
       .expect(201)
 
     const keyFields = [
-        [ 'etapaProcesso_sequencia', 1234 ],
+        [ 'etapasProcesso_sequencia', 1234 ],
         [ 'empresa_CompanyCode', '1234' ],
         [ 'contaOrigem_ChartOfAccounts', '1234' ],
         [ 'contaOrigem_GLAccount', '1234' ],
@@ -998,7 +998,7 @@ describe('OData: Rateio: ConfigOrigens', () => {
     await this.utils.createTestData();
 
     const configOrigemData1 = {
-      "etapaProcesso_sequencia": constants.SEQUENCIA_1,
+      "etapasProcesso_sequencia": constants.SEQUENCIA_1,
       "empresa_CompanyCode": constants.COMPANY_CODE,
       "contaOrigem_ChartOfAccounts": constants.CHART_OF_ACCOUNTS,
       "contaOrigem_GLAccount": constants.GL_ACCOUNT_1,
