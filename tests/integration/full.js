@@ -20,7 +20,7 @@ async function request(options, log=true){
     return result
 }
 
-async function full(){
+async function fullEtapa(etapa){
 
     const now = (new Date()).toISOString()
 
@@ -44,7 +44,7 @@ async function full(){
         // Verificamos se já existe a etapa.
         response = await request({
             method: 'GET',
-            uri: '/config/EtapasProcesso(90)',
+            uri: `/config/EtapasProcesso(${etapa})`,
             json: true,
         })
         
@@ -58,7 +58,7 @@ async function full(){
                 'Content-Type': 'application/json'
             },
             body: {
-                    sequencia: 90,
+                    sequencia: etapa,
                     name: 'Um teste'
                 },
             json: true,
@@ -74,7 +74,7 @@ async function full(){
             'Content-Type': 'application/json'
         },
         body: {
-            "etapaProcesso_sequencia": 90,
+            "etapaProcesso_sequencia": etapa,
             "validFrom": now,
             "validTo": now,
             "empresa_CompanyCode": "1410",
@@ -167,6 +167,7 @@ async function full(){
         },
         body: {
             descricao: 'Full test',
+            etapaProcesso_sequencia: etapa,
             periodo: 6,
             ano: 2020,
             dataConfiguracoes: now,
@@ -194,6 +195,16 @@ async function full(){
         json: true,
     })
 
+}
+
+async function full(){
+    try {
+        await fullEtapa(90)    
+    } catch (error) {
+        console.error(error);
+    } finally {
+        await fullEtapa(900)
+    }
 }
 
 full()

@@ -10,6 +10,31 @@ annotate ConfigService.Execucoes with {
         }
     );
 
+    etapaProcesso_sequencia @(
+		Common: {
+			Label: 'Etapa',
+            FieldControl: #Mandatory,
+            ValueList: {
+                Label: 'Etapas',
+                CollectionPath: 'EtapasProcesso',
+                SearchSupported: true,
+                Parameters: [
+                    {
+                        $Type: 'Common.ValueListParameterInOut',
+                        LocalDataProperty: 'etapaProcesso_sequencia',
+                        ValueListProperty: 'sequencia'
+                    },
+                    {
+                        $Type: 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty: 'name'
+                    }
+                ]
+            },
+		},
+        // TODO Deveria trazer as descrições.
+        sap.value.list: 'fixed-values',
+	);
+
     periodo @(
 		Common: {
 			Label: 'Periodo',
@@ -58,6 +83,7 @@ annotate ConfigService.Execucoes with @(
 
         SelectionFields: [ 
             descricao,
+            etapaProcesso_sequencia,
             periodo,
             ano,
             dataConfiguracoes,
@@ -66,6 +92,7 @@ annotate ConfigService.Execucoes with @(
 
         LineItem: [
             {$Type: 'UI.DataField', Value: descricao,},
+            {$Type: 'UI.DataField', Value: etapaProcesso_sequencia,},
             {$Type: 'UI.DataField', Value: periodo,},
             {$Type: 'UI.DataField', Value: ano,},
             {$Type: 'UI.DataField', Value: dataConfiguracoes,},
@@ -118,6 +145,7 @@ annotate ConfigService.Execucoes with @(
 		FieldGroup#Detalhes: {
 			Data: [
                 {Value: descricao,},
+                {Value: etapaProcesso_sequencia,},
                 {Value: periodo,},
                 {Value: ano,},
                 {Value: dataConfiguracoes,},
