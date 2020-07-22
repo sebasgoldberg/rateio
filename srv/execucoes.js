@@ -151,18 +151,28 @@ class ExecucoesImplementation{
 
         const {
             dataConfiguracoes,
+            etapasProcesso_sequencia
         } = await cds.transaction(req).run(
             SELECT.one
                 .from(Execucoes)
                 .where('ID = ', ID)
         )
 
+        const condicaoEtapa = ( etapasProcesso_sequencia == null ) ?
+            {} :
+            { etapasProcesso_sequencia: etapasProcesso_sequencia }
+
+        const condition = {
+            validFrom: { '<=': dataConfiguracoes },
+            validTo: { '>=': dataConfiguracoes },
+            ativa: true,
+            ...condicaoEtapa
+        }
+
         const configAtivasPeriodo = await cds.transaction(req).run(
             SELECT
                 .from(ConfigOrigens)
-                .where('validFrom <=', dataConfiguracoes)
-                .and('validTo >=', dataConfiguracoes)
-                .and('ativa', true)
+                .where(condition)
         )
 
         await cds.transaction(req).run([

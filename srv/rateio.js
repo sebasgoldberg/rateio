@@ -18,22 +18,11 @@ class RateioProcess{
 
         const { ConfigOrigensExecucoes } = this.srv.entities
 
-        const { etapasProcesso_sequencia } = this.execucao
-
-        const condicaoEtapa = ( etapasProcesso_sequencia == null ) ?
-            {} :
-            { sequencia: etapasProcesso_sequencia }
-
-        const condition = {
-            execucao_ID: this.execucoes_ID,
-            ...condicaoEtapa
-        }
-
         const etapas = await cds.transaction(this.req).run(
 
             SELECT(['sequencia'])
                 .from(ConfigOrigensExecucoes)
-                .where(condition)
+                .where({ execucao_ID: this.execucoes_ID, })
                 .groupBy('sequencia')
                 .orderBy('sequencia')
         )
