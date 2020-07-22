@@ -32,7 +32,8 @@
                 "kind": "odata",
                 "model": "srv/external/API_JOURNALENTRYITEMBASIC_SRV",
                 "credentials": {
-                    "destination": "s4hc"
+                    "destination": "s4hc",
+                    "requestTimeout": 900000
                 }
             },
             "db": {
