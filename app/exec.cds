@@ -81,6 +81,12 @@ annotate ConfigService.Execucoes with {
 annotate ConfigService.Execucoes with @(
     UI: {
 
+        PresentationVariant:{
+            SortOrder:[
+                {Property: modifiedAt, Descending: true},
+            ]
+        },
+
         SelectionFields: [ 
             descricao,
             etapasProcesso_sequencia,
@@ -179,6 +185,12 @@ annotate ConfigService.ExecucoesLogs with @(
             message,
             ],
 
+        PresentationVariant:{
+            SortOrder:[
+                {Property: timestamp, Descending: false}
+            ]
+        },
+
         LineItem: [
             {$Type: 'UI.DataField', Value: timestamp,},
             {$Type: 'UI.DataField', Value: message, Criticality: messageType },
@@ -242,6 +254,12 @@ annotate ConfigService.ItensExecucoesLogs with @(
             timestamp,
             message,
             ],
+
+        PresentationVariant:{
+            SortOrder:[
+                {Property: timestamp, Descending: false}
+            ]
+        },
 
         LineItem: [
             {$Type: 'UI.DataField', Value: timestamp,},

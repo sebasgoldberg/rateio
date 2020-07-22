@@ -176,6 +176,18 @@ annotate ConfigService.ConfigOrigens with @(
             validFrom, validTo, ativa
             ],
 
+        PresentationVariant:{
+            SortOrder:[
+                {Property: etapasProcesso_sequencia, Descending: false},
+                {Property: empresa_CompanyCode, Descending: false},
+                {Property: contaOrigem_ChartOfAccounts, Descending: false},
+                {Property: contaOrigem_GLAccount, Descending: false},
+                {Property: centroCustoOrigem_ControllingArea, Descending: false},
+                {Property: centroCustoOrigem_CostCenter, Descending: false},
+                {Property: validTo, Descending: true},
+            ]
+        },
+
         LineItem: [
             {$Type: 'UI.DataField', Value: etapasProcesso_sequencia},
             {$Type: 'UI.DataField', Value: empresa_CompanyCode},
@@ -380,6 +392,19 @@ annotate ConfigService.ConfigDestinos with{
 
 annotate ConfigService.ConfigDestinos with @(
     UI: {
+
+        PresentationVariant:{
+            SortOrder:[
+                {Property: origem_ID, Descending: false},
+                {Property: tipoOperacao_operacao, Descending: false},
+                {Property: contaDestino_ChartOfAccounts, Descending: false},
+                {Property: contaDestino_GLAccount, Descending: false},
+                {Property: centroCustoDestino_ControllingArea, Descending: false},
+                {Property: centroCustoDestino_CostCenter, Descending: false},
+                {Property: atribuicao, Descending: false},
+            ]
+        },
+
         LineItem: [
             {$Type: 'UI.DataField', Value: tipoOperacao_operacao},
             {$Type: 'UI.DataField', Value: contaDestino_ChartOfAccounts},
@@ -434,6 +459,13 @@ annotate ConfigService.ConfigDestinos with @(
 
 annotate ConfigService.EtapasProcesso with @(
     UI: {
+
+        PresentationVariant:{
+            SortOrder:[
+                {Property: sequencia, Descending: false}
+            ]
+        },
+
         LineItem: [
             {$Type: 'UI.DataField', Value: sequencia},
             {$Type: 'UI.DataField', Value: name},

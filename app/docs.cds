@@ -196,6 +196,12 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
             periodo,
             ],
 
+        PresentationVariant:{
+            SortOrder:[
+                {Property: createdAt, Descending: true},
+            ]
+        },
+
         LineItem: [
             {$Type: 'UI.DataField', Value: CompanyCode},
             {$Type: 'UI.DataField', Value: AccountingDocument},
@@ -209,6 +215,7 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
             {$Type: 'UI.DataField', Value: CostCenter},
             {$Type: 'UI.DataField', Value: ano},
             {$Type: 'UI.DataField', Value: periodo},
+            {$Type: 'UI.DataField', Value: createdAt},
             {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar', Inline: true},
             {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento', Inline: true},
         ],
@@ -258,6 +265,7 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
 		FieldGroup#Origem: {
 			Data: [
                 {Value: configuracaoOrigem_ID},
+                {Value: itemExecutado.configuracaoOrigem.descricao},
                 {Value: sequencia},
                 {Value: CompanyCode},
                 {Value: ChartOfAccounts},
@@ -271,8 +279,10 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
 		FieldGroup#Execucao: {
 			Data: [
                 {Value: execucao_ID},
+                {Value: itemExecutado.execucao.etapasProcesso_sequencia},
                 {Value: ano},
                 {Value: periodo},
+                {Value: itemExecutado.execucao.dataConfiguracoes},
 			]
 		},
     }
