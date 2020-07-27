@@ -91,7 +91,30 @@
 			}
 		},
 		"extends": {
-			"extensions": {}
+			"extensions": {
+
+				"sap.ui.controllerExtensions": {
+					"sap.suite.ui.generic.template.ListReport.view.ListReport": {
+						"controllerName": "qintess.rateio.rateio-config.ext.controller.ListReportExt",
+						"sap.ui.generic.app": {
+						  	"ConfigOrigens": {
+								"EntitySet": "ConfigOrigens",
+								"Actions": {
+									"Exportar": {
+										"id" : "ExportarAction",
+										"text" : "Exportar",
+										"press" : "onExportar",
+										"global": false,
+										"requiresSelection": false,
+										"determining": true
+									}
+								}
+							}
+						}
+					}
+				}
+
+			}
 		},
 		"contentDensities": {
 			"compact": true,
