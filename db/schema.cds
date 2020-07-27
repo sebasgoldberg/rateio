@@ -261,4 +261,36 @@ entity LogsItensExecucao as
         timestamp,
         createdBy
     from ItensExecucoesLogs;
-    
+
+@readonly
+entity ConfigOrigensDestinos as projection on rateio.ConfigDestinos{
+
+    // Dados do origem
+    origem.ID as origem_ID,
+    origem.etapasProcesso_sequencia as etapa,
+    origem.empresa_CompanyCode as empresa,
+    origem.contaOrigem_ChartOfAccounts,
+    origem.contaOrigem_GLAccount,
+    origem.centroCustoOrigem_ControllingArea,
+    origem.centroCustoOrigem_CostCenter,
+    origem.validFrom,
+    origem.validTo,
+    origem.ativa,
+    origem.descricao,
+
+    // Dados do destino
+    key ID as destino_ID,
+    tipoOperacao_operacao as operacao,
+    contaDestino_ChartOfAccounts,
+    contaDestino_GLAccount,
+    centroCustoDestino_ControllingArea,
+    centroCustoDestino_CostCenter,
+    atribuicao,
+    porcentagemRateio,
+}
+
+@readonly
+entity Exportacao{
+    key dummy: Integer;
+    virtual csv: LargeBinary @Core.MediaType: 'text/csv';
+}

@@ -21,6 +21,7 @@ const { ConfigOrigensImplementation } = require("./")
 const { ConfigDestinosImplementation } = require("./")
 const { ExecucoesImplementation } = require("./")
 const { DocumentosImplementation } = require('./documento')
+const ExportImplementation = require('./export')
 
 function ODataV2toODataV4(instance){
     const dateAttributes = ['ValidityEndDate', 'ValidityStartDate', 'CostCenterCreationDate', 'CreationDate']
@@ -105,6 +106,9 @@ class ImplementationRegistration{
 
         const documentosImp = new DocumentosImplementation(this)
         documentosImp.registerHandles()
+
+        const exportImp = new ExportImplementation(this)
+        exportImp.registerHandles()
 
     }
 
