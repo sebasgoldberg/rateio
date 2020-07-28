@@ -91,7 +91,21 @@
 			}
 		},
 		"extends": {
-			"extensions": {}
+			"extensions": {
+				"sap.ui.viewExtensions": {
+					"sap.suite.ui.generic.template.ObjectPage.view.Details": {
+						"AfterFacet|Importacoes|com.sap.vocabularies.UI.v1.FieldGroup::Detalhes": {
+							"type": "XML",
+							"className": "sap.ui.core.mvc.View",
+							"viewName": "qintess.rateio.rateio-import.ext.view.Import",
+							"sap.ui.generic.app": {
+								"title": "{@i18n>SECAO_IMPORTACAO}"
+							}
+						}
+					}
+				}
+
+			}
 		},
 		"contentDensities": {
 			"compact": true,

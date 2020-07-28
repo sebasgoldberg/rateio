@@ -17,10 +17,26 @@ annotate ConfigService.Importacoes with{
         sap.value.list: 'fixed-values',
 	);
 
-    status @(
+    status_status @(
 		Common: {
 			Label: 'Status',
 			FieldControl: #Mandatory,
+            ValueList: {
+                Label: 'Status',
+                CollectionPath: 'StatusExecucoes',
+                SearchSupported: true,
+                Parameters: [
+                    {
+                        $Type: 'Common.ValueListParameterInOut',
+                        LocalDataProperty: 'status_status',
+                        ValueListProperty: 'status'
+                    },
+                    {
+                        $Type: 'Common.ValueListParameterDisplayOnly',
+                        ValueListProperty: 'name'
+                    }
+                ]
+            },
 		},
         // TODO Deveria trazer as descrições.
         sap.value.list: 'fixed-values',
