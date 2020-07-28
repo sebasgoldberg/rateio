@@ -21,8 +21,12 @@ service ConfigService @(requires:'rateioAdmin') {
 
     // Entidades de configuração
     entity EtapasProcesso as projection on rateio.EtapasProcesso;
-    entity ConfigOrigens as projection on rateio.ConfigOrigens
-        { *, itensExecucoes: redirected to ItensExecucoes }
+    entity ConfigOrigens 
+        as projection on rateio.ConfigOrigens{
+            *,
+            itensExecucoes: redirected to ItensExecucoes,
+            destinos: redirected to ConfigDestinos 
+        }
         actions{
             action ativar();
             action desativar();
