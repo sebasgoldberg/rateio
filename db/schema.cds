@@ -294,3 +294,30 @@ entity Exportacao{
     key dummy: Integer;
     virtual csv: LargeBinary @Core.MediaType: 'text/csv';
 }
+
+type OperacaoImportacao: String enum { criar; modificar; eliminar }
+
+entity OperacoesImportacoes: sap.common.CodeList{
+    key operacao: OperacaoImportacao @assert.range: OperacaoImportacao;
+}
+
+entity Importacoes: cuid, managed{
+
+    descricao: String(100) not null;
+    operacao: Association to one OperacoesImportacoes;
+
+    @readonly
+    status_status: StatusExecucao not null default 'nao_executado';
+    status: Association to one StatusExecucoes on status.status = $self.status_status;
+    virtual statusCriticality: Integer;
+
+    virtual csv: LargeBinary @Core.MediaType: 'text/csv';
+
+    logs: Association to many ImportacoesLogs on logs.importacao = $self;
+
+}
+
+@readonly
+entity ImportacoesLogs: log{
+    importacao: Association to Importacoes;
+}

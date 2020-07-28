@@ -79,5 +79,18 @@ service ConfigService @(requires:'rateioAdmin') {
 
     entity ConfigOrigensDestinos as projection on rateio.ConfigOrigensDestinos;
 
+
+    // Exportação/Importação de configurações
+
+    @readonly
     entity Exportacao as projection on rateio.Exportacao;
+
+    @readonly
+    entity OperacoesImportacoes as projection on rateio.OperacoesImportacoes;
+
+    entity Importacoes as projection on rateio.Importacoes;
+
+    @readonly
+    entity ImportacoesLogs as projection on rateio.ImportacoesLogs;
+
 }
