@@ -13,10 +13,11 @@
 			tooltip="Importação de configurações. Mesmo formato que na exportação."
             enabled="{= ${status_status} === 'nao_executado' &amp;&amp; ${ui>/editable} &amp;&amp; !${ui>/createMode} }"
 			uploadComplete="handleUploadComplete"
+            change="handleUploadPress"
             />
 		<Button
-            enabled="{= ${status_status} === 'nao_executado' &amp;&amp; ${ui>/editable} &amp;&amp; !${ui>/createMode} }"
-			text="Importar Configuração"
-			press="handleUploadPress"/>
+			text="Baixar Arquivo"
+            enabled="{= !${ui>/createMode} }"
+			press="onBaixarArquivo"/>
 	</l:VerticalLayout>
 </mvc:View>

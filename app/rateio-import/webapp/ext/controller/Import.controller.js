@@ -20,7 +20,9 @@ sap.ui.define([
                     }
                 );
             }
-
+            
+            var oFileUploader = this.byId("fileUploader");
+            oFileUploader.setValue('');
 		},
 
 		handleUploadPress: function() {
@@ -28,6 +30,9 @@ sap.ui.define([
             var oFileUploader = this.byId("fileUploader");
 
             if (!oFileUploader.getEnabled())
+                return;
+
+            if (!oFileUploader.getValue())
                 return;
 
             oFileUploader.destroyHeaderParameters();
@@ -49,7 +54,15 @@ sap.ui.define([
 
             oFileUploader.upload();
 
-		}
+        },
+        
+        onBaixarArquivo: function (oEvent) {
+            var bc = this.getView().getBindingContext();
+            var sPath = bc.getPath();
+            this.getView().getBindin
+            const url = '/rateio_api/v2/config/'+sPath+'/csv/$value';
+            window.open(url,'_blank');
+        },
 
     });
 });
