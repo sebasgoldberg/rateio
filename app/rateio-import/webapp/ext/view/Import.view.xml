@@ -11,10 +11,11 @@
 			name="myFileUpload"
 			uploadUrl="/rateio_api/v2/config/Importacoes({ID})/csv"
 			tooltip="Importação de configurações. Mesmo formato que na exportação."
-            enabled="{= status_status == 'nao_executado' }"
+            enabled="{= ${status_status} === 'nao_executado' &amp;&amp; ${ui>/editable} &amp;&amp; !${ui>/createMode} }"
 			uploadComplete="handleUploadComplete"
             />
 		<Button
+            enabled="{= ${status_status} === 'nao_executado' &amp;&amp; ${ui>/editable} &amp;&amp; !${ui>/createMode} }"
 			text="Importar Configuração"
 			press="handleUploadPress"/>
 	</l:VerticalLayout>

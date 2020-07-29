@@ -1,29 +1,34 @@
 sap.ui.define([
-	"sap/ui/core/mvc/Controller",
-], function(Controller, formatter) {
+    "sap/ui/core/mvc/Controller",
+    "sap/m/MessageToast",
+    "sap/m/MessageBox",
+], function(Controller, MessageToast, MessageBox) {
 	"use strict";
 
 	return Controller.extend("qintess.rateio.rateio-import.ext.controller.Import", {
 
 		handleUploadComplete: function(oEvent) {
-			var sResponse = oEvent.getParameter("response");
-			if (sResponse) {
-				var sMsg = "";
-				var m = /^\[(\d\d\d)\]:(.*)$/.exec(sResponse);
-				if (m[1] == "200") {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Success)";
-					oEvent.getSource().setValue("");
-				} else {
-					sMsg = "Return Code: " + m[1] + "\n" + m[2] + "(Upload Error)";
-				}
+			var status = oEvent.getParameter("status");
+            if (status == 204) {
+                MessageToast.show("Upload do arquivo realizado com sucesso");                
+            } else {
+                var responseRaw = oEvent.getParameter("responseRaw");
+                MessageBox.show(
+                    responseRaw, {
+                        icon: MessageBox.Icon.ERROR,
+                        title: "Erro ao fazer o upload",
+                    }
+                );
+            }
 
-				MessageToast.show(sMsg);
-			}
 		},
 
 		handleUploadPress: function() {
 
             var oFileUploader = this.byId("fileUploader");
+
+            if (!oFileUploader.getEnabled())
+                return;
 
             oFileUploader.destroyHeaderParameters();
     
