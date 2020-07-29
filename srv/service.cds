@@ -88,7 +88,11 @@ service ConfigService @(requires:'rateioAdmin') {
     @readonly
     entity OperacoesImportacoes as projection on rateio.OperacoesImportacoes;
 
-    entity Importacoes as projection on rateio.Importacoes;
+    entity Importacoes 
+        as projection on rateio.Importacoes
+        actions{
+            action importar();
+        };
 
     @readonly
     entity ImportacoesLogs as projection on rateio.ImportacoesLogs;
