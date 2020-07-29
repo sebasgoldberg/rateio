@@ -1,7 +1,7 @@
 <mvc:View
 	controllerName="qintess.rateio.rateio-import.ext.controller.Import"
 	xmlns:l="sap.ui.layout"
-	xmlns:u="sap.ui.unified"
+	xmlns:u="qintess.rateio.rateio-import.ext.control"
 	xmlns:mvc="sap.ui.core.mvc"
 	xmlns="sap.m"
 	class="viewPadding">
@@ -12,7 +12,8 @@
 			uploadUrl="/rateio_api/v2/config/Importacoes({ID})/csv"
 			tooltip="Importação de configurações. Mesmo formato que na exportação."
             enabled="{= status_status == 'nao_executado' }"
-			uploadComplete="handleUploadComplete"/>
+			uploadComplete="handleUploadComplete"
+            />
 		<Button
 			text="Importar Configuração"
 			press="handleUploadPress"/>

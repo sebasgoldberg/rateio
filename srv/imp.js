@@ -22,6 +22,7 @@ const { ConfigDestinosImplementation } = require("./")
 const { ExecucoesImplementation } = require("./")
 const { DocumentosImplementation } = require('./documento')
 const ExportImplementation = require('./export')
+const ImportImplementation = require('./import')
 
 function ODataV2toODataV4(instance){
     const dateAttributes = ['ValidityEndDate', 'ValidityStartDate', 'CostCenterCreationDate', 'CreationDate']
@@ -110,11 +111,30 @@ class ImplementationRegistration{
         const exportImp = new ExportImplementation(this)
         exportImp.registerHandles()
 
+        const importImp = new ImportImplementation(this)
+        importImp.registerHandles()
+
     }
 
     async registerImpForExternalModels(){
 
         this.on('sync', sync.bind(this))
+
+        // this.on('UPDATE', 'Importacoes', async req => {
+
+        //     const { Readable, PassThrough } = require('stream')
+            
+        //     const stream = new PassThrough()
+        //     const chunks = []
+        //     stream.on('data', chunk => {
+        //       chunks.push(chunk)
+        //     })
+        //     stream.on('end', () => {
+        //       const content = Buffer.concat(chunks).toString('utf-8')
+        //       console.log(content);
+        //     })
+        //     req.data.csv.pipe(stream)
+        // })
     
     }
 

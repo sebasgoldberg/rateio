@@ -311,7 +311,7 @@ entity Importacoes: cuid, managed{
     status: Association to one StatusExecucoes on status.status = $self.status_status;
     virtual statusCriticality: Integer;
 
-    virtual csv: LargeBinary @Core.MediaType: 'text/csv';
+    csv: LargeBinary @Core.MediaType: 'text/csv';
 
     logs: Association to many ImportacoesLogs on logs.importacao = $self;
 
