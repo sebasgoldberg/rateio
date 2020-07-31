@@ -1,6 +1,95 @@
 const cds = require('@sap/cds')
 const { Readable } = require("stream")
 const { STATUS_EXECUCAO } = require('./constants')
+const parse = require('csv-parse')
+
+const OPERACAO_IMPORTACAO = {
+    CRIAR: 'criar',
+    MODIFICAR: 'modificar',
+    ELIMINAR: 'eliminar',
+}
+
+class OperacaoImportacaoBase{
+
+    constructor(req, importacao){
+        this.req = req
+        this.importacao = importacao
+    }
+
+    async parse(content){
+        return new Promise( (resolve, reject) => {
+            parse(content, {
+                comment: '#',
+                columns: true,
+                bom: true,
+                delimiter: ';',
+            }, function(error, output){
+                if (error)
+                    reject(error)
+                resolve(output)
+            })      
+        })
+    }
+
+    async executar(){
+
+        const { ID, csv } = this.importacao
+
+        let lines;
+
+        try {
+
+            const fileContent = new TextDecoder("utf-8").decode(csv)
+            lines = await this.parse(fileContent)
+
+        } catch (error) {
+
+            req.error(409, `Erro ao tentar interpretar o conteudo do arquivo da importação ${ID}: ${String(error)}`)
+            return
+
+        }
+
+        for (let i=0; i < lines.length; i++){
+            const line = lines[i]
+            await this._processLine(line)
+        }
+
+    }
+
+    async _processLine(line){
+        await this.processLine(line)
+    }
+
+    async processLine(line){
+        console.log(line)
+    }
+    
+}
+
+class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
+
+    async processLine(line){
+        super.processLine(line)
+    }
+    
+}
+
+class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
+
+    async processLine(line){
+        super.processLine(line)
+    }
+    
+}
+
+class OperacaoImportacaoEliminar extends OperacaoImportacaoBase{
+    
+    async processLine(line){
+        super.processLine(line)
+    }
+    
+}
+
 
 class ImportImplementation{
 
@@ -49,6 +138,19 @@ class ImportImplementation{
 
     }
 
+    createOperacaoImportacao(req, importacao){
+
+        const { operacao_operacao } = importacao
+
+        if (operacao_operacao == OPERACAO_IMPORTACAO.CRIAR)
+            return new OperacaoImportacaoCriar(req, importacao)
+        else if (operacao_operacao == OPERACAO_IMPORTACAO.MODIFICAR)
+            return new OperacaoImportacaoModificar(req, importacao)
+        else if (operacao_operacao == OPERACAO_IMPORTACAO.ELIMINAR)
+            return new OperacaoImportacaoEliminar(req, importacao)
+
+    }
+
     async importarImportacoesAction(req){
 
         const ID = req.params[0]
@@ -61,22 +163,9 @@ class ImportImplementation{
                 .where('ID = ', ID)
         )
 
-        let lines;
+        const operacaoImportacao = this.createOperacaoImportacao(req, importacao)
 
-        try {
-
-            const fileContent = new TextDecoder("utf-8").decode(importacao.csv)
-
-            lines = fileContent.split('\n')
-            
-            // Eliminamos as duas primeiras linhas.
-            lines.shift()
-            lines.shift()
-
-        } catch (error) {
-            req.error(409, `Erro ao tentar interpretar o conteudo do arquivo da importação ${ID}: ${String(error)}`)
-            return
-        }
+        await operacaoImportacao.executar()
 
     }
 
