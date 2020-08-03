@@ -8,6 +8,14 @@ class ConfigOrigensImplementation{
         this.externalData = new ExternalData(srv)
     }
 
+    error(req, code, message, target){
+        req.error(code, message, target)
+    }
+
+    getData(req){
+        return req.data
+    }
+
     async validatePeriodosSobrepostos(req){
 
         const { ConfigOrigens } = this.srv.entities
@@ -15,16 +23,16 @@ class ConfigOrigensImplementation{
         let result = await cds.transaction(req).run(
             SELECT.from(ConfigOrigens)
                 .where({
-                    ID: req.data.ID
+                    ID: this.getData(req).ID
                 })
         )
 
         let entityData;
 
         if (result.length == 0)
-            entityData = req.data
+            entityData = this.getData(req)
         else
-            entityData = {...result[0], ...req.data}
+            entityData = {...result[0], ...this.getData(req)}
             
         const {
             ID,
@@ -41,7 +49,7 @@ class ConfigOrigensImplementation{
         if (validFrom > validTo){
             ['validFrom', 'validTo']
                 .forEach(target =>
-                    req.error(409, `O periodo indicado ${validFrom} - ${validTo} é inválido.`, target)
+                    this.error(req, 409, `O periodo indicado ${validFrom} - ${validTo} é inválido.`, target)
                 )
             return
         }
@@ -78,7 +86,7 @@ class ConfigOrigensImplementation{
         if (result.length > 0)
             ['validFrom', 'validTo']
                 .forEach(target =>
-                    req.error(409, `O periodo indicado fica sobreposto com uma configuração `+
+                    this.error(req, 409, `O periodo indicado fica sobreposto com uma configuração `+
                     `já existente no periodo ${result[0].validFrom} - `+
                     `${result[0].validTo}.`, target)
                 )
@@ -95,7 +103,7 @@ class ConfigOrigensImplementation{
             'centroCustoOrigem_CostCenter',    
         ].forEach(fieldName => {
             if (fieldName in req.data)
-                req.error(409, `O campo ${fieldName} não deve ser modificado`, fieldName)
+                this.error(req, 409, `O campo ${fieldName} não deve ser modificado`, fieldName)
         })
     }
 
@@ -109,7 +117,7 @@ class ConfigOrigensImplementation{
     }
 
     async validateDadosInternos(req){
-        const { etapasProcesso_sequencia } = req.data
+        const { etapasProcesso_sequencia } = this.getData(req)
 
         const { EtapasProcesso } = this.srv.entities
 
@@ -121,7 +129,7 @@ class ConfigOrigensImplementation{
         )
 
         if (!etapa)
-            req.error(409, `A etapa ${etapasProcesso_sequencia} não existe.`, 'etapasProcesso_sequencia')
+            this.error(req, 409, `A etapa ${etapasProcesso_sequencia} não existe.`, 'etapasProcesso_sequencia')
 
     }
 
@@ -133,7 +141,7 @@ class ConfigOrigensImplementation{
             contaOrigem_GLAccount,
             centroCustoOrigem_ControllingArea,
             centroCustoOrigem_CostCenter,
-        } = req.data
+        } = this.getData(req)
 
         await Promise.all([
             this.externalData.validateEmpresa(req, empresa_CompanyCode),
@@ -145,7 +153,10 @@ class ConfigOrigensImplementation{
 
     async beforeCreate(req){
 
-        req.data.ativa = false
+        // TODO Verificar se descomentar.
+        // req.data.ativa = false
+
+        const data = this.getData(req)
 
         await Promise.all([
             this.validateDadosInternos(req),
@@ -168,7 +179,7 @@ class ConfigOrigensImplementation{
           )
         
         if (result1.length == 0){
-            req.error(409, `Impossível ativar configuração ${ID}, a mesma não tem destinos definidos.`, 'destinos')
+            this.error(req, 409, `Impossível ativar configuração ${ID}, a mesma não tem destinos definidos.`, 'destinos')
             return
         }
 
@@ -181,7 +192,7 @@ class ConfigOrigensImplementation{
         const {credito, debito} = somaPorcentagens
 
         if (credito != debito){
-            req.error(409, `Impossível ativar a configuração. A soma das porcentagens agrupadas `+
+            this.error(req, 409, `Impossível ativar a configuração. A soma das porcentagens agrupadas `+
                 `por tipo de operação não coincidem: ${credito} distinto de ${debito}.`, 'destinos')
             return
         }
@@ -207,7 +218,7 @@ class ConfigOrigensImplementation{
         
         if (result1){
             const { execucao_ID } = result1
-            req.error(409, `Impossível desativar a configuração. `+
+            this.error(req, 409, `Impossível desativar a configuração. `+
                 `A mesma é utilizada na execução ${execucao_ID}.`, 'execucoes')
             return
         }

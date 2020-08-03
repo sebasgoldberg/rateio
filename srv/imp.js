@@ -21,8 +21,8 @@ const { ConfigOrigensImplementation } = require("./")
 const { ConfigDestinosImplementation } = require("./")
 const { ExecucoesImplementation } = require("./")
 const { DocumentosImplementation } = require('./documento')
-const ExportImplementation = require('./export')
-const ImportImplementation = require('./import')
+const { ExportImplementation } = require('./export')
+const { ImportImplementation } = require('./import')
 
 function ODataV2toODataV4(instance){
     const dateAttributes = ['ValidityEndDate', 'ValidityStartDate', 'CostCenterCreationDate', 'CreationDate']

@@ -1,6 +1,7 @@
 const cds = require('@sap/cds')
 
 const { registerImpForInternalModels } = require("../srv/imp")
+const { EXPORT_HEADER } = require('../srv/export')
 
 const constants = {
     GUID: "17b1febd-0d85-463c-b16d-ce72bbf3a09b",
@@ -163,6 +164,61 @@ class TestUtils{
         .send(data)
         .set('Accept', 'application/json')
         .expect('Content-Type', /^application\/json/)
+    }
+
+    criarImportacao({ descricao, operacao_operacao }){
+        return this.request
+            .post('/config/Importacoes')
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
+            .send({ descricao, operacao_operacao })
+            .set('Accept', 'application/json')
+            .expect('Content-Type', /^application\/json/)
+    }
+
+    carregarCsvImportacao({ ID, csvContent }){
+
+        const data =
+            EXPORT_HEADER+
+            csvContent.map( ({
+                origem_ID,
+                etapasProcesso_sequencia,
+                empresa_CompanyCode,
+                contaOrigem_ChartOfAccounts,
+                contaOrigem_GLAccount,
+                centroCustoOrigem_ControllingArea,
+                centroCustoOrigem_CostCenter,
+                validFrom,
+                validTo,
+                ativa,
+                descricao,
+                destino_ID,
+                operacao,
+                contaDestino_ChartOfAccounts,
+                contaDestino_GLAccount,
+                centroCustoDestino_ControllingArea,
+                centroCustoDestino_CostCenter,
+                atribuicao,
+                porcentagemRateio,
+            }) => `${ origem_ID };${ String(etapasProcesso_sequencia) };${ empresa_CompanyCode };${ contaOrigem_ChartOfAccounts };`+
+                `${ contaOrigem_GLAccount };${ centroCustoOrigem_ControllingArea };${ centroCustoOrigem_CostCenter };${ validFrom };`+
+                `${ validTo };${ ativa };${ descricao };${ destino_ID };${ operacao };${ contaDestino_ChartOfAccounts };`+
+                `${ contaDestino_GLAccount };${ centroCustoDestino_ControllingArea };${ centroCustoDestino_CostCenter };`+
+                `${ atribuicao };${ String(porcentagemRateio) }`
+            ).join('\n')
+
+        return this.request
+            .put(`/config/Importacoes(${ID})/csv`)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
+            .send(data)
+            .set('Content-Type', 'text/csv')
+    }
+
+    importar({ ID }){
+        return this.request
+            .post(`/config/Importacoes(${ID})/ConfigService.importar`)
+            .auth(constants.ADMIN_USER, constants.ADMIN_USER)
+            .set("Content-Type", "application/json;charset=UTF-8;IEEE754Compatible=true")
+            .set("Accept", "application/json;odata.metadata=minimal;IEEE754Compatible=true")
     }
 
     sync(){
