@@ -324,16 +324,109 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
 
 class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
 
-    async processLine(line){
-        super.processLine(line)
+    async modificarOrigem({
+        origem_ID,
+        validFrom,
+        validTo,
+        descricao
+    }){
+        const origem = {
+            validFrom,
+            validTo,
+            descricao
+        }
+
+        this.origemRequestProcessor.requestHandler.setData(origem)
+        await this.origemRequestProcessor.beforeUpdate(this.req)
+        
+        const { ConfigOrigens } = this.srv.entities
+
+        await cds.transaction(this.req).run(
+            UPDATE(ConfigOrigens).set(origem).where({ID: origem_ID})
+        )
+
+        await this.info(`Origem ${origem_ID} modificada com sucesso.`)
+
+        this.origemAtual = await cds.transaction(this.req).run(
+            SELECT.one
+                .from(ConfigOrigens)
+                .where({ ID: origem_ID })
+        )
+
+    }
+
+    async modificarDestino({
+        destino_ID,
+        tipoOperacao_operacao,
+        contaDestino_ChartOfAccounts,
+        contaDestino_GLAccount,
+        centroCustoDestino_ControllingArea,
+        centroCustoDestino_CostCenter,
+        atribuicao,
+        porcentagemRateio,
+    }){
+
+        const destino = {
+            tipoOperacao_operacao,
+            contaDestino_ChartOfAccounts,
+            contaDestino_GLAccount,
+            centroCustoDestino_ControllingArea,
+            centroCustoDestino_CostCenter,
+            atribuicao,
+            porcentagemRateio,
+        }
+
+        this.destinoRequestProcessor.requestHandler.setData(destino)
+        await this.destinoRequestProcessor.beforeUpdate(this.req)
+        
+        const { ConfigDestinos } = this.srv.entities
+
+        await cds.transaction(this.req).run(
+            UPDATE(ConfigDestinos).set(destino).where({ID: destino_ID})
+        )
+
+        await this.info(`Destino ${destino_ID} modificado com sucesso.`)
+
+    }
+
+    async desativarOrigem({ ID }){
+        this.origemRequestProcessor.requestHandler.setParams([ID])
+        await this.origemRequestProcessor.desativarConfiguracaoAction(this.req)
+        await this.info(`Origem ${ID} desativada com sucesso.`)
+    }
+
+    async processLine({ line,
+        isPrimeiraLinhaOrigem,
+        isUltimaLinhaOrigem,
+    }){
+
+        if (isPrimeiraLinhaOrigem){
+            await this.modificarOrigem(line)
+            if (this.origemAtual.ativa)
+                this.desativarOrigem({ ID: line.origem_ID })
+        }
+
+        if (line.destino_ID)
+            await this.modificarDestino(line)
+        
+        if (isUltimaLinhaOrigem){
+            if (line.ativa)
+                await this.ativarOrigem({ ID: line.origem_ID })
+        }
     }
     
 }
 
 class OperacaoImportacaoEliminar extends OperacaoImportacaoBase{
     
-    async processLine(line){
-        super.processLine(line)
+    async processLine({ line,
+        isPrimeiraLinhaOrigem,
+        isUltimaLinhaOrigem,
+    }){
+        super.processLine({ line,
+            isPrimeiraLinhaOrigem,
+            isUltimaLinhaOrigem,
+        })
     }
     
 }
