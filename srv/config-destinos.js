@@ -1,24 +1,18 @@
 const cds = require('@sap/cds')
 const ExternalData = require("./external-data")
+const { RequestHandler } = require('./request-handler')
 
 class ConfigDestinosImplementation{
 
-    constructor(srv){
+    constructor(srv, requestHandler=new RequestHandler()){
         this.srv = srv
-        this.externalData = new ExternalData(srv)
-    }
-
-    error(req, code, message, target){
-        req.error(code, message, target)
-    }
-
-    getData(req){
-        return req.data
+        this.externalData = new ExternalData(srv, requestHandler)
+        this.requestHandler = requestHandler
     }
 
     async validateDadosInternos(req){
 
-        const { tipoOperacao_operacao } = this.getData(req)
+        const { tipoOperacao_operacao } = this.requestHandler.getData(req)
 
         const { TiposOperacoes } = this.srv.entities
 
@@ -30,13 +24,13 @@ class ConfigDestinosImplementation{
         )
 
         if (!tipoOperacao)
-            this.error(req, 409, `O tipo de operação ${tipoOperacao_operacao} não existe.`, 'tipoOperacao_operacao')
+            this.requestHandler.error(req, 409, `O tipo de operação ${tipoOperacao_operacao} não existe.`, 'tipoOperacao_operacao')
 
     }
 
     async validateDadosExternos(req){
 
-        const { ID } = this.getData(req)
+        const { ID } = this.requestHandler.getData(req)
 
         const { ConfigDestinos } = this.srv.entities
 
@@ -57,7 +51,7 @@ class ConfigDestinosImplementation{
             centroCustoDestino_CostCenter,
         } = {
             ...destino,
-            ...this.getData(req),
+            ...this.requestHandler.getData(req),
         }
 
         await Promise.all([
@@ -73,7 +67,7 @@ class ConfigDestinosImplementation{
 
         const { ConfigDestinos } = this.srv.entities
 
-        const { ID } = this.getData(req)
+        const { ID } = this.requestHandler.getData(req)
 
         let destino = await cds.transaction(req).run(
             SELECT
@@ -91,7 +85,7 @@ class ConfigDestinosImplementation{
             porcentagemRateio,
         } = {
             ...destino,
-            ...this.getData(req)
+            ...this.requestHandler.getData(req)
         }
 
         if (!porcentagemRateio)
@@ -113,7 +107,7 @@ class ConfigDestinosImplementation{
 
         // Se for maior a 100, então temos um erro
         if (porcentagemTotal > 100)
-            this.error(req, 409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`, 'porcentagemRateio')
+            this.requestHandler.error(req, 409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`, 'porcentagemRateio')
 
     }
 
@@ -121,7 +115,7 @@ class ConfigDestinosImplementation{
 
         const { ConfigDestinos, ConfigOrigens } = this.srv.entities
 
-        const { ID } = this.getData(req)
+        const { ID } = this.requestHandler.getData(req)
 
         const destino = await cds.transaction(req).run(
             SELECT
@@ -135,7 +129,7 @@ class ConfigDestinosImplementation{
         if (destino)
             origem_ID = destino.origem_ID
         else
-            origem_ID = this.getData(req).origem_ID
+            origem_ID = this.requestHandler.getData(req).origem_ID
 
 
         // Obtem os destinos para o mesmo origem.
@@ -150,15 +144,15 @@ class ConfigDestinosImplementation{
         )
 
         if (result.length > 0)
-            this.error(req, 409, `A configuração origem ${origem_ID} já esta ativa, `+
+            this.requestHandler.error(req, 409, `A configuração origem ${origem_ID} já esta ativa, `+
             `imposível adicionar, modificar ou eliminar destinos.`)
     }
 
     async beforeCreate(req){
 
         // TODO Se não for necessario, eliminar.
-        if (!this.getData(req).atribuicao)
-            this.getData(req).atribuicao = '';
+        if (!this.requestHandler.getData(req).atribuicao)
+            this.requestHandler.getData(req).atribuicao = '';
 
         await Promise.all([
             this.validateDadosInternos(req),

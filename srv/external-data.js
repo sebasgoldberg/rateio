@@ -1,7 +1,10 @@
+const { RequestHandler } = require("./request-handler");
+
 class ExternalData{
 
-    constructor(srv){
+    constructor(srv, requestHandler=new RequestHandler()){
         this.srv = srv;
+        this.requestHandler = requestHandler
     }
 
     async validateEmpresa(req, CompanyCode, target='empresa_CompanyCode'){
@@ -10,7 +13,7 @@ class ExternalData{
             SELECT.one.from(A_CompanyCode).where({CompanyCode: CompanyCode})
         )
         if (!result)
-            req.error(409, `A empresa ${CompanyCode} não existe`, target)
+            this.requestHandler.error(req, 409, `A empresa ${CompanyCode} não existe`, target)
     }
 
     async validateConta(req, ChartOfAccounts, GLAccount, targets=['contaOrigem_ChartOfAccounts', 'contaOrigem_GLAccount']){
@@ -23,7 +26,7 @@ class ExternalData{
         )
         if (!result)
             targets.forEach( target =>
-                req.error(409, `A conta ${ChartOfAccounts}/${GLAccount} não existe`, target)
+                this.requestHandler.error(req, 409, `A conta ${ChartOfAccounts}/${GLAccount} não existe`, target)
             )
     }
 
@@ -37,7 +40,7 @@ class ExternalData{
         )
         if (!result)
             targets.forEach( target =>
-                req.error(409, `O centro ${ControllingArea}/${CostCenter} não existe`, target)
+                this.requestHandler.error(req, 409, `O centro ${ControllingArea}/${CostCenter} não existe`, target)
             )
     }
 

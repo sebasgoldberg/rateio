@@ -1,23 +1,13 @@
 const cds = require('@sap/cds')
 const ExternalData = require("./external-data")
+const { RequestHandler } = require('./request-handler')
 
 class ConfigOrigensImplementation{
 
-    constructor(srv){
+    constructor(srv, requestHandler=new RequestHandler()){
         this.srv = srv
-        this.externalData = new ExternalData(srv)
-    }
-
-    error(req, code, message, target){
-        req.error(code, message, target)
-    }
-
-    getData(req){
-        return req.data
-    }
-
-    getParams(req){
-        return req.params
+        this.externalData = new ExternalData(srv, requestHandler)
+        this.requestHandler = requestHandler
     }
 
     async validatePeriodosSobrepostos(req){
@@ -27,16 +17,16 @@ class ConfigOrigensImplementation{
         let result = await cds.transaction(req).run(
             SELECT.from(ConfigOrigens)
                 .where({
-                    ID: this.getData(req).ID
+                    ID: this.requestHandler.getData(req).ID
                 })
         )
 
         let entityData;
 
         if (result.length == 0)
-            entityData = this.getData(req)
+            entityData = this.requestHandler.getData(req)
         else
-            entityData = {...result[0], ...this.getData(req)}
+            entityData = {...result[0], ...this.requestHandler.getData(req)}
             
         const {
             ID,
@@ -53,7 +43,7 @@ class ConfigOrigensImplementation{
         if (validFrom > validTo){
             ['validFrom', 'validTo']
                 .forEach(target =>
-                    this.error(req, 409, `O periodo indicado ${validFrom} - ${validTo} é inválido.`, target)
+                    this.requestHandler.error(req, 409, `O periodo indicado ${validFrom} - ${validTo} é inválido.`, target)
                 )
             return
         }
@@ -90,7 +80,7 @@ class ConfigOrigensImplementation{
         if (result.length > 0)
             ['validFrom', 'validTo']
                 .forEach(target =>
-                    this.error(req, 409, `O periodo indicado fica sobreposto com uma configuração `+
+                    this.requestHandler.error(req, 409, `O periodo indicado fica sobreposto com uma configuração `+
                     `já existente no periodo ${result[0].validFrom} - `+
                     `${result[0].validTo}.`, target)
                 )
@@ -106,8 +96,8 @@ class ConfigOrigensImplementation{
             'centroCustoOrigem_ControllingArea',
             'centroCustoOrigem_CostCenter',    
         ].forEach(fieldName => {
-            if (fieldName in req.data)
-                this.error(req, 409, `O campo ${fieldName} não deve ser modificado`, fieldName)
+            if (fieldName in this.requestHandler.getData(req))
+                this.requestHandler.error(req, 409, `O campo ${fieldName} não deve ser modificado`, fieldName)
         })
     }
 
@@ -121,7 +111,7 @@ class ConfigOrigensImplementation{
     }
 
     async validateDadosInternos(req){
-        const { etapasProcesso_sequencia } = this.getData(req)
+        const { etapasProcesso_sequencia } = this.requestHandler.getData(req)
 
         const { EtapasProcesso } = this.srv.entities
 
@@ -133,7 +123,7 @@ class ConfigOrigensImplementation{
         )
 
         if (!etapa)
-            this.error(req, 409, `A etapa ${etapasProcesso_sequencia} não existe.`, 'etapasProcesso_sequencia')
+            this.requestHandler.error(req, 409, `A etapa ${etapasProcesso_sequencia} não existe.`, 'etapasProcesso_sequencia')
 
     }
 
@@ -145,7 +135,7 @@ class ConfigOrigensImplementation{
             contaOrigem_GLAccount,
             centroCustoOrigem_ControllingArea,
             centroCustoOrigem_CostCenter,
-        } = this.getData(req)
+        } = this.requestHandler.getData(req)
 
         await Promise.all([
             this.externalData.validateEmpresa(req, empresa_CompanyCode),
@@ -160,7 +150,7 @@ class ConfigOrigensImplementation{
         // TODO Verificar se descomentar.
         // req.data.ativa = false
 
-        const data = this.getData(req)
+        const data = this.requestHandler.getData(req)
 
         await Promise.all([
             this.validateDadosInternos(req),
@@ -174,7 +164,7 @@ class ConfigOrigensImplementation{
 
         const { ConfigOrigens, ConfigDestinos } = this.srv.entities
 
-        const ID = this.getParams(req)[0]
+        const ID = this.requestHandler.getParams(req)[0]
 
         const tx = cds.transaction(req)
 
@@ -183,7 +173,7 @@ class ConfigOrigensImplementation{
           )
         
         if (result1.length == 0){
-            this.error(req, 409, `Impossível ativar configuração ${ID}, a mesma não tem destinos definidos.`, 'destinos')
+            this.requestHandler.error(req, 409, `Impossível ativar configuração ${ID}, a mesma não tem destinos definidos.`, 'destinos')
             return
         }
 
@@ -196,7 +186,7 @@ class ConfigOrigensImplementation{
         const {credito, debito} = somaPorcentagens
 
         if (credito != debito){
-            this.error(req, 409, `Impossível ativar a configuração. A soma das porcentagens agrupadas `+
+            this.requestHandler.error(req, 409, `Impossível ativar a configuração. A soma das porcentagens agrupadas `+
                 `por tipo de operação não coincidem: ${credito} distinto de ${debito}.`, 'destinos')
             return
         }
@@ -212,7 +202,7 @@ class ConfigOrigensImplementation{
 
         const { ConfigOrigens, ItensExecucoes } = this.srv.entities
 
-        const ID = this.getParams(req)[0]
+        const ID = this.requestHandler.getParams(req)[0]
 
         const tx = cds.transaction(req)
 
@@ -222,7 +212,7 @@ class ConfigOrigensImplementation{
         
         if (result1){
             const { execucao_ID } = result1
-            this.error(req, 409, `Impossível desativar a configuração. `+
+            this.requestHandler.error(req, 409, `Impossível desativar a configuração. `+
                 `A mesma é utilizada na execução ${execucao_ID}.`, 'execucoes')
             return
         }

@@ -7,6 +7,7 @@ const { LogBase, MESSAGE_TYPES } = require('./log')
 const { TextDecoder } = require('util')
 const { ConfigDestinosImplementation } = require('.')
 const log = require('./log')
+const { RequestHandler } = require('./request-handler')
 
 const OPERACAO_IMPORTACAO = {
     CRIAR: 'criar',
@@ -27,7 +28,7 @@ class ImportacaoLog extends LogBase{
 
 }
 
-class OrigemRequestProcessor extends ConfigOrigensImplementation{
+class ImportRequestHandler extends RequestHandler{
 
     error(req, code, message, target){
         throw Error(message)
@@ -51,18 +52,18 @@ class OrigemRequestProcessor extends ConfigOrigensImplementation{
 
 }
 
+class OrigemRequestProcessor extends ConfigOrigensImplementation{
+
+    constructor(srv){
+        super(srv, new ImportRequestHandler())
+    }
+
+}
+
 class DestinoRequestProcessor extends ConfigDestinosImplementation{
 
-    error(req, code, message, target){
-        throw Error(message)
-    }
-
-    setData(data){
-        this.data = data
-    }
-
-    getData(req){
-        return this.data
+    constructor(srv){
+        super(srv, new ImportRequestHandler())
     }
 
 }
@@ -212,7 +213,7 @@ class OperacaoImportacaoBase{
     }
 
     async ativarOrigem({ ID }){
-        this.origemRequestProcessor.setParams([ID])
+        this.origemRequestProcessor.requestHandler.setParams([ID])
         await this.origemRequestProcessor.ativarConfiguracaoAction(this.req)
         await this.info(`Origem ${ID} ativada com sucesso.`)
     }
@@ -238,7 +239,7 @@ class OperacaoImportacaoBase{
             porcentagemRateio,
         }
 
-        this.destinoRequestProcessor.setData(destino)
+        this.destinoRequestProcessor.requestHandler.setData(destino)
         await this.destinoRequestProcessor.beforeCreate(this.req)
         
         const { ConfigDestinos } = this.srv.entities
@@ -284,7 +285,7 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
             descricao
         }
 
-        this.origemRequestProcessor.setData(origem)
+        this.origemRequestProcessor.requestHandler.setData(origem)
         await this.origemRequestProcessor.beforeCreate(this.req)
         
         const { ConfigOrigens } = this.srv.entities
