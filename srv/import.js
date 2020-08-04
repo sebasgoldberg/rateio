@@ -180,7 +180,6 @@ class OperacaoImportacaoBase{
     }
 
     async error(error){
-        console.error(String(error))
         await this.log.log({ 
             importacao_ID: this.importacao.ID
         },{
