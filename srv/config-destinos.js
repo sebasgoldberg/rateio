@@ -8,9 +8,17 @@ class ConfigDestinosImplementation{
         this.externalData = new ExternalData(srv)
     }
 
+    error(req, code, message, target){
+        this.error(req, code, message, target)
+    }
+
+    getData(req){
+        return this.getData(req)
+    }
+
     async validateDadosInternos(req){
 
-        const { tipoOperacao_operacao } = req.data
+        const { tipoOperacao_operacao } = this.getData(req)
 
         const { TiposOperacoes } = this.srv.entities
 
@@ -22,13 +30,13 @@ class ConfigDestinosImplementation{
         )
 
         if (!tipoOperacao)
-            req.error(409, `O tipo de operação ${tipoOperacao_operacao} não existe.`, 'tipoOperacao_operacao')
+            this.error(req, 409, `O tipo de operação ${tipoOperacao_operacao} não existe.`, 'tipoOperacao_operacao')
 
     }
 
     async validateDadosExternos(req){
 
-        const { ID } = req.data
+        const { ID } = this.getData(req)
 
         const { ConfigDestinos } = this.srv.entities
 
@@ -49,7 +57,7 @@ class ConfigDestinosImplementation{
             centroCustoDestino_CostCenter,
         } = {
             ...destino,
-            ...req.data,
+            ...this.getData(req),
         }
 
         await Promise.all([
@@ -65,7 +73,7 @@ class ConfigDestinosImplementation{
 
         const { ConfigDestinos } = this.srv.entities
 
-        const { ID } = req.data
+        const { ID } = this.getData(req)
 
         let destino = await cds.transaction(req).run(
             SELECT
@@ -83,7 +91,7 @@ class ConfigDestinosImplementation{
             porcentagemRateio,
         } = {
             ...destino,
-            ...req.data
+            ...this.getData(req)
         }
 
         if (!porcentagemRateio)
@@ -105,7 +113,7 @@ class ConfigDestinosImplementation{
 
         // Se for maior a 100, então temos um erro
         if (porcentagemTotal > 100)
-            req.error(409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`, 'porcentagemRateio')
+            this.error(req, 409, `A soma das porcentagens (${porcentagemTotal}%) no tipo de operação ${tipoOperacao_operacao} supera o 100%.`, 'porcentagemRateio')
 
     }
 
@@ -113,7 +121,7 @@ class ConfigDestinosImplementation{
 
         const { ConfigDestinos, ConfigOrigens } = this.srv.entities
 
-        const { ID } = req.data
+        const { ID } = this.getData(req)
 
         const destino = await cds.transaction(req).run(
             SELECT
@@ -127,7 +135,7 @@ class ConfigDestinosImplementation{
         if (destino)
             origem_ID = destino.origem_ID
         else
-            origem_ID = req.data.origem_ID
+            origem_ID = this.getData(req).origem_ID
 
 
         // Obtem os destinos para o mesmo origem.
@@ -142,15 +150,15 @@ class ConfigDestinosImplementation{
         )
 
         if (result.length > 0)
-            req.error(409, `A configuração origem ${origem_ID} já esta ativa, `+
+            this.error(req, 409, `A configuração origem ${origem_ID} já esta ativa, `+
             `imposível adicionar, modificar ou eliminar destinos.`)
     }
 
     async beforeCreate(req){
 
         // TODO Se não for necessario, eliminar.
-        if (!req.data.atribuicao)
-            req.data.atribuicao = '';
+        if (!this.getData(req).atribuicao)
+            this.getData(req).atribuicao = '';
 
         await Promise.all([
             this.validateDadosInternos(req),

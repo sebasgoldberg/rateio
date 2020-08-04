@@ -3,7 +3,7 @@ const { Readable } = require("stream")
 
 const EXPORT_HEADER = `#Origem;Origem;Origem;Origem;Origem;Origem;Origem;Origem;Origem;Origem;Origem;Destino;Destino;Destino;Destino;Destino;Destino;Destino;Destino\n`+
     `#ID;Etapa;Empresa;Chart Of Accounts;Conta;Controlling Area;Centro de Custo;Valido de;Valido até;Ativa;Descricao;ID;Operacao (credito, debito);Chart Of Accounts;Conta;Controlling Area;Centro de Custo;Atribuição;Porcentagem Rateio\n`+
-    `origem_ID;etapasProcesso_sequencia;empresa_CompanyCode;contaOrigem_ChartOfAccounts;contaOrigem_GLAccount;centroCustoOrigem_ControllingArea;centroCustoOrigem_CostCenter;validFrom;validTo;ativa;descricao;destino_ID;operacao;contaDestino_ChartOfAccounts;contaDestino_GLAccount;centroCustoDestino_ControllingArea;centroCustoDestino_CostCenter;atribuicao;porcentagemRateio\n`
+    `origem_ID;etapasProcesso_sequencia;empresa_CompanyCode;contaOrigem_ChartOfAccounts;contaOrigem_GLAccount;centroCustoOrigem_ControllingArea;centroCustoOrigem_CostCenter;validFrom;validTo;ativa;descricao;destino_ID;tipoOperacao_operacao;contaDestino_ChartOfAccounts;contaDestino_GLAccount;centroCustoDestino_ControllingArea;centroCustoDestino_CostCenter;atribuicao;porcentagemRateio\n`
 
 class ExportImplementation{
 

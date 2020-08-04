@@ -5,6 +5,8 @@ const parse = require('csv-parse')
 const ConfigOrigensImplementation = require('./config-origens')
 const { LogBase, MESSAGE_TYPES } = require('./log')
 const { TextDecoder } = require('util')
+const { ConfigDestinosImplementation } = require('.')
+const log = require('./log')
 
 const OPERACAO_IMPORTACAO = {
     CRIAR: 'criar',
@@ -39,6 +41,30 @@ class OrigemRequestProcessor extends ConfigOrigensImplementation{
         return this.data
     }
 
+    setParams(params){
+        this.params = params
+    }
+
+    getParams(req){
+        return this.params
+    }
+
+}
+
+class DestinoRequestProcessor extends ConfigDestinosImplementation{
+
+    error(req, code, message, target){
+        throw Error(message)
+    }
+
+    setData(data){
+        this.data = data
+    }
+
+    getData(req){
+        return this.data
+    }
+
 }
 
 class OperacaoImportacaoBase{
@@ -49,7 +75,9 @@ class OperacaoImportacaoBase{
         this.importacao = importacao
         // TODO Estender ConfigOrigensImplementation.
         this.origemRequestProcessor = new OrigemRequestProcessor(this.srv)
+        this.destinoRequestProcessor = new DestinoRequestProcessor(this.srv)
         this.log = new ImportacaoLog(this.srv, this.req)
+        this.origemAtual = null
     }
 
     async parse(content){
@@ -63,8 +91,45 @@ class OperacaoImportacaoBase{
                 if (error)
                     reject(error)
                 resolve(output)
-            })      
+            })
         })
+    }
+
+    origensLinhasIguais(linha1, linha2){
+
+        const camposComparar = [ 
+            'origem_ID',
+            'etapasProcesso_sequencia',
+            'empresa_CompanyCode',
+            'contaOrigem_ChartOfAccounts',
+            'contaOrigem_GLAccount',
+            'centroCustoOrigem_ControllingArea',
+            'centroCustoOrigem_CostCenter',
+            'validFrom',
+            'validTo',
+            'descricao'
+        ]
+
+        for (const campo of camposComparar){
+            if (linha1[campo] != linha2[campo])
+                return false
+        }
+
+        return true
+    }
+
+    isPrimeiraLinhaOrigem(lines, i){
+        if (i == 0)
+            return true
+        // Verificamos que a linha atual seja distinta da anterior.
+        return ! this.origensLinhasIguais(lines[i-1],lines[i])
+    }
+
+    isUltimaLinhaOrigem(lines, i){
+        if (i == (lines.length-1))
+            return true
+        // Verificamos que a seguinte linha seja distinta da atual.
+        return ! this.origensLinhasIguais(lines[i],lines[i+1])
     }
 
     async executar(){
@@ -77,7 +142,10 @@ class OperacaoImportacaoBase{
 
             const fileContent = new TextDecoder("utf-8").decode(csv)
             lines = await this.parse(fileContent)
-
+            lines.forEach( line => {
+                line.ativa = ( line.ativa == 'true' )
+                line.porcentagemRateio = Number(line.porcentagemRateio)
+            })
         } catch (error) {
 
             this.req.error(409, `Erro ao tentar interpretar o conteudo do arquivo da importação ${ID}: ${String(error)}`)
@@ -87,13 +155,22 @@ class OperacaoImportacaoBase{
 
         for (let i=0; i < lines.length; i++){
             const line = lines[i]
-            await this._processLine(line)
+            await this._processLine({ line,
+                isPrimeiraLinhaOrigem: this.isPrimeiraLinhaOrigem(lines,i),
+                isUltimaLinhaOrigem: this.isUltimaLinhaOrigem(lines,i)
+            })
         }
 
     }
 
-    debug(message){
-        this.log.log({ 
+    async info(message){
+        await this.log.info({
+            importacao_ID: this.importacao.ID
+        }, message)
+    }
+
+    async debug(message){
+        await this.log.log({
             importacao_ID: this.importacao.ID
         },{
             message: message,
@@ -101,8 +178,9 @@ class OperacaoImportacaoBase{
         })
     }
 
-    error(error){
-        this.log.log({ 
+    async error(error){
+        console.error(String(error))
+        await this.log.log({ 
             importacao_ID: this.importacao.ID
         },{
             message: String(error),
@@ -110,65 +188,78 @@ class OperacaoImportacaoBase{
         })
     }
 
-    async _processLine(line){
-        this.debug(`Inicio processamento ${JSON.stringify(line)}`)
+    async _processLine({ line,
+        isPrimeiraLinhaOrigem,
+        isUltimaLinhaOrigem,
+    }){
+        await this.debug(`Inicio processamento ${JSON.stringify(line)}`)
         try {
-            await this.processLine(line)
+            await this.processLine({ line,
+                isPrimeiraLinhaOrigem,
+                isUltimaLinhaOrigem,
+            })
         } catch (error) {
-            this.error(error)
+            await this.error(error)
         }
-        this.debug(`Fim processamento ${JSON.stringify(line)}`)
+        await this.debug(`Fim processamento ${JSON.stringify(line)}`)
     }
 
-    async processLine(line){
+    async processLine({ line,
+        isPrimeiraLinhaOrigem,
+        isUltimaLinhaOrigem,
+    }){
         console.log(line)
     }
-    
-}
 
-class OrigemAtualNaoExistente extends Error{
+    async ativarOrigem({ ID }){
+        this.origemRequestProcessor.setParams([ID])
+        await this.origemRequestProcessor.ativarConfiguracaoAction(this.req)
+        await this.info(`Origem ${ID} ativada com sucesso.`)
+    }
 
+    async criarDestino({
+        tipoOperacao_operacao,
+        contaDestino_ChartOfAccounts,
+        contaDestino_GLAccount,
+        centroCustoDestino_ControllingArea,
+        centroCustoDestino_CostCenter,
+        atribuicao,
+        porcentagemRateio,
+    }){
+
+        const destino = {
+            origem_ID: this.origemAtual.ID,
+            tipoOperacao_operacao,
+            contaDestino_ChartOfAccounts,
+            contaDestino_GLAccount,
+            centroCustoDestino_ControllingArea,
+            centroCustoDestino_CostCenter,
+            atribuicao,
+            porcentagemRateio,
+        }
+
+        this.destinoRequestProcessor.setData(destino)
+        await this.destinoRequestProcessor.beforeCreate(this.req)
+        
+        const { ConfigDestinos } = this.srv.entities
+
+        await cds.transaction(this.req).run(
+            INSERT(destino)
+                .into(ConfigDestinos)
+        )
+
+        const { destinoID } = await cds.transaction(this.req).run(
+            SELECT.one
+                .from(ConfigDestinos)
+                .where(destino)
+        )
+
+        await this.info(`Destino ${destinoID} criado com sucesso.`)
+
+    }
 }
 
 class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
-
-    constructor(srv, req, importacao){
-        super(srv, req, importacao)
-        this.origemAtual = null
-    }
-
-    isOrigemCoincideComLinha(origem, linha){
-
-        const camposComparar = [ 'etapasProcesso_sequencia',
-            'empresa_CompanyCode',
-            'contaOrigem_ChartOfAccounts',
-            'contaOrigem_GLAccount',
-            'centroCustoOrigem_ControllingArea',
-            'centroCustoOrigem_CostCenter',
-            'validFrom',
-            'validTo',
-            'descricao'
-        ]
-
-        for (const campo of camposComparar){
-            if (origem[campo] != linha[campo])
-                return false
-        }
-
-        return true
-    }
-
-    isOrigemAtualCoincideComLinha(line){
-        return this.isOrigemCoincideComLinha(this.origemAtual, line)
-    }
-
-    getOrigemAtual(line){
-        if (this.origemAtual == null)
-            throw new OrigemAtualNaoExistente('O origem atual ainda não foi definido')
-        if (this.isOrigemAtualCoincideComLinha(line))
-            return this.origemAtual
-        throw new OrigemAtualNaoExistente('O origem atual não coincide com dados da linha.')
-    }
 
     async criarOrigem({
         etapasProcesso_sequencia,
@@ -198,7 +289,6 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
         
         const { ConfigOrigens } = this.srv.entities
 
-        // TODO Ver se é efetivamente obtido a origem atual.
         await cds.transaction(this.req).run(
             INSERT(origem)
                 .into(ConfigOrigens)
@@ -210,19 +300,24 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
                 .where(origem)
         )
 
+        await this.info(`Origem ${this.origemAtual.ID} criada com sucesso.`)
     }
 
-    async processLine(line){
+    async processLine({ line,
+        isPrimeiraLinhaOrigem,
+        isUltimaLinhaOrigem,
+    }){
         let origem
-        try {
-            origem = this.getOrigemAtual(line)
-        } catch (error) {
-            if (error instanceof OrigemAtualNaoExistente)
-                origem = await this.criarOrigem(line)
-            else
-                throw error
-        }
-        // TODO Criar os destinos correspondentes.
+
+        if (isPrimeiraLinhaOrigem)
+            origem = await this.criarOrigem(line)
+        else
+            origem = this.origemAtual
+
+        await this.criarDestino(line)
+
+        if (isUltimaLinhaOrigem && line.ativa)
+            await this.ativarOrigem(origem)
     }
     
 }

@@ -192,7 +192,7 @@ class TestUtils{
                 ativa,
                 descricao,
                 destino_ID,
-                operacao,
+                tipoOperacao_operacao,
                 contaDestino_ChartOfAccounts,
                 contaDestino_GLAccount,
                 centroCustoDestino_ControllingArea,
@@ -201,7 +201,7 @@ class TestUtils{
                 porcentagemRateio,
             }) => `${ origem_ID };${ String(etapasProcesso_sequencia) };${ empresa_CompanyCode };${ contaOrigem_ChartOfAccounts };`+
                 `${ contaOrigem_GLAccount };${ centroCustoOrigem_ControllingArea };${ centroCustoOrigem_CostCenter };${ validFrom };`+
-                `${ validTo };${ ativa };${ descricao };${ destino_ID };${ operacao };${ contaDestino_ChartOfAccounts };`+
+                `${ validTo };${ ativa };${ descricao };${ destino_ID };${ tipoOperacao_operacao };${ contaDestino_ChartOfAccounts };`+
                 `${ contaDestino_GLAccount };${ centroCustoDestino_ControllingArea };${ centroCustoDestino_CostCenter };`+
                 `${ atribuicao };${ String(porcentagemRateio) }`
             ).join('\n')

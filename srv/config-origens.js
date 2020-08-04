@@ -16,6 +16,10 @@ class ConfigOrigensImplementation{
         return req.data
     }
 
+    getParams(req){
+        return req.params
+    }
+
     async validatePeriodosSobrepostos(req){
 
         const { ConfigOrigens } = this.srv.entities
@@ -170,7 +174,7 @@ class ConfigOrigensImplementation{
 
         const { ConfigOrigens, ConfigDestinos } = this.srv.entities
 
-        const ID = req.params[0]
+        const ID = this.getParams(req)[0]
 
         const tx = cds.transaction(req)
 
@@ -208,7 +212,7 @@ class ConfigOrigensImplementation{
 
         const { ConfigOrigens, ItensExecucoes } = this.srv.entities
 
-        const ID = req.params[0]
+        const ID = this.getParams(req)[0]
 
         const tx = cds.transaction(req)
 

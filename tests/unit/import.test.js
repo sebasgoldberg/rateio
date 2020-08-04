@@ -50,10 +50,11 @@ describe('OData: Rateio: Importacoes', () => {
       ...origem1,
       contaOrigem_GLAccount: constants.GL_ACCOUNT_1,
       descricao: 'Origem Importado 2',
+      ativa: false,
     }
 
     const destino1 = {
-      operacao: constants.TIPO_OPERACAO_1,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_1,
       contaDestino_ChartOfAccounts: constants.CHART_OF_ACCOUNTS,
       contaDestino_GLAccount: constants.GL_ACCOUNT_1,
       centroCustoDestino_ControllingArea: constants.CONTROLLING_AREA,
@@ -64,7 +65,7 @@ describe('OData: Rateio: Importacoes', () => {
 
     const destino2 = {
       ...destino1,
-      operacao: constants.TIPO_OPERACAO_2,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_2,
     }
 
     const destino3 = {
@@ -74,7 +75,7 @@ describe('OData: Rateio: Importacoes', () => {
 
     const destino4 = {
       ...destino3,
-      operacao: constants.TIPO_OPERACAO_2,
+      tipoOperacao_operacao: constants.TIPO_OPERACAO_2,
     }
 
     const response2 = await this.utils.carregarCsvImportacao({ 
