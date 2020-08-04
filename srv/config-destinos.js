@@ -9,11 +9,11 @@ class ConfigDestinosImplementation{
     }
 
     error(req, code, message, target){
-        this.error(req, code, message, target)
+        req.error(code, message, target)
     }
 
     getData(req){
-        return this.getData(req)
+        return req.data
     }
 
     async validateDadosInternos(req){
