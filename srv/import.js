@@ -217,6 +217,12 @@ class OperacaoImportacaoBase{
         await this.info(`Origem ${ID} ativada com sucesso.`)
     }
 
+    async desativarOrigem({ ID }){
+        this.origemRequestProcessor.requestHandler.setParams([ID])
+        await this.origemRequestProcessor.desativarConfiguracaoAction(this.req)
+        await this.info(`Origem ${ID} desativada com sucesso.`)
+    }
+
     async criarDestino({
         tipoOperacao_operacao,
         contaDestino_ChartOfAccounts,
@@ -389,12 +395,6 @@ class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
 
     }
 
-    async desativarOrigem({ ID }){
-        this.origemRequestProcessor.requestHandler.setParams([ID])
-        await this.origemRequestProcessor.desativarConfiguracaoAction(this.req)
-        await this.info(`Origem ${ID} desativada com sucesso.`)
-    }
-
     async processLine({ line,
         isPrimeiraLinhaOrigem,
         isUltimaLinhaOrigem,
@@ -419,14 +419,60 @@ class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
 
 class OperacaoImportacaoEliminar extends OperacaoImportacaoBase{
     
+    async eliminarOrigem({
+        origem_ID,
+    }){
+
+        const { ConfigOrigens } = this.srv.entities
+
+        const count = await cds.transaction(this.req).run(
+            DELETE(ConfigOrigens).where({ID: origem_ID})
+        )
+
+        if (count == 0)
+            throw Error(`Não foi possível eliminar a origem ${origem_ID}.`)
+
+        await this.info(`Origem ${origem_ID} eliminado com sucesso.`)
+
+    }
+
+    async eliminarDestino({
+        destino_ID,
+    }){
+
+        this.destinoRequestProcessor.requestHandler.setData({
+            ID: destino_ID
+        })
+        await this.destinoRequestProcessor.beforeDelete(this.req)
+        
+        const { ConfigDestinos } = this.srv.entities
+
+        const count = await cds.transaction(this.req).run(
+            DELETE(ConfigDestinos).where({ID: destino_ID})
+        )
+
+        if (count == 0)
+            throw Error(`Não foi possível eliminar o destino ${destino_ID}.`)
+
+        await this.info(`Destino ${destino_ID} eliminado com sucesso.`)
+
+    }
+
     async processLine({ line,
         isPrimeiraLinhaOrigem,
         isUltimaLinhaOrigem,
     }){
-        super.processLine({ line,
-            isPrimeiraLinhaOrigem,
-            isUltimaLinhaOrigem,
-        })
+
+        if (isPrimeiraLinhaOrigem){
+            this.desativarOrigem({ ID: line.origem_ID })
+        }
+
+        if (line.destino_ID)
+            await this.eliminarDestino(line)
+        
+        if (isUltimaLinhaOrigem){
+            await this.eliminarOrigem(line)
+        }
     }
     
 }
