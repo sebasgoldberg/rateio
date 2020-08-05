@@ -144,6 +144,7 @@ class OperacaoImportacaoBase{
             const fileContent = new TextDecoder("utf-8").decode(csv)
             lines = await this.parse(fileContent)
             lines.forEach( line => {
+                line.etapasProcesso_sequencia = Number(line.etapasProcesso_sequencia)
                 line.ativa = ( line.ativa == 'true' )
                 line.porcentagemRateio = Number(line.porcentagemRateio)
             })
@@ -158,7 +159,8 @@ class OperacaoImportacaoBase{
             const line = lines[i]
             await this._processLine({ line,
                 isPrimeiraLinhaOrigem: this.isPrimeiraLinhaOrigem(lines,i),
-                isUltimaLinhaOrigem: this.isUltimaLinhaOrigem(lines,i)
+                isUltimaLinhaOrigem: this.isUltimaLinhaOrigem(lines,i),
+                lineNumber: i
             })
         }
 
@@ -166,6 +168,12 @@ class OperacaoImportacaoBase{
 
     async info(message){
         await this.log.info({
+            importacao_ID: this.importacao.ID
+        }, message)
+    }
+
+    async warn(message){
+        await this.log.warn({
             importacao_ID: this.importacao.ID
         }, message)
     }
@@ -191,8 +199,9 @@ class OperacaoImportacaoBase{
     async _processLine({ line,
         isPrimeiraLinhaOrigem,
         isUltimaLinhaOrigem,
+        lineNumber
     }){
-        await this.debug(`Inicio processamento ${JSON.stringify(line)}`)
+        await this.debug(`Processamento registro ${lineNumber}`)
         try {
             await this.processLine({ line,
                 isPrimeiraLinhaOrigem,
@@ -201,7 +210,6 @@ class OperacaoImportacaoBase{
         } catch (error) {
             await this.error(error)
         }
-        await this.debug(`Fim processamento ${JSON.stringify(line)}`)
     }
 
     async processLine({ line,
@@ -326,8 +334,10 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
         if (isPrimeiraLinhaOrigem)
             await this.criarOrigem(line)
 
-        if (this.origemAtual == null)
+        if (this.origemAtual == null){
+            this.warn('Não será criado o destino, a origem não chegou a ser criada.')
             return
+        }
 
         await this.criarDestino(line)
 

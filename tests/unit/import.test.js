@@ -49,7 +49,7 @@ describe('OData: Rateio: Importacoes', () => {
 
     const origem2 = {
       ...origem1,
-      contaOrigem_GLAccount: constants.GL_ACCOUNT_1,
+      contaOrigem_GLAccount: constants.GL_ACCOUNT_2,
       descricao: 'Origem Importado 2',
       ativa: false,
     }

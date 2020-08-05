@@ -48,33 +48,37 @@ class ConfigOrigensImplementation{
             return
         }
 
+        const condicao = {
+            and: [
+                { etapasProcesso_sequencia: etapasProcesso_sequencia },
+                { empresa_CompanyCode: empresa_CompanyCode },
+                { contaOrigem_ChartOfAccounts: contaOrigem_ChartOfAccounts },
+                { contaOrigem_GLAccount: contaOrigem_GLAccount },
+                { centroCustoOrigem_ControllingArea: centroCustoOrigem_ControllingArea },
+                { centroCustoOrigem_CostCenter: centroCustoOrigem_CostCenter },
+                { or: [
+                    {
+                        validFrom: { '<=': validFrom },
+                        validTo: { '>=': validFrom },
+                    },
+                    {
+                        validFrom: { '<=': validTo },
+                        validTo: { '>=': validTo },
+                    },
+                    {
+                        validFrom: { '>=': validFrom },
+                        validTo: { '<=': validTo },
+                    },
+                ]}
+            ]
+        }
+
+        if (ID)
+            condicao.and.push({ ID: { '!=': ID } })
+
         result = await cds.transaction(req).run(
             SELECT.from(ConfigOrigens)
-                .where({
-                    and: [
-                        { etapasProcesso_sequencia: etapasProcesso_sequencia },
-                        { empresa_CompanyCode: empresa_CompanyCode },
-                        { contaOrigem_ChartOfAccounts: contaOrigem_ChartOfAccounts },
-                        { contaOrigem_GLAccount: contaOrigem_GLAccount },
-                        { centroCustoOrigem_ControllingArea: centroCustoOrigem_ControllingArea },
-                        { centroCustoOrigem_CostCenter: centroCustoOrigem_CostCenter },
-                        { ID: { '!=': ID } },
-                        { or: [
-                            {
-                                validFrom: { '<=': validFrom },
-                                validTo: { '>=': validFrom },
-                            },
-                            {
-                                validFrom: { '<=': validTo },
-                                validTo: { '>=': validTo },
-                            },
-                            {
-                                validFrom: { '>=': validFrom },
-                                validTo: { '<=': validTo },
-                            },
-                        ]}
-                    ]
-                })
+                .where(condicao)
         )
 
         if (result.length > 0)

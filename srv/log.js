@@ -68,6 +68,13 @@ class LogBase{
         })
     }
 
+    async warn(entityKey, message){
+        await this.log(entityKey, {
+            messageType: MESSAGE_TYPES.WARNING,
+            message: message
+        })
+    }
+
 }
 
 class ItemExecucaoLog extends LogBase{
