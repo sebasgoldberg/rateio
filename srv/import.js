@@ -249,18 +249,21 @@ class OperacaoImportacaoBase{
         
         const { ConfigDestinos } = this.srv.entities
 
-        await cds.transaction(this.req).run(
+        const count = await cds.transaction(this.req).run(
             INSERT(destino)
                 .into(ConfigDestinos)
         )
 
-        const { destinoID } = await cds.transaction(this.req).run(
+        if (count == 0)
+            throw new Error(`Não foi possível criar o destino ${JSON.stringify(destino)}`)
+
+        const { ID } = await cds.transaction(this.req).run(
             SELECT.one
                 .from(ConfigDestinos)
                 .where(destino)
         )
 
-        await this.info(`Destino ${destinoID} criado com sucesso.`)
+        await this.info(`Destino ${ID} criado com sucesso.`)
 
     }
 }
@@ -295,15 +298,21 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
         
         const { ConfigOrigens } = this.srv.entities
 
-        await cds.transaction(this.req).run(
+        const count = await cds.transaction(this.req).run(
             INSERT(origem)
                 .into(ConfigOrigens)
         )
+
+        if (count == 0){
+            this.origemAtual = null
+            throw new Error(`Não foi possível criar a origem ${JSON.stringify(origem)}`)
+        }
 
         this.origemAtual = await cds.transaction(this.req).run(
             SELECT.one
                 .from(ConfigOrigens)
                 .where(origem)
+                .orderBy({createdAt: 'desc'})
         )
 
         await this.info(`Origem ${this.origemAtual.ID} criada com sucesso.`)
@@ -313,17 +322,17 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
         isPrimeiraLinhaOrigem,
         isUltimaLinhaOrigem,
     }){
-        let origem
 
         if (isPrimeiraLinhaOrigem)
-            origem = await this.criarOrigem(line)
-        else
-            origem = this.origemAtual
+            await this.criarOrigem(line)
+
+        if (this.origemAtual == null)
+            return
 
         await this.criarDestino(line)
 
         if (isUltimaLinhaOrigem && line.ativa)
-            await this.ativarOrigem(origem)
+            await this.ativarOrigem(this.origemAtual)
     }
     
 }

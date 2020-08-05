@@ -115,3 +115,72 @@ annotate ConfigService.Importacoes with @(
     }
 );
 
+annotate ConfigService.ImportacoesLogs with {
+
+    timestamp @(
+		Common: {
+			Label: 'Data',
+        }
+    );
+
+    message @(
+		Common: {
+			Label: 'Mensagem',
+        }
+    );
+
+}
+
+annotate ConfigService.ImportacoesLogs with @(
+    UI: {
+
+        SelectionFields: [ 
+            timestamp,
+            message,
+            ],
+
+        PresentationVariant:{
+            SortOrder:[
+                {Property: timestamp, Descending: false}
+            ]
+        },
+
+        LineItem: [
+            {$Type: 'UI.DataField', Value: timestamp,},
+            {$Type: 'UI.DataField', Value: message, Criticality: messageType },
+        ],
+
+        HeaderInfo: {
+            TypeName: 'Log Execução', TypeNamePlural: 'Logs Execuções',
+            Title: { $Type: 'UI.DataField', Value: message },
+            Description: { Value: ID }
+        },
+
+
+        HeaderFacets: [
+			{$Type: 'UI.ReferenceFacet', Label: 'Criado', Target: '@UI.FieldGroup#Created'},
+			{$Type: 'UI.ReferenceFacet', Label: 'Modificado', Target: '@UI.FieldGroup#Modified'},
+		],
+		FieldGroup#Created: {
+			Data: [
+				{Value: createdBy},
+				{Value: createdAt},
+			]
+		},
+		FieldGroup#Modified: {
+			Data: [
+				{Value: modifiedBy},
+				{Value: modifiedAt},
+			]
+		},
+        Facets: [
+			{$Type: 'UI.ReferenceFacet', Label: 'Detalhes', Target: '@UI.FieldGroup#Detalhes'},
+		],
+		FieldGroup#Detalhes: {
+			Data: [
+                {Value: timestamp,},
+                {Value: message, Criticality: messageType },
+			]
+		},
+    }
+);
