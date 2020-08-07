@@ -141,6 +141,14 @@ class OperacaoImportacaoBase{
 
         const { ID, csv } = this.importacao
 
+        const { Importacoes } = this.srv.entities
+
+        await cds.transaction(this.req).run(
+            UPDATE(Importacoes)
+                .set({status_status: STATUS_EXECUCAO.EM_EXECUCAO})
+                .where({ID: ID})
+        )
+
         let lines;
 
         try {
@@ -154,6 +162,12 @@ class OperacaoImportacaoBase{
             })
         } catch (error) {
 
+            await cds.transaction(this.req).run(
+                UPDATE(Importacoes)
+                    .set({status_status: STATUS_EXECUCAO.NAO_EXECUTADO})
+                    .where({ID: ID})
+            )
+    
             this.req.error(409, `Erro ao tentar interpretar o conteudo do arquivo da importação ${ID}: ${String(error)}`)
             return
 
@@ -168,6 +182,12 @@ class OperacaoImportacaoBase{
                 lineNumber: i
             })
         }
+
+        await cds.transaction(this.req).run(
+            UPDATE(Importacoes)
+                .set({status_status: STATUS_EXECUCAO.FINALIZADO})
+                .where({ID: ID})
+        )
 
     }
 
