@@ -58,6 +58,10 @@ class OrigemRequestProcessor extends ConfigOrigensImplementation{
         super(srv, new ImportRequestHandler())
     }
 
+    setValorAtiva(req){
+        // Neste caso não mudamos os dados da request, já que realizamos o INSERT pelo codigo.
+    }
+
 }
 
 class DestinoRequestProcessor extends ConfigDestinosImplementation{
@@ -192,7 +196,7 @@ class OperacaoImportacaoBase{
         await this.log.log({ 
             importacao_ID: this.importacao.ID
         },{
-            message: `${this.lineNumber}) ${String(error)}`,
+            message: `${this.lineNumber}) ${error.message || String(error)}`,
             messageType: MESSAGE_TYPES.ERROR
         })
     }
@@ -308,7 +312,8 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
             centroCustoOrigem_CostCenter,
             validFrom,
             validTo,
-            descricao
+            descricao,
+            ativa: false
         }
 
         this.origemRequestProcessor.requestHandler.setData(origem)

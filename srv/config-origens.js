@@ -149,10 +149,14 @@ class ConfigOrigensImplementation{
 
     }
 
+    setValorAtiva(req){
+        // Necessario quando estamos trabalhando com HANA.
+        req.data.ativa = false
+    }
+
     async beforeCreate(req){
 
-        // TODO Verificar se descomentar.
-        // req.data.ativa = false
+        this.setValorAtiva(req)
 
         const data = this.requestHandler.getData(req)
 
