@@ -397,8 +397,6 @@ class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
         descricao
     }){
 
-        this.origemAtual == null
-
         const origem = {
             validFrom,
             validTo,
@@ -470,6 +468,7 @@ class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
     }){
 
         if (isPrimeiraLinhaOrigem){
+            this.origemAtual == null
             if (line.origem_ID)
                 await this.modificarOrigem(line)
             if (this.origemAtual && this.origemAtual.ativa)
