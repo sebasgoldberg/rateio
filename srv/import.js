@@ -629,7 +629,7 @@ class ImportImplementation{
 
     }
 
-    async beforeUpdateImportacoes(req){
+    async validarStatusImportacao(req){
 
         const ID = req.params[0]
 
@@ -655,12 +655,21 @@ class ImportImplementation{
 
     }
 
+    async beforeUpdateImportacoes(req){
+        await this.validarStatusImportacao(req)
+    }
+
+    async beforeDeleteImportacoes(req){
+        await this.validarStatusImportacao(req)
+    }
+
     registerHandles(){
 
         const { Importacoes } = this.srv.entities
         
         this.srv.after('READ', Importacoes, this.afterReadImportacoes.bind(this))
         this.srv.before('UPDATE', Importacoes, this.beforeUpdateImportacoes.bind(this))
+        this.srv.before('DELETE', Importacoes, this.beforeDeleteImportacoes.bind(this))
         this.srv.before('importar', Importacoes, this.beforeImportarImportacoesAction.bind(this))
         this.srv.on('importar', Importacoes, this.importarImportacoesAction.bind(this))
 
