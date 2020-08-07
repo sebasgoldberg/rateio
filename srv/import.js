@@ -410,11 +410,14 @@ class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
         
         const { ConfigOrigens } = this.srv.entities
 
-        await cds.transaction(this.req).run(
+        const count = await cds.transaction(this.req).run(
             UPDATE(ConfigOrigens).set(origem).where({ID: origem_ID})
         )
 
-        await this.info(`Origem ${origem_ID} modificada com sucesso.`)
+        if (count == 0)
+            await this.error(`Não foi possível modificar a origem ${origem_ID}.`)
+        else
+            await this.info(`Origem ${origem_ID} modificada com sucesso.`)
 
         this.origemAtual = await cds.transaction(this.req).run(
             SELECT.one
@@ -450,9 +453,12 @@ class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
         
         const { ConfigDestinos } = this.srv.entities
 
-        await cds.transaction(this.req).run(
+        const count = await cds.transaction(this.req).run(
             UPDATE(ConfigDestinos).set(destino).where({ID: destino_ID})
         )
+
+        if (count == 0)
+            throw new Error(`Não foi possível modificar o destino ${destino_ID}.`)
 
         await this.info(`Destino ${destino_ID} modificado com sucesso.`)
 
