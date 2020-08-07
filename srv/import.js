@@ -624,11 +624,38 @@ class ImportImplementation{
 
     }
 
+    async beforeUpdateImportacoes(req){
+
+        const ID = req.params[0]
+
+        const { Importacoes } = this.srv.entities
+
+        const importacao = await cds.transaction(req).run(
+            SELECT.one
+                .from(Importacoes)
+                .where('ID = ', ID)
+        )
+
+        if (!importacao){
+            req.error(409, `A importacao ${ID} não existe`)
+            return
+        }
+
+        const { status_status } = importacao
+
+        if (status_status != STATUS_EXECUCAO.NAO_EXECUTADO){
+            req.error(409, `A importação ${ID} não pode ser modificada já que atualmente esta com o status ${status_status}.`, 'status_status')
+            return
+        }
+
+    }
+
     registerHandles(){
 
         const { Importacoes } = this.srv.entities
         
         this.srv.after('READ', Importacoes, this.afterReadImportacoes.bind(this))
+        this.srv.before('UPDATE', Importacoes, this.beforeUpdateImportacoes.bind(this))
         this.srv.before('importar', Importacoes, this.beforeImportarImportacoesAction.bind(this))
         this.srv.on('importar', Importacoes, this.importarImportacoesAction.bind(this))
 
