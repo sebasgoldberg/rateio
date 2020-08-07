@@ -8,6 +8,8 @@ sap.ui.define([
 	return Controller.extend("qintess.rateio.rateio-import.ext.controller.Import", {
 
 		handleUploadComplete: function(oEvent) {
+            this.getView().setBusy(false)
+
 			var status = oEvent.getParameter("status");
             if (status == 204) {
                 MessageToast.show("Upload do arquivo realizado com sucesso");                
@@ -53,6 +55,8 @@ sap.ui.define([
             oFileUploader.setUseMultipart(false);
 
             oFileUploader.upload();
+
+            this.getView().setBusy(true)
 
         },
         
