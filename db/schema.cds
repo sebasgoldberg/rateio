@@ -263,8 +263,7 @@ entity LogsItensExecucao as
     from ItensExecucoesLogs;
 
 @readonly
-entity ConfigOrigensDestinos as projection on rateio.ConfigDestinos{
-
+entity ConfigOrigensDestinos as select
     // Dados do origem
     origem.ID as origem_ID,
     origem.etapasProcesso_sequencia as etapa,
@@ -279,15 +278,17 @@ entity ConfigOrigensDestinos as projection on rateio.ConfigDestinos{
     origem.descricao,
 
     // Dados do destino
-    key ID as destino_ID,
-    tipoOperacao_operacao as operacao,
-    contaDestino_ChartOfAccounts,
-    contaDestino_GLAccount,
-    centroCustoDestino_ControllingArea,
-    centroCustoDestino_CostCenter,
-    atribuicao,
-    porcentagemRateio,
-}
+    key destino.ID as destino_ID,
+    destino.tipoOperacao_operacao as operacao,
+    destino.contaDestino_ChartOfAccounts,
+    destino.contaDestino_GLAccount,
+    destino.centroCustoDestino_ControllingArea,
+    destino.centroCustoDestino_CostCenter,
+    destino.atribuicao,
+    destino.porcentagemRateio
+from rateio.ConfigOrigens as origem left join rateio.ConfigDestinos as destino 
+on origem.ID = destino.origem.ID;
+ 
 
 @readonly
 entity Exportacao{

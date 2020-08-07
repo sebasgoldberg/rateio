@@ -31,7 +31,7 @@ class ImportacaoLog extends LogBase{
 class ImportRequestHandler extends RequestHandler{
 
     error(req, code, message, target){
-        throw Error(message)
+        throw new Error(message)
     }
 
     setData(data){
@@ -156,6 +156,7 @@ class OperacaoImportacaoBase{
         }
 
         for (let i=0; i < lines.length; i++){
+            this.lineNumber = i
             const line = lines[i]
             await this._processLine({ line,
                 isPrimeiraLinhaOrigem: this.isPrimeiraLinhaOrigem(lines,i),
@@ -169,20 +170,20 @@ class OperacaoImportacaoBase{
     async info(message){
         await this.log.info({
             importacao_ID: this.importacao.ID
-        }, message)
+        }, `${this.lineNumber}) ${message}`)
     }
 
     async warn(message){
         await this.log.warn({
             importacao_ID: this.importacao.ID
-        }, message)
+        }, `${this.lineNumber}) ${message}`)
     }
 
     async debug(message){
         await this.log.log({
             importacao_ID: this.importacao.ID
         },{
-            message: message,
+            message: `${this.lineNumber}) ${message}`,
             messageType: MESSAGE_TYPES.DEBUG
         })
     }
@@ -191,7 +192,7 @@ class OperacaoImportacaoBase{
         await this.log.log({ 
             importacao_ID: this.importacao.ID
         },{
-            message: String(error),
+            message: `${this.lineNumber}) ${String(error)}`,
             messageType: MESSAGE_TYPES.ERROR
         })
     }
@@ -201,7 +202,6 @@ class OperacaoImportacaoBase{
         isUltimaLinhaOrigem,
         lineNumber
     }){
-        await this.debug(`Processamento registro ${lineNumber}`)
         try {
             await this.processLine({ line,
                 isPrimeiraLinhaOrigem,
@@ -221,14 +221,22 @@ class OperacaoImportacaoBase{
 
     async ativarOrigem({ ID }){
         this.origemRequestProcessor.requestHandler.setParams([ID])
-        await this.origemRequestProcessor.ativarConfiguracaoAction(this.req)
-        await this.info(`Origem ${ID} ativada com sucesso.`)
+        try {
+            await this.origemRequestProcessor.ativarConfiguracaoAction(this.req)
+            await this.info(`Origem ${ID} ativada com sucesso.`)
+        } catch (error) {
+            this.warn(String(error))
+        }
     }
 
     async desativarOrigem({ ID }){
         this.origemRequestProcessor.requestHandler.setParams([ID])
-        await this.origemRequestProcessor.desativarConfiguracaoAction(this.req)
-        await this.info(`Origem ${ID} desativada com sucesso.`)
+        try {
+            await this.origemRequestProcessor.desativarConfiguracaoAction(this.req)
+            await this.info(`Origem ${ID} desativada com sucesso.`)
+        } catch (error) {
+            this.warn(String(error))
+        }
     }
 
     async criarDestino({
@@ -289,6 +297,8 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
         validTo,
         descricao
     }){
+        this.origemAtual = null
+
         const origem = {
             etapasProcesso_sequencia,
             empresa_CompanyCode,
@@ -311,10 +321,8 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
                 .into(ConfigOrigens)
         )
 
-        if (count == 0){
-            this.origemAtual = null
+        if (count == 0)
             throw new Error(`Não foi possível criar a origem ${JSON.stringify(origem)}`)
-        }
 
         this.origemAtual = await cds.transaction(this.req).run(
             SELECT.one
@@ -332,7 +340,11 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
     }){
 
         if (isPrimeiraLinhaOrigem)
-            await this.criarOrigem(line)
+            try {
+                await this.criarOrigem(line)
+            } catch (error) {
+                this.error(error)
+            }
 
         if (this.origemAtual == null){
             this.warn('Não será criado o destino, a origem não chegou a ser criada.')
@@ -349,12 +361,19 @@ class OperacaoImportacaoCriar extends OperacaoImportacaoBase{
 
 class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
 
+    origensLinhasIguais({ origem_ID: origem1_ID }, { origem_ID: origem2_ID }){
+        return origem1_ID == origem2_ID
+    }
+
     async modificarOrigem({
         origem_ID,
         validFrom,
         validTo,
         descricao
     }){
+
+        this.origemAtual == null
+
         const origem = {
             validFrom,
             validTo,
@@ -420,9 +439,10 @@ class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
     }){
 
         if (isPrimeiraLinhaOrigem){
-            await this.modificarOrigem(line)
-            if (this.origemAtual.ativa)
-                this.desativarOrigem({ ID: line.origem_ID })
+            if (line.origem_ID)
+                await this.modificarOrigem(line)
+            if (this.origemAtual && this.origemAtual.ativa)
+                await this.desativarOrigem({ ID: line.origem_ID })
         }
 
         if (line.destino_ID)
@@ -437,7 +457,11 @@ class OperacaoImportacaoModificar extends OperacaoImportacaoBase{
 }
 
 class OperacaoImportacaoEliminar extends OperacaoImportacaoBase{
-    
+
+    origensLinhasIguais({ origem_ID: origem1_ID }, { origem_ID: origem2_ID }){
+        return origem1_ID == origem2_ID
+    }
+
     async eliminarOrigem({
         origem_ID,
     }){
@@ -482,8 +506,8 @@ class OperacaoImportacaoEliminar extends OperacaoImportacaoBase{
         isUltimaLinhaOrigem,
     }){
 
-        if (isPrimeiraLinhaOrigem){
-            this.desativarOrigem({ ID: line.origem_ID })
+        if (isPrimeiraLinhaOrigem && line.origem_ID){
+            await this.desativarOrigem({ ID: line.origem_ID })
         }
 
         if (line.destino_ID)

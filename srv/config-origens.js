@@ -199,7 +199,12 @@ class ConfigOrigensImplementation{
             UPDATE(ConfigOrigens).set({ativa: true}).where({ID: ID})
           )
 
-        return result2
+        if (result2 == 0){
+            this.requestHandler.error(req, 409, `Erro ao tentar ativar a configuração ${ID}.`,
+                'execucoes')
+            return
+        }
+
     }
 
     async desativarConfiguracaoAction(req){
@@ -224,8 +229,13 @@ class ConfigOrigensImplementation{
         const result2 = await tx.run (
             UPDATE(ConfigOrigens).set({ativa: false}).where({ID: ID})
           )
+        
+        if (result2 == 0){
+            this.requestHandler.error(req, 409, `Erro ao tentar desativar a configuração ${ID}.`,
+                'execucoes')
+            return
+        }
 
-        return result2
     }
 
     afterRead(origens){
