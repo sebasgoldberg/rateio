@@ -263,7 +263,8 @@ entity LogsItensExecucao as
     from ItensExecucoesLogs;
 
 @readonly
-entity ConfigOrigensDestinos as select
+// TODO Ver de mudar para obter origens sem destino (o branch fix-left-join já tem a mudança, porem ao fazer o deploy o HANA fica sem memoria).
+entity ConfigOrigensDestinos as projection on rateio.ConfigDestinos{
     // Dados do origem
     origem.ID as origem_ID,
     origem.etapasProcesso_sequencia as etapa,
@@ -278,16 +279,15 @@ entity ConfigOrigensDestinos as select
     origem.descricao,
 
     // Dados do destino
-    key destino.ID as destino_ID,
-    destino.tipoOperacao_operacao as operacao,
-    destino.contaDestino_ChartOfAccounts,
-    destino.contaDestino_GLAccount,
-    destino.centroCustoDestino_ControllingArea,
-    destino.centroCustoDestino_CostCenter,
-    destino.atribuicao,
-    destino.porcentagemRateio
-from rateio.ConfigOrigens as origem left join rateio.ConfigDestinos as destino 
-on origem.ID = destino.origem.ID;
+    key ID as destino_ID,
+    tipoOperacao_operacao as operacao,
+    contaDestino_ChartOfAccounts,
+    contaDestino_GLAccount,
+    centroCustoDestino_ControllingArea,
+    centroCustoDestino_CostCenter,
+    atribuicao,
+    porcentagemRateio,
+}
  
 
 @readonly
