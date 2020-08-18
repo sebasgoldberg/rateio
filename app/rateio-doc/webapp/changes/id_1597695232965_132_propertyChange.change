@@ -1,0 +1,41 @@
+{
+	"fileName": "id_1597695232965_132_propertyChange",
+	"fileType": "change",
+	"changeType": "propertyChange",
+	"moduleName": "",
+	"reference": "qintess.rateio.rateio-doc.Component",
+	"packageName": "$TMP",
+	"content": {
+		"property": "useExportToExcel",
+		"newValue": true
+	},
+	"selector": {
+		"id": "qintess.rateio.rateio-doc::sap.suite.ui.generic.template.ListReport.view.ListReport::ConfigOrigensDocumentos--listReport",
+		"type": "sap.ui.comp.smarttable.SmartTable",
+		"idIsLocal": false
+	},
+	"layer": "CUSTOMER_BASE",
+	"texts": {},
+	"namespace": "apps/qintess.rateio.rateio-doc/changes/",
+	"projectId": "qintess.rateio.rateio-doc",
+	"creation": "2020-08-17T20:15:05.506Z",
+	"originalLanguage": "PT",
+	"support": {
+		"generator": "Change.createInitialFileContent",
+		"service": "",
+		"user": "",
+		"sapui5Version": "1.80.1",
+		"sourceChangeFileName": "",
+		"compositeCommand": ""
+	},
+	"oDataInformation": {},
+	"dependentSelector": {},
+	"validAppVersions": {
+		"creation": "1.0.0",
+		"from": "1.0.0",
+		"to": "1.0.0"
+	},
+	"jsOnly": false,
+	"variantReference": "",
+	"appDescriptorChange": false
+}
