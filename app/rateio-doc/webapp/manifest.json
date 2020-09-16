@@ -118,7 +118,7 @@
 					"settings": {
 						"condensedTableLayout": true,
 						"smartVariantManagement": false,
-						"multiSelect": true
+						"multiSelect": false
 					}
 				},
 				"pages": {

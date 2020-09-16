@@ -57,7 +57,6 @@ service ConfigService @(requires:'rateioAdmin') {
         { *, itemExecutado: redirected to ItensExecucoes }
         actions{
             action cancelar();
-            action anularCancelamento();
         }
 
     entity ExecucoesLogs as projection on rateio.ExecucoesLogs;

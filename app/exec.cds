@@ -352,14 +352,8 @@ annotate ConfigService.Documentos with @(
             {$Type: 'UI.DataField', Value: FiscalYear },
             {$Type: 'UI.DataField', Value: moeda },
             {$Type: 'UI.DataField', Value: cancelado, Criticality: canceladoCriticality  },
-            {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar', Inline: true},
-            {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento', Inline: true},
+            {$Type: 'UI.DataFieldForAction', Label: 'Estornar', Action: 'ConfigService/Documentos_cancelar', Inline: true},
         ],
-
-        // Identification:[ //![@UI.Importance]: #High,
-        //     {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar'},
-        //     {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento'},
-        // ],
 
         HeaderInfo: {
             TypeName: 'Documento', TypeNamePlural: 'Documentos',

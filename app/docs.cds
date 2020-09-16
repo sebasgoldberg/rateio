@@ -216,13 +216,11 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
             {$Type: 'UI.DataField', Value: ano},
             {$Type: 'UI.DataField', Value: periodo},
             {$Type: 'UI.DataField', Value: createdAt},
-            {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar', Inline: true},
-            {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento', Inline: true},
+            {$Type: 'UI.DataFieldForAction', Label: 'Estornar', Action: 'ConfigService/Documentos_cancelar', Determining: true },
         ],
 
         Identification:[ //![@UI.Importance]: #High,
-            {$Type: 'UI.DataFieldForAction', Label: 'Cancelar', Action: 'ConfigService/Documentos_cancelar' },
-            {$Type: 'UI.DataFieldForAction', Label: 'Anular Cancelamento', Action: 'ConfigService/Documentos_anularCancelamento' },
+            {$Type: 'UI.DataFieldForAction', Label: 'Estornar', Action: 'ConfigService/Documentos_cancelar' },
         ],
 
 
