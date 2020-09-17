@@ -1,14 +1,14 @@
 const { Log, MESSAGE_TYPES } = require("./log")
 const createJournalEntry = require("./soap")
 
-class Documento{
+class DocumentoBase{
 
     constructor(srv){
         this.srv = srv
         this.itens = []
     }
 
-    setDadosCabecalho({ 
+    setDadosCabecalho({
         PostingDate, CompanyCode, DocumentReferenceID, DocumentHeaderText, CreatedByUser
     }) {
 
@@ -26,34 +26,6 @@ class Documento{
             PostingDate: PostingDate,
             Item:[]
         }
-
-    }
-
-    addItem({
-        AmountInTransactionCurrency, currencyCode, GLAccount,
-        CostCenter, DebitCreditCode, DocumentItemText, AssignmentReference
-    }){
-
-        const ReferenceDocumentItem = (this.JournalEntry.Item.length + 1)
-            .toString().padStart(2, '0')
-
-        this.JournalEntry.Item.push({
-            ReferenceDocumentItem: `${ReferenceDocumentItem}`,
-            CompanyCode: this.JournalEntry.CompanyCode,
-            GLAccount: GLAccount,
-            AmountInTransactionCurrency:{
-                attributes:{
-                    currencyCode: currencyCode
-                },
-                $value: AmountInTransactionCurrency,
-            },
-            DebitCreditCode: DebitCreditCode,
-            DocumentItemText: DocumentItemText,
-            AccountAssignment:{
-                CostCenter: CostCenter,
-            },
-            AssignmentReference: AssignmentReference
-        })
 
     }
 
@@ -99,10 +71,87 @@ class Documento{
 
 }
 
+class Documento extends DocumentoBase{
+
+    setDadosCabecalho(JournalEntry) {
+
+        super.setDadosCabecalho(JournalEntry)
+        this.JournalEntry.Item = []
+
+    }
+
+    addItem({
+        AmountInTransactionCurrency, currencyCode, GLAccount,
+        CostCenter, DebitCreditCode, DocumentItemText, AssignmentReference
+    }){
+
+        const ReferenceDocumentItem = (this.JournalEntry.Item.length + 1)
+            .toString().padStart(2, '0')
+
+        this.JournalEntry.Item.push({
+            ReferenceDocumentItem: `${ReferenceDocumentItem}`,
+            CompanyCode: this.JournalEntry.CompanyCode,
+            GLAccount: GLAccount,
+            AmountInTransactionCurrency:{
+                attributes:{
+                    currencyCode: currencyCode
+                },
+                $value: AmountInTransactionCurrency,
+            },
+            DebitCreditCode: DebitCreditCode,
+            DocumentItemText: DocumentItemText,
+            AccountAssignment:{
+                CostCenter: CostCenter,
+            },
+            AssignmentReference: AssignmentReference
+        })
+
+    }
+
+}
+
+class DocumentoEstorno extends DocumentoBase{
+
+    setDadosCabecalho(JournalEntry) {
+
+        super.setDadosCabecalho(JournalEntry)
+
+        const { ReversalReason, ReversalReferenceDocument } = JournalEntry
+        this.JournalEntry.ReversalReason = ReversalReason
+        this.JournalEntry.ReversalReferenceDocument = ReversalReferenceDocument
+
+    }
+
+}
+
 class DocumentosImplementation{
 
     constructor(srv){
         this.srv = srv
+    }
+
+    async estornarDocumento(req, { CompanyCode, AccountingDocument, FiscalYear }){
+     
+        const { createDocumentoEstorno } = require("./documento-factory")
+        console.log(createDocumentoEstorno);
+        const documento = createDocumentoEstorno(this.srv)
+
+        const dataDoDia = new Date().toISOString().split('T')[0];
+
+        documento.setDadosCabecalho({
+            PostingDate: dataDoDia,
+            CompanyCode: CompanyCode,
+            DocumentReferenceID: '201',
+            DocumentHeaderText: `EstornoRateio`,
+            CreatedByUser: req.user.id,
+            ReversalReason: '02',
+            ReversalReferenceDocument: `${ AccountingDocument }${ CompanyCode }${ FiscalYear }`,
+        })
+
+        await documento.post()
+
+        return documento
+
     }
 
     async cancelarDocumentoAction(req){
@@ -124,10 +173,17 @@ class DocumentosImplementation{
             return
         }
 
+        const documentoEstorno = await this.estornarDocumento(req, { CompanyCode, AccountingDocument, FiscalYear })
+
+        const { AccountingDocument: AccountingDocumentEstorno } = documentoEstorno
+
         await Promise.all([
             cds.transaction(req).run(
                 UPDATE(Documentos)
-                .set({cancelado: true})
+                .set({
+                    cancelado: true,
+                    EstornadoCom: AccountingDocumentEstorno
+                })
                 .where({CompanyCode: CompanyCode })
                 .and({ AccountingDocument: AccountingDocument })
                 .and({ FiscalYear: FiscalYear })
@@ -137,7 +193,7 @@ class DocumentosImplementation{
                 documento.execucao_ID, documento.configuracaoOrigem_ID,
                 {
                     messageType: MESSAGE_TYPES.WARNING,
-                    message: `O seguinte documento foi cancelado: ${CompanyCode} ${AccountingDocument} ${FiscalYear}.`
+                    message: `O seguinte documento ${CompanyCode} ${AccountingDocument} ${FiscalYear} foi estornado com o documento ${ AccountingDocumentEstorno }.`
                 })
         ])
 
@@ -161,6 +217,7 @@ class DocumentosImplementation{
 }
 
 module.exports = {
-    Documento: Documento,
-    DocumentosImplementation: DocumentosImplementation
+    Documento,
+    DocumentoEstorno,
+    DocumentosImplementation
 }

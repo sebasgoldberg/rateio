@@ -1,6 +1,6 @@
 const cds = require('@sap/cds')
 const bs = require("binary-search");
-const createDocumento = require('./documento-factory');
+const { createDocumento } = require('./documento-factory');
 const { Log, MESSAGE_TYPES } = require('./log');
 const { STATUS_EXECUCAO } = require('./constants');
 

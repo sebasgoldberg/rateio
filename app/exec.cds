@@ -333,6 +333,8 @@ annotate ConfigService.Documentos with {
         }
     );
 
+    EstornadoCom @Common.Label: 'Estornado com';
+
 }
 
 annotate ConfigService.Documentos with @(
@@ -343,7 +345,8 @@ annotate ConfigService.Documentos with @(
             AccountingDocument,
             FiscalYear,
             moeda,
-            cancelado
+            cancelado,
+            EstornadoCom,
             ],
 
         LineItem: [
@@ -352,6 +355,7 @@ annotate ConfigService.Documentos with @(
             {$Type: 'UI.DataField', Value: FiscalYear },
             {$Type: 'UI.DataField', Value: moeda },
             {$Type: 'UI.DataField', Value: cancelado, Criticality: canceladoCriticality  },
+            {$Type: 'UI.DataField', Value: EstornadoCom },
             {$Type: 'UI.DataFieldForAction', Label: 'Estornar', Action: 'ConfigService/Documentos_cancelar', Inline: true},
         ],
 
@@ -388,6 +392,7 @@ annotate ConfigService.Documentos with @(
                 {Value: FiscalYear },
                 {Value: moeda },
                 {Value: cancelado, Criticality: canceladoCriticality },
+                {Value: EstornadoCom },
 			]
 		},
     }

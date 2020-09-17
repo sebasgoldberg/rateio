@@ -1,7 +1,7 @@
 const { TestUtils, constants } = require('../utils');
 
-const createDocumento = require('../../srv/documento-factory');
-const { Documento } = require('../../srv/documento');
+const docFactory = require('../../srv/documento-factory');
+const { Documento, DocumentoEstorno } = require('../../srv/documento');
 jest.mock('../../srv/documento-factory');
 
 const createRateioProcess = require('../../srv/rateio-factory');
@@ -17,6 +17,21 @@ describe('Processo: Rateio', () => {
   beforeAll(async () => {
     await this.utils.deployAndServe()
     await this.utils.createTestData();
+
+    docFactory.createDocumentoEstorno.mockImplementation( srv => {
+      const documento = new DocumentoEstorno(srv)
+      documento.setDadosCabecalho = jest.fn()
+      documento.post = jest.fn()
+      documento.post.mockImplementation(function(){
+        this.CompanyCode = constants.COMPANY_CODE
+        AccountingDocument = 1001
+        this.AccountingDocument = AccountingDocument.toString()
+        this.FiscalYear = 2020
+        return Promise.resolve()
+      })
+      return documento
+    })
+
   })
 
   it('Os rateios devem ser ser realizados por etapa em ordem crecente.', async () => {
@@ -586,7 +601,7 @@ describe('Processo: Rateio', () => {
     let AccountingDocument = 0
     let documentos = []
 
-    createDocumento.mockImplementation( srv => {
+    docFactory.createDocumento.mockImplementation( srv => {
       const documento = new Documento(srv)
       documento.setDadosCabecalho = jest.fn()
       documento.addItem = jest.fn()
@@ -791,7 +806,7 @@ describe('Processo: Rateio', () => {
     let ActualAccountingDocument = 0
     let documentos = []
 
-    createDocumento.mockImplementation( srv => {
+    docFactory.createDocumento.mockImplementation( srv => {
       const documento = new Documento(srv)
       documento.setDadosCabecalho = jest.fn()
       documento.addItem = jest.fn()
@@ -924,7 +939,7 @@ describe('Processo: Rateio', () => {
     let AccountingDocument = 0
     let documentos = []
 
-    createDocumento.mockImplementation( srv => {
+    docFactory.createDocumento.mockImplementation( srv => {
       const documento = new Documento(srv)
       documento.setDadosCabecalho = jest.fn()
       documento.addItem = jest.fn()
@@ -1050,7 +1065,7 @@ describe('Processo: Rateio', () => {
     let AccountingDocument = 0
     let documentos = []
 
-    createDocumento.mockImplementation( srv => {
+    docFactory.createDocumento.mockImplementation( srv => {
       const documento = new Documento(srv)
       documento.setDadosCabecalho = jest.fn()
       documento.addItem = jest.fn()
@@ -1435,7 +1450,7 @@ describe('Processo: Rateio', () => {
     let AccountingDocument = 0
     let documentos = []
 
-    createDocumento.mockImplementation( srv => {
+    docFactory.createDocumento.mockImplementation( srv => {
       const documento = new Documento(srv)
       documento.setDadosCabecalho = jest.fn()
       documento.addItem = jest.fn()
@@ -1482,7 +1497,7 @@ describe('Processo: Rateio', () => {
         expect.arrayContaining([
           expect.objectContaining({ 
             messageType: MESSAGE_TYPES.WARNING,
-            message: expect.stringMatching(new RegExp(`O seguinte documento foi cancelado: .*\\.`))
+            message: expect.stringMatching(new RegExp(`O seguinte documento .* foi estornado com o documento .*\\.`))
           }),
         ]))
   })

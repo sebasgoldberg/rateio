@@ -195,6 +195,28 @@ async function fullEtapa(etapa){
         json: true,
     })
 
+
+    // Os documentos são estornados
+    response.value
+        .filter( doc => !doc.cancelado )
+        .map( doc => {
+            const { CompanyCode, AccountingDocument, FiscalYear } = doc
+            const key = `CompanyCode='${CompanyCode}',AccountingDocument='${AccountingDocument}',FiscalYear=${FiscalYear}`
+            return key
+        })
+        .forEach( async key => {
+
+            const response = await request({
+                method: 'POST',
+                uri: `/config/Documentos(${key})/ConfigService.cancelar`,
+                headers:{
+                    'Content-Type': 'application/json;charset=UTF-8;IEEE754Compatible=true'
+                },
+                json: true,
+            })
+    
+        })
+
 }
 
 async function full(){

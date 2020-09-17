@@ -174,16 +174,18 @@ entity ItensExecucoes: managed {
 }
 
 type Moeda: String(3);
+type AccountingDocument: String(10);
 
 @autoexpose
 entity Documentos: managed {
     key CompanyCode: CompanyCode not null;
-    key AccountingDocument: String(10) not null;
+    key AccountingDocument: AccountingDocument not null;
     key FiscalYear: FiscalYear not null;
     moeda: Moeda;
     itemExecutado: Association to one ItensExecucoes not null;
     cancelado: Boolean not null default false;
     virtual canceladoCriticality: Integer;
+    EstornadoCom: AccountingDocument null;
 };
 
 type DocumentItemNumber: String(6);
@@ -230,6 +232,7 @@ entity ConfigOrigensDocumentos as projection on rateio.Documentos{
         moeda,
         cancelado,
         canceladoCriticality,
+        EstornadoCom,
         createdAt,
         createdBy,
         modifiedAt,

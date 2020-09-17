@@ -1,7 +1,14 @@
-const { Documento } = require("./documento")
+const { Documento, DocumentoEstorno } = require("./documento")
 
 function createDocumento(srv){
     return new Documento(srv)
 }
 
-module.exports = createDocumento
+function createDocumentoEstorno(srv){
+    return new DocumentoEstorno(srv)
+}
+
+module.exports = { 
+    createDocumento,
+    createDocumentoEstorno,
+}

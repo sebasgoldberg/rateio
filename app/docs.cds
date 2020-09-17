@@ -42,6 +42,8 @@ annotate ConfigService.ConfigOrigensDocumentos with{
         }
     );
 
+    EstornadoCom @Common.Label: 'Estornado com';
+
     configuracaoOrigem_ID @Common.Label: 'ID origem';
 
     sequencia @(
@@ -187,6 +189,7 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
             FiscalYear,
             moeda,
             cancelado,
+            EstornadoCom,
             sequencia,
             ChartOfAccounts,
             GLAccount,
@@ -208,6 +211,7 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
             {$Type: 'UI.DataField', Value: FiscalYear},
             {$Type: 'UI.DataField', Value: moeda},
             {$Type: 'UI.DataField', Value: cancelado, Criticality: canceladoCriticality },
+            {$Type: 'UI.DataField', Value: EstornadoCom},
             {$Type: 'UI.DataField', Value: sequencia},
             {$Type: 'UI.DataField', Value: ChartOfAccounts},
             {$Type: 'UI.DataField', Value: GLAccount},
@@ -258,6 +262,7 @@ annotate ConfigService.ConfigOrigensDocumentos with @(
                 {Value: FiscalYear },
                 {Value: moeda },
                 {Value: cancelado, Criticality: canceladoCriticality },
+                {Value: EstornadoCom },
 			]
 		},
 		FieldGroup#Origem: {
