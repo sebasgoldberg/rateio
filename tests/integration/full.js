@@ -191,22 +191,22 @@ async function fullEtapa(etapa){
     response = await request({
         method: 'GET',
         uri: '/config/ConfigOrigensDocumentos',
-        qs: `$filter=execucao_ID = ${execucaoID}`,
+        qs: { $filter: `execucao_ID eq ${execucaoID}` },
         json: true,
     })
 
 
     // Os documentos são estornados
-    response.value
+    let responses = response.value
         .filter( doc => !doc.cancelado )
         .map( doc => {
             const { CompanyCode, AccountingDocument, FiscalYear } = doc
             const key = `CompanyCode='${CompanyCode}',AccountingDocument='${AccountingDocument}',FiscalYear=${FiscalYear}`
             return key
         })
-        .forEach( async key => {
+        .map( async key => {
 
-            const response = await request({
+            return await request({
                 method: 'POST',
                 uri: `/config/Documentos(${key})/ConfigService.cancelar`,
                 headers:{
@@ -216,6 +216,8 @@ async function fullEtapa(etapa){
             })
     
         })
+
+    await Promise.all(responses)
 
 }
 

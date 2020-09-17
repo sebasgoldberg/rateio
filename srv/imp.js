@@ -20,7 +20,7 @@ function ODataV2toODataV4Date(value){
 const { ConfigOrigensImplementation } = require("./")
 const { ConfigDestinosImplementation } = require("./")
 const { ExecucoesImplementation } = require("./")
-const { DocumentosImplementation } = require('./documento')
+const { DocumentosImplementation } = require('./documento-imp')
 const { ExportImplementation } = require('./export')
 const { ImportImplementation } = require('./import')
 
