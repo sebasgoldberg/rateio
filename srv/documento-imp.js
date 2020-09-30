@@ -7,14 +7,15 @@ class DocumentosImplementation{
         this.srv = srv
     }
 
-    async estornarDocumento(req, { CompanyCode, AccountingDocument, FiscalYear }){
+    async estornarDocumento(req, { CompanyCode, AccountingDocument, FiscalYear, PostingDate }){
      
         const documento = createDocumentoEstorno(this.srv)
 
-        const dataDoDia = new Date().toISOString().split('T')[0];
-
+        if (!PostingDate)
+            PostingDate = new Date().toISOString().split('T')[0];
+        
         documento.setDadosCabecalho({
-            PostingDate: dataDoDia,
+            PostingDate: PostingDate,
             CompanyCode: CompanyCode,
             DocumentReferenceID: '201',
             DocumentHeaderText: `EstornoRateio`,
@@ -44,11 +45,12 @@ class DocumentosImplementation{
         )
 
         if (documento.cancelado){
-            req.error(409, `O documento já se encontra cancelado.`)
             return
         }
 
-        const documentoEstorno = await this.estornarDocumento(req, { CompanyCode, AccountingDocument, FiscalYear })
+        const { PostingDate } = documento
+
+        const documentoEstorno = await this.estornarDocumento(req, { CompanyCode, AccountingDocument, FiscalYear, PostingDate })
 
         const { AccountingDocument: AccountingDocumentEstorno } = documentoEstorno
 

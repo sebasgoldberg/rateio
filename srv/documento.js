@@ -59,6 +59,7 @@ class DocumentoBase{
             this.AccountingDocument = AccountingDocument
             this.CompanyCode = CompanyCode
             this.FiscalYear = FiscalYear
+            this.PostingDate = this.JournalEntry.PostingDate
 
         } else {
 

@@ -254,7 +254,8 @@ class RateioProcess{
 
         const entries = [
             documento.CompanyCode, documento.AccountingDocument, documento.FiscalYear,
-            saldoItem.CompanyCodeCurrency, item.execucao_ID, item.configuracaoOrigem_ID, false
+            saldoItem.CompanyCodeCurrency, item.execucao_ID, item.configuracaoOrigem_ID, false,
+            documento.PostingDate
         ]
 
         await cds.transaction(this.req).run(
@@ -262,7 +263,8 @@ class RateioProcess{
                 .into(Documentos)
                 .columns(
                     'CompanyCode', 'AccountingDocument', 'FiscalYear', 'moeda', 
-                    'itemExecutado_execucao_ID', 'itemExecutado_configuracaoOrigem_ID', 'cancelado'
+                    'itemExecutado_execucao_ID', 'itemExecutado_configuracaoOrigem_ID', 'cancelado',
+                    'PostingDate'
                     )
                 .entries(entries)
         )

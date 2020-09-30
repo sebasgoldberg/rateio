@@ -186,6 +186,7 @@ entity Documentos: managed {
     cancelado: Boolean not null default false;
     virtual canceladoCriticality: Integer;
     EstornadoCom: AccountingDocument null;
+    PostingDate: Date;
 };
 
 type DocumentItemNumber: String(6);
@@ -233,6 +234,7 @@ entity ConfigOrigensDocumentos as projection on rateio.Documentos{
         cancelado,
         canceladoCriticality,
         EstornadoCom,
+        PostingDate,
         createdAt,
         createdBy,
         modifiedAt,
