@@ -186,7 +186,7 @@ entity Documentos: managed {
     cancelado: Boolean not null default false;
     virtual canceladoCriticality: Integer;
     EstornadoCom: AccountingDocument null;
-    PostingDate: Date;
+    PostingDate: Date null;
 };
 
 type DocumentItemNumber: String(6);

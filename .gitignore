@@ -38,3 +38,6 @@ soap.describe.json
 
 dist
 cert
+
+config/destinations/qa.json
+config/destinations/prd.json

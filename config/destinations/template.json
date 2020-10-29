@@ -1,0 +1,30 @@
+{
+    "init_data": {
+        "instance" : {
+            "existing_destinations_policy": "update",
+            "existing_certificates_policy": "fail",
+            "destinations" : [
+                {
+                    "Name": "s4hc",
+                    "Type": "HTTP",
+                    "URL": "",
+                    "Authentication": "BasicAuthentication",
+                    "ProxyType": "Internet",
+                    "User": "",
+                    "Password": ""
+                },
+                {
+                    "Name": "soapJournalEntry",
+                    "Type": "HTTP",
+                    "URL": "",
+                    "Authentication": "BasicAuthentication",
+                    "ProxyType": "Internet",
+                    "User": "",
+                    "Password": ""
+                }
+            ],
+            "certificates" : [
+            ]
+        }
+    }
+}

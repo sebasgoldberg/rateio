@@ -1,11 +1,14 @@
 {
   "name": "approuter",
   "dependencies": {
-    "@sap/approuter": "^6",
+    "@sap/approuter": "^8",
     "nodemon": "^2.0.4"
   },
   "scripts": {
     "start": "nodemon node_modules/@sap/approuter/approuter.js",
     "build": "cd rateio-config && ui5 build && cd .. && cd rateio-doc && ui5 build && cd .. && cd rateio-etapas && ui5 build && cd .. && cd rateio-exec && ui5 build && cd .. && cd rateio-import && ui5 build && cd .."
+  },
+  "engines": {
+    "node": "12.x"
   }
 }
