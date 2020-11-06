@@ -28,6 +28,7 @@
         "node": "12.x"
     },
     "cds": {
+        "hana" : { "deploy-format": "hdbtable" },
         "requires": {
             "API_JOURNALENTRYITEMBASIC_SRV": {
                 "kind": "odata",
