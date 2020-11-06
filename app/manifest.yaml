@@ -1,6 +1,7 @@
 ---
 applications:
 - name: rateio-app
+  # host: 
   buildpack: nodejs_buildpack
   random-route: true
   path: .
